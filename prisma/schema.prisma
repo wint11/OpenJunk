@@ -1,0 +1,332 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  image     String?
+  password  String?  // Hashed password
+  role      String   @default("USER") // USER, AUTHOR, ADMIN, SUPER_ADMIN
+  status    String   @default("ACTIVE") // ACTIVE, BANNED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  managedJournalId String?
+  managedJournal   Journal? @relation("JournalAdmin", fields: [managedJournalId], references: [id])
+
+  reviewerJournals Journal[] @relation("JournalReviewers")
+
+  readingHistory ReadingHistory[]
+  uploadedNovels Novel[]          @relation("UserUploads")
+  auditLogs      AuditLog[]
+  reviews        ReviewLog[]
+  
+  notifications  Notification[] @relation("UserNotifications")
+  sentNotifications Notification[] @relation("SenderNotifications")
+  
+  comments       Comment[]
+  commentLikes   CommentLike[]
+
+  // Fund System Relations
+  fundAdminCategories FundCategory[] @relation("FundCategoryAdmins")
+  fundExpertProfile   FundExpertProfile?
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+  
+  senderId  String?
+  sender    User?    @relation("SenderNotifications", fields: [senderId], references: [id])
+  
+  type      String   // INVITATION, SYSTEM, REVIEW
+  title     String
+  content   String
+  status    String   @default("UNREAD") // UNREAD, READ, ACCEPTED, REJECTED
+  
+  data      String?  // JSON string for storing related IDs (e.g. { journalId: "..." })
+  
+  createdAt DateTime @default(now())
+}
+
+model Novel {
+  id          String   @id @default(cuid())
+  title       String
+  author      String   // Display author name
+  correspondingAuthor String? // Corresponding author name
+  extraAuthors String? // JSON string of additional authors
+  description String
+  coverUrl    String?
+  pdfUrl      String?  // URL to the full text PDF
+  pdfHash     String?  // SHA-256 hash of the PDF file for deduplication
+  pendingCoverUrl String? // For cover update requests
+  category    String
+  type        String   @default("NOVEL") // NOVEL, PAPER, AUTOBIOGRAPHY, ARTICLE
+  status      String   @default("DRAFT") // DRAFT, PENDING, PUBLISHED, REJECTED, PENDING_DELETION, TAKEDOWN
+  serializationStatus String @default("SERIALIZING") // SERIALIZING, COMPLETED
+  isRecommended Boolean @default(false) // Featured on home page
+  
+  // Audit/Review fields
+  lastSubmittedAt DateTime?
+  lastApprovedAt  DateTime?
+  changeLog      String?   // JSON string or text describing changes since last approval
+
+  aiReviewPassed Boolean?
+  aiQuality     Int?
+  aiReviewedAt  DateTime?
+  aiReviewRaw   String?
+  views       Int      @default(0)
+  popularity  Float    @default(0) // Dynamic heat/popularity score
+  rating      Float    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  uploaderId  String?
+  uploader    User?    @relation("UserUploads", fields: [uploaderId], references: [id])
+  uploaderIp  String?  // Record IP address for anonymous submissions
+
+  journalId   String?
+  journal     Journal? @relation(fields: [journalId], references: [id])
+
+  chapters    Chapter[]
+  readingHistory ReadingHistory[]
+  reviewLogs  ReviewLog[]
+  comments    Comment[]
+}
+
+model ReviewLog {
+  id        String   @id @default(cuid())
+  novelId   String
+  novel     Novel    @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  
+  reviewerId String
+  reviewer   User    @relation(fields: [reviewerId], references: [id])
+  
+  action    String   // APPROVE, REJECT
+  feedback  String?  // Feedback to author
+  
+  createdAt DateTime @default(now())
+}
+
+model Chapter {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  order     Int
+  novelId   String
+  novel     Novel    @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  status    String   @default("DRAFT") // DRAFT, PENDING, PUBLISHED, REJECTED
+  
+  isVip     Boolean  @default(false)
+
+  isModified Boolean @default(false) // Track if modified since last submission
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  readingHistory ReadingHistory[]
+
+  @@index([novelId])
+}
+
+model ReadingHistory {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guestName String?  // For anonymous users: "匿名用户xxxx"
+  guestIp   String?  // Store IP for rate limiting/blocking if needed
+  novelId   String
+  novel     Novel    @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  chapterId String
+  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, novelId])
+  @@index([userId])
+  @@index([novelId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  resource  String
+  details   String?
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  ipAddress String?
+  createdAt DateTime @default(now())
+}
+
+model AppSetting {
+  key       String   @id
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GhostMessage {
+  id        String   @id @default(cuid())
+  content   String
+  author    String?  @default("ANONYMOUS") // Username or "ANONYMOUS"
+  type      String   @default("user") // user, system, story, flag, hint
+  createdAt DateTime @default(now())
+}
+
+model Journal {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  coverUrl    String?
+  status      String   @default("ACTIVE") // ACTIVE, ARCHIVED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  papers      Novel[]
+  admins      User[]   @relation("JournalAdmin")
+  reviewers   User[]   @relation("JournalReviewers")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guestName String?  // For anonymous users: "匿名用户xxxx"
+  guestIp   String?  // Store IP for rate limiting/blocking if needed
+  
+  novelId   String
+  novel     Novel    @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  
+  // Optional parent comment for replies
+  parentId  String?
+  parent    Comment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   Comment[] @relation("CommentReplies")
+
+  likes     CommentLike[]
+}
+
+model CommentLike {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guestIp   String?  // For anonymous users
+  commentId String
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, commentId])
+  @@unique([guestIp, commentId])
+}
+
+// ==========================================
+// Fund System Models (New)
+// ==========================================
+
+// 基金大类 (如: NSFC, NSSFC)
+model FundCategory {
+  id          String   @id @default(cuid())
+  name        String   // e.g. "国家自然科学基金"
+  code        String   @unique // e.g. "NSFC"
+  description String?
+  
+  // 基金管理员：多对多关联，指定谁管理这个大类
+  admins      User[]   @relation("FundCategoryAdmins")
+  
+  funds       Fund[]
+}
+
+// 基金专家档案 (独立于 User 表的扩展信息)
+model FundExpertProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  
+  realName    String?  // 真实姓名（冗余存储，用于快照）
+  title       String?  // 职称 (教授/副教授)
+  researchField String? // 研究领域/关键词
+  institution String?  // 单位（用于回避原则）
+  bankCard    String?  // 银行卡号（发放评审费）
+  idCard      String?  // 身份证号
+  
+  isActive    Boolean  @default(true)
+  
+  reviews     FundReview[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// 具体基金指南/项目 (如: 2026年NSFC面上项目)
+model Fund {
+  id          String   @id @default(cuid())
+  title       String   // e.g. "2026年度面上项目"
+  year        Int      // 2026
+  
+  categoryId  String
+  category    FundCategory @relation(fields: [categoryId], references: [id])
+  
+  startDate   DateTime
+  endDate     DateTime
+  
+  status      String   @default("DRAFT") // DRAFT, ACTIVE, CLOSED, ARCHIVED
+  guideContent String? // 指南正文(Markdown/HTML)
+  
+  applications FundApplication[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// 申报书 (无需登录，无需关联 User)
+model FundApplication {
+  id          String   @id @default(cuid())
+  serialNo    String?  @unique // 全局唯一ID，规则待定
+  
+  fundId      String
+  fund        Fund     @relation(fields: [fundId], references: [id])
+  
+  applicantName String   // 申请人姓名 (手动填写)
+  
+  title       String   // 项目名称
+  description String   // 项目简介
+  achievements String? // 项目已有成果（可选）
+  
+  status      String   @default("DRAFT") // DRAFT, SUBMITTED, UNDER_REVIEW, REJECTED, APPROVED
+  
+  reviews     FundReview[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// 评审记录
+model FundReview {
+  id            String   @id @default(cuid())
+  
+  applicationId String
+  application   FundApplication @relation(fields: [applicationId], references: [id])
+  
+  // 关联到专家档案，而不是直接关联 User，强调专家身份
+  expertId      String
+  expert        FundExpertProfile @relation(fields: [expertId], references: [id])
+  
+  score         Float?
+  grade         String?  // A, B, C, D
+  comments      String?  // 评审意见
+  
+  status        String   @default("PENDING") // PENDING, SUBMITTED
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

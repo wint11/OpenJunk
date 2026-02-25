@@ -1,0 +1,73 @@
+
+{
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "论文库",
+				"enablePullDownRefresh": false,
+				"disableScroll": true
+			}
+		},
+		{
+			"path": "pages/trends/index",
+			"style": {
+				"navigationBarTitleText": "趋势榜",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/journals/index",
+			"style": {
+				"navigationBarTitleText": "期刊矩阵",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/paper/detail",
+			"style": {
+				"navigationBarTitleText": "论文详情"
+			}
+		},
+		{
+			"path": "pages/paper/read",
+			"style": {
+				"navigationBarTitleText": "在线阅读",
+				"navigationBarBackgroundColor": "#333333",
+				"navigationBarTextStyle": "white"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "SmartReview",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"color": "#7A7E83",
+		"selectedColor": "#007AFF",
+		"borderStyle": "black",
+		"backgroundColor": "#FFFFFF",
+		"list": [
+			{
+				"pagePath": "pages/index/index",
+				"iconPath": "static/tabbar/paper.png",
+				"selectedIconPath": "static/tabbar/paper-active.png",
+				"text": "论文"
+			},
+			{
+				"pagePath": "pages/trends/index",
+				"iconPath": "static/tabbar/trend.png",
+				"selectedIconPath": "static/tabbar/trend-active.png",
+				"text": "趋势"
+			},
+			{
+				"pagePath": "pages/journals/index",
+				"iconPath": "static/tabbar/journal.png",
+				"selectedIconPath": "static/tabbar/journal-active.png",
+				"text": "期刊"
+			}
+		]
+	}
+}

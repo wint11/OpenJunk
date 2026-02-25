@@ -1,0 +1,66 @@
+
+/**
+ * uni-app内置的常用样式变量
+ */
+
+/* 行为相关颜色 */
+$uni-color-primary: #2979ff;
+$uni-color-success: #19be6b;
+$uni-color-warning: #ff9900;
+$uni-color-error: #fa3534;
+
+/* 现代学术风格配色 */
+$uni-color-academic-1: #2c3e50; // 深蓝灰
+$uni-color-academic-2: #8e44ad; // 紫色
+$uni-color-academic-3: #16a085; // 青色
+$uni-color-academic-4: #c0392b; // 深红
+$uni-color-academic-5: #d35400; // 焦糖色
+$uni-color-academic-6: #2980b9; // 蓝色
+
+/* 文字基本颜色 */
+$uni-text-color: #303133;
+$uni-text-color-inverse: #ffffff;
+$uni-text-color-grey: #909399;
+$uni-text-color-placeholder: #c0c4cc;
+$uni-text-color-disable: #c0c4cc;
+
+/* 背景颜色 */
+$uni-bg-color: #ffffff;
+$uni-bg-color-grey: #f5f7fa;
+$uni-bg-color-hover: #f5f7fa;
+$uni-bg-color-mask: rgba(0, 0, 0, 0.4);
+
+/* 边框颜色 */
+$uni-border-color: #e4e7ed;
+
+/* 尺寸变量 */
+$uni-font-size-sm: 24rpx;
+$uni-font-size-base: 28rpx;
+$uni-font-size-lg: 32rpx;
+
+/* Border Radius */
+$uni-border-radius-sm: 8rpx;
+$uni-border-radius-base: 16rpx;
+$uni-border-radius-lg: 32rpx;
+$uni-border-radius-circle: 50%;
+
+/* Spacing */
+$uni-spacing-row-sm: 10rpx;
+$uni-spacing-row-base: 20rpx;
+$uni-spacing-row-lg: 30rpx;
+$uni-spacing-col-sm: 10rpx;
+$uni-spacing-col-base: 20rpx;
+$uni-spacing-col-lg: 30rpx;
+
+/* Shadows */
+$uni-shadow-sm: 0 4rpx 12rpx 0 rgba(0, 0, 0, 0.05);
+$uni-shadow-base: 0 8rpx 24rpx 0 rgba(0, 0, 0, 0.08);
+$uni-shadow-lg: 0 16rpx 48rpx 0 rgba(0, 0, 0, 0.12);
+
+/* 文章场景相关 */
+$uni-color-title: #2C405A; // 文章标题颜色
+$uni-font-size-title:40rpx;
+$uni-color-subtitle: #555555; // 二级标题颜色
+$uni-font-size-subtitle:36rpx;
+$uni-color-paragraph: #3F536E; // 文章段落颜色
+$uni-font-size-paragraph:30rpx;

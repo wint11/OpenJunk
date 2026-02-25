@@ -1,0 +1,43 @@
+{
+  "fields": [
+    {
+      "id": "title",
+      "label": "论文标题 (Title)",
+      "type": "text",
+      "required": true,
+      "placeholder": "请输入论文标题...",
+      "description": "请使用学术语言，简洁明了。"
+    },
+    {
+      "id": "author",
+      "label": "作者 (Author)",
+      "type": "text",
+      "required": true,
+      "placeholder": "张三, 李四",
+      "description": "多位作者请用逗号分隔。"
+    },
+    {
+      "id": "abstract",
+      "label": "摘要 (Abstract)",
+      "type": "textarea",
+      "required": true,
+      "rows": 6,
+      "placeholder": "在此输入摘要内容...",
+      "description": "摘要应包含研究目的、方法、结果和结论，字数控制在300字以内。"
+    },
+    {
+      "id": "keywords",
+      "label": "关键词 (Keywords)",
+      "type": "text",
+      "required": true,
+      "placeholder": "人工智能; 量子物理; 神经网络",
+      "description": "3-5个关键词，分号分隔。"
+    },
+    {
+      "id": "content",
+      "label": "正文内容 (Body)",
+      "type": "rich-text",
+      "description": "支持图文混排。"
+    }
+  ]
+}
