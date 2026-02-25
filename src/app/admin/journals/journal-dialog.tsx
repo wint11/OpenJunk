@@ -31,6 +31,7 @@ interface JournalDialogProps {
     name: string
     description: string | null
     status: string
+    coverUrl?: string | null
   }
 }
 
@@ -92,6 +93,24 @@ export function JournalDialog({ mode, journal }: JournalDialogProps) {
                 defaultValue={journal?.description || ""}
                 className="col-span-3"
               />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="cover" className="text-right">
+                封面图
+              </Label>
+              <div className="col-span-3">
+                 <Input
+                    id="cover"
+                    name="cover"
+                    type="file"
+                    accept="image/*"
+                  />
+                  {journal?.coverUrl && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                        当前已有封面，上传新文件将覆盖
+                    </p>
+                  )}
+              </div>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="status" className="text-right">

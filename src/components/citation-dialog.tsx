@@ -19,7 +19,7 @@ interface CitationDialogProps {
     id: string
     title: string
     author: string
-    updatedAt: Date
+    createdAt: Date
     journalName?: string
   }
 }

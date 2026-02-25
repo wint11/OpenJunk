@@ -27,10 +27,26 @@ export default async function UsersPage() {
 
   // Restrict visibility for ADMIN (Journal Admin)
   if (role === 'ADMIN') {
-    userQuery.where = {
-      role: {
-        notIn: ['SUPER_ADMIN', 'ADMIN']
-      }
+    // Only show Reviewers or Authors/Users if needed.
+    // Requirement: "Add and manage editor accounts" -> Focus on REVIEWER.
+    // But maybe also see users?
+    // Let's filter to:
+    // 1. Users who are REVIEWER and assigned to this journal
+    // 2. OR maybe allow finding users to promote them?
+    // For now, let's show all REVIEWERs assigned to this journal.
+    
+    if (currentUser?.managedJournalId) {
+        userQuery.where = {
+            role: 'REVIEWER',
+            reviewerJournals: {
+                some: {
+                    id: currentUser.managedJournalId
+                }
+            }
+        }
+    } else {
+        // No journal managed, see no one
+        userQuery.where = { id: 'NONE' }
     }
   }
 
@@ -54,8 +70,8 @@ export default async function UsersPage() {
     "REVIEWER": "责任编辑",
     "ADMIN": "期刊管理员",
     "SUPER_ADMIN": "平台管理员",
-    "USER": "普通读者 (旧)", // Legacy support
-    "AUTHOR": "投稿作者 (旧)" // Legacy support
+    "USER": "普通读者",
+    "AUTHOR": "投稿作者"
   }
 
   const statusMap: Record<string, string> = {

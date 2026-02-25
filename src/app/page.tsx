@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 
 export default async function Home() {
   console.log("Fetching home page data...");
-  const [featuredPapers, latestPapers, categories, rawJournals] = await Promise.all([
+  const [featuredPapers, latestPapers, rawCategories, rawJournals] = await Promise.all([
     prisma.novel.findMany({
       where: { 
         status: 'PUBLISHED', 
@@ -57,6 +57,12 @@ export default async function Home() {
       }
     })
   ])
+
+  // Sort categories by count (desc) and take top 5
+  const categories = rawCategories
+    .filter(c => c.category && c.category.trim() !== "")
+    .sort((a, b) => b._count.category - a._count.category)
+    .slice(0, 5);
   
   // Sort journals by paper count (desc) then name (asc)
   const journals = rawJournals.sort((a, b) => {

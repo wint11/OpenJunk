@@ -41,6 +41,13 @@ export function CreateUserDialog({ currentUserRole, journals }: CreateUserDialog
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
 
+  // If Admin has only one journal (which they should), pre-select it
+  useEffect(() => {
+    if (currentUserRole === 'ADMIN' && journals.length === 1) {
+        setSelectedJournal(journals[0].id)
+    }
+  }, [currentUserRole, journals])
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setLoading(true)
@@ -100,8 +107,9 @@ export function CreateUserDialog({ currentUserRole, journals }: CreateUserDialog
             <Input id="email" name="email" type="text" value={email} onChange={(e) => setEmail(e.target.value)} required disabled={loading} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">初始密码</Label>
-            <Input id="password" name="password" type="password" required minLength={6} disabled={loading} />
+            <Label htmlFor="password">密码</Label>
+            <Input id="password" name="password" type="password" required disabled={loading} defaultValue="123456" />
+            <p className="text-xs text-muted-foreground">默认密码: 123456</p>
           </div>
           
           {currentUserRole === 'SUPER_ADMIN' && (
@@ -112,35 +120,30 @@ export function CreateUserDialog({ currentUserRole, journals }: CreateUserDialog
                    <SelectValue placeholder="选择角色" />
                  </SelectTrigger>
                  <SelectContent>
-                   <SelectItem value="ADMIN">期刊管理员 (Admin)</SelectItem>
-                   <SelectItem value="REVIEWER">责任编辑 (Reviewer)</SelectItem>
+                   <SelectItem value="ADMIN">期刊管理员</SelectItem>
+                   <SelectItem value="REVIEWER">责任编辑</SelectItem>
+                   <SelectItem value="SUPER_ADMIN">平台管理员</SelectItem>
                  </SelectContent>
                </Select>
              </div>
           )}
 
-          {/* Show Journal Select if:
-              1. Super Admin is creating an ADMIN (to assign managed journal)
-              2. Super Admin is creating a REVIEWER (to assign initial reviewer journal)
-          */}
-          {currentUserRole === 'SUPER_ADMIN' && (
-             <div className="space-y-2">
-               <Label htmlFor="journal">
-                 {role === 'ADMIN' ? "管理期刊" : "归属期刊 (可选)"}
-               </Label>
-               <Select value={selectedJournal} onValueChange={setSelectedJournal} disabled={loading} required={role === 'ADMIN'}>
-                 <SelectTrigger>
-                   <SelectValue placeholder="选择期刊" />
-                 </SelectTrigger>
-                 <SelectContent>
-                   {journals.map((j) => (
-                     <SelectItem key={j.id} value={j.id}>
-                       {j.name}
-                     </SelectItem>
-                   ))}
-                 </SelectContent>
-               </Select>
-             </div>
+          {/* Journal Selection - Visible for Super Admin or if role is Reviewer/Admin */}
+          {/* For ADMIN creating Reviewer, it's auto-assigned but we can show it disabled or hidden */}
+          {(currentUserRole === 'SUPER_ADMIN' || (currentUserRole === 'ADMIN' && journals.length > 1)) && (
+              <div className="space-y-2">
+                <Label htmlFor="journal">所属期刊</Label>
+                <Select value={selectedJournal} onValueChange={setSelectedJournal} disabled={loading || (currentUserRole === 'ADMIN' && journals.length === 1)}>
+                    <SelectTrigger>
+                        <SelectValue placeholder="选择期刊" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {journals.map(j => (
+                            <SelectItem key={j.id} value={j.id}>{j.name}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+              </div>
           )}
 
           <DialogFooter>

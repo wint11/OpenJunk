@@ -5,6 +5,9 @@ import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
+import { join } from "path"
+import { writeFile, mkdir } from "fs/promises"
+
 export async function createJournal(formData: FormData) {
   const session = await auth()
   if (session?.user?.role !== "SUPER_ADMIN") {
@@ -14,12 +17,28 @@ export async function createJournal(formData: FormData) {
   const name = formData.get("name") as string
   const description = formData.get("description") as string
   const status = formData.get("status") as string
+  const coverFile = formData.get("cover") as File | null
+
+  let coverUrl = undefined
+  if (coverFile && coverFile.size > 0) {
+    const bytes = await coverFile.arrayBuffer()
+    const buffer = Buffer.from(bytes)
+    
+    // Ensure directory exists
+    const uploadDir = join(process.cwd(), "public/uploads/journals")
+    await mkdir(uploadDir, { recursive: true })
+    
+    const fileName = `${Date.now()}-${coverFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`
+    await writeFile(join(uploadDir, fileName), buffer)
+    coverUrl = `/uploads/journals/${fileName}`
+  }
 
   await prisma.journal.create({
     data: {
       name,
       description,
       status: status || "ACTIVE",
+      coverUrl,
     },
   })
 
@@ -28,13 +47,45 @@ export async function createJournal(formData: FormData) {
 
 export async function updateJournal(id: string, formData: FormData) {
   const session = await auth()
-  if (session?.user?.role !== "SUPER_ADMIN") {
+  
+  if (!session?.user) {
+    throw new Error("Unauthorized")
+  }
+
+  // Allow SUPER_ADMIN or the Journal Admin managing this journal
+  let isAllowed = session.user.role === "SUPER_ADMIN"
+  if (!isAllowed) {
+    const user = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { managedJournalId: true }
+    })
+    if (user?.managedJournalId === id) {
+        isAllowed = true
+    }
+  }
+
+  if (!isAllowed) {
     throw new Error("Unauthorized")
   }
 
   const name = formData.get("name") as string
   const description = formData.get("description") as string
   const status = formData.get("status") as string
+  const coverFile = formData.get("cover") as File | null
+
+  let coverUrl = undefined
+  if (coverFile && coverFile.size > 0) {
+    const bytes = await coverFile.arrayBuffer()
+    const buffer = Buffer.from(bytes)
+    
+    // Ensure directory exists
+    const uploadDir = join(process.cwd(), "public/uploads/journals")
+    await mkdir(uploadDir, { recursive: true })
+    
+    const fileName = `${Date.now()}-${coverFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`
+    await writeFile(join(uploadDir, fileName), buffer)
+    coverUrl = `/uploads/journals/${fileName}`
+  }
 
   await prisma.journal.update({
     where: { id },
@@ -42,6 +93,7 @@ export async function updateJournal(id: string, formData: FormData) {
       name,
       description,
       status,
+      ...(coverUrl ? { coverUrl } : {}),
     },
   })
 

@@ -41,7 +41,7 @@ export function PaperCard({ paper }: PaperCardProps) {
               )}
               <span className="flex items-center gap-1">
                 <Calendar className="h-3 w-3" />
-                {paper.updatedAt.toLocaleDateString('zh-CN')}
+                {paper.createdAt.toLocaleDateString('zh-CN')}
               </span>
               <span>•</span>
               <Badge variant="secondary" className="text-xs font-normal">

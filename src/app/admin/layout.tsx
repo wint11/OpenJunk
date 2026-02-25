@@ -23,6 +23,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const isFundAdmin = user?.fundAdminCategories && user.fundAdminCategories.length > 0
   const isJournalAdmin = role === 'ADMIN' && !isFundAdmin // Assuming non-fund admins are journal admins if role is ADMIN
 
+  // Fetch unread notifications count
+  const unreadCount = await prisma.notification.count({
+    where: {
+      userId: session.user.id,
+      status: 'UNREAD'
+    }
+  })
+
   return (
     <div className="flex min-h-[calc(100vh-4rem)]">
       {/* Sidebar */}
@@ -38,7 +46,16 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </Button>
 
           <Button variant="ghost" className="justify-start w-full" asChild>
-            <Link href="/admin/messages"><Mail className="mr-2 h-4 w-4"/> 消息中心</Link>
+            <Link href="/admin/messages" className="flex items-center justify-between">
+               <div className="flex items-center">
+                 <Mail className="mr-2 h-4 w-4"/> 消息中心
+               </div>
+               {unreadCount > 0 && (
+                 <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[1.25rem] text-center flex items-center justify-center h-5">
+                   {unreadCount > 99 ? '99+' : unreadCount}
+                 </span>
+               )}
+            </Link>
           </Button>
           
           {/* SUPER ADMIN MENUS */}
@@ -58,6 +75,19 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase mt-2">基金管理</div>
               <Button variant="ghost" className="justify-start w-full pl-6" asChild>
                 <Link href="/admin/fund/admins"><Users className="mr-2 h-4 w-4"/> 管理员设置</Link>
+              </Button>
+            </>
+          )}
+
+          {/* JOURNAL ADMIN MENUS */}
+          {isJournalAdmin && (
+            <>
+              <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase mt-2">期刊管理</div>
+              <Button variant="ghost" className="justify-start w-full pl-6" asChild>
+                <Link href="/admin/journals"><Layers className="mr-2 h-4 w-4"/> 期刊设置</Link>
+              </Button>
+              <Button variant="ghost" className="justify-start w-full pl-6" asChild>
+                <Link href="/admin/users"><Users className="mr-2 h-4 w-4"/> 编辑管理</Link>
               </Button>
             </>
           )}

@@ -56,17 +56,52 @@ export default async function AdminDashboardPage() {
       { title: "入库专家", value: activeExperts, icon: UserCog },
     ]
   } else {
-    // Journal Admin (Default)
+    // Journal Admin (Default) or Reviewer
     dashboardTitle = "期刊管理概览"
-    const totalArticles = await prisma.novel.count()
-    const pendingArticles = await prisma.novel.count({ where: { status: 'PENDING' } })
-    const totalUsers = await prisma.user.count() // Journal admins might care about users too
-    const totalViews = await prisma.novel.aggregate({ _sum: { views: true } })
+    
+    // Determine the scope
+    let journalIds: string[] = []
+    
+    const currentUser = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        include: { 
+            reviewerJournals: true 
+        }
+    })
+
+    if (role === 'ADMIN' && currentUser?.managedJournalId) {
+        journalIds.push(currentUser.managedJournalId)
+    }
+    
+    // If user is a reviewer (or admin acting as reviewer), add assigned journals
+    // Note: Admin might not be in reviewerJournals list of their own journal usually, but if they are, it's fine.
+    if (currentUser?.reviewerJournals) {
+        journalIds.push(...currentUser.reviewerJournals.map(j => j.id))
+    }
+    
+    // Deduplicate
+    journalIds = Array.from(new Set(journalIds))
+    
+    const whereClause: any = journalIds.length > 0 ? { journalId: { in: journalIds } } : { journalId: "NONE" }
+
+    const totalArticles = await prisma.novel.count({ where: whereClause })
+    const pendingArticles = await prisma.novel.count({ where: { ...whereClause, status: 'PENDING' } })
+    // Only count views for these journals
+    const totalViews = await prisma.novel.aggregate({ 
+        _sum: { views: true },
+        where: whereClause
+    })
+    
+    // Count reviewers for these journals? Or just hide User count.
+    // Let's show "My Reviewers" if Admin, or just hide it.
+    // User requested "only see their own data". Global user count is definitely wrong.
+    // Let's replace "Total Users" with "Published Articles" count for this journal
+    const publishedArticles = await prisma.novel.count({ where: { ...whereClause, status: 'PUBLISHED' } })
 
     stats = [
       { title: "总收稿量", value: totalArticles, icon: BookOpen },
       { title: "待审稿", value: pendingArticles, icon: FileClock },
-      { title: "总用户", value: totalUsers, icon: Users },
+      { title: "已发表", value: publishedArticles, icon: CheckSquare },
       { title: "总浏览量", value: totalViews._sum.views || 0, icon: Eye },
     ]
   }

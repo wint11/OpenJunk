@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button"
 import { BookOpen, FileText, Users } from "lucide-react"
 
+import Image from "next/image"
+
 export const metadata = {
   title: "期刊列表",
   description: "浏览OpenJunk旗下的所有垃圾期刊",
@@ -14,13 +16,29 @@ export default async function JournalsPage() {
     where: { status: 'ACTIVE' },
     include: {
       _count: {
-        select: { papers: true, admins: true, reviewers: true }
+        select: { admins: true, reviewers: true }
       }
     },
   })
 
+  // Fetch published paper counts manually for accuracy
+  // We can do this in parallel or use a raw query if performance is critical
+  // For now, parallel count queries
+  const journalsWithCounts = await Promise.all(journals.map(async (j) => {
+    const paperCount = await prisma.novel.count({
+      where: {
+        journalId: j.id,
+        status: 'PUBLISHED'
+      }
+    })
+    return {
+      ...j,
+      publishedPaperCount: paperCount
+    }
+  }))
+
   // Sort journals by name (supports Pinyin for Chinese)
-  journals.sort((a, b) => a.name.localeCompare(b.name, "zh-CN"))
+  journalsWithCounts.sort((a, b) => a.name.localeCompare(b.name, "zh-CN"))
 
   return (
     <div className="container mx-auto py-12 px-4">
@@ -32,8 +50,18 @@ export default async function JournalsPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {journals.map((journal) => (
-          <Card key={journal.id} className="flex flex-col hover:shadow-lg transition-shadow">
+        {journalsWithCounts.map((journal) => (
+          <Card key={journal.id} className="flex flex-col hover:shadow-lg transition-shadow overflow-hidden group">
+            {journal.coverUrl && (
+              <div className="relative h-48 w-full overflow-hidden">
+                <Image 
+                  src={journal.coverUrl} 
+                  alt={journal.name} 
+                  fill 
+                  className="object-cover transition-transform group-hover:scale-105"
+                />
+              </div>
+            )}
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BookOpen className="h-5 w-5 text-primary" />
@@ -47,7 +75,7 @@ export default async function JournalsPage() {
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <FileText className="h-4 w-4" />
-                  {journal._count.papers} 篇论文
+                  {journal.publishedPaperCount} 篇论文
                 </span>
                 <span className="flex items-center gap-1">
                   <Users className="h-4 w-4" />

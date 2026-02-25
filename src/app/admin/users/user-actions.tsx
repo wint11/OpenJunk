@@ -30,6 +30,31 @@ export function UserActions({ userId, name, email, currentRole, currentStatus, m
   // Disable edit if email is masked
   const isMasked = email.includes("****")
 
+  const handleResetPassword = async () => {
+    if (!confirm("确定要重置该用户的密码吗？")) return
+    setLoading(true)
+    try {
+        const res = await resetUserPassword(userId)
+        if (res.success) alert(res.message)
+    } catch (error) {
+        alert("操作失败")
+    } finally {
+        setLoading(false)
+    }
+  }
+
+  const handleUpdateRole = async (newRole: string) => {
+    if (!confirm(`确定要将该用户设置为 ${newRole} 吗？`)) return
+    setLoading(true)
+    try {
+        await updateUserRole(userId, newRole)
+    } catch (error) {
+        alert("操作失败")
+    } finally {
+        setLoading(false)
+    }
+  }
+
   const handleDeleteUser = async () => {
     if (!confirm("确定要删除该用户吗？此操作不可恢复！")) return
     setLoading(true)
@@ -40,31 +65,6 @@ export function UserActions({ userId, name, email, currentRole, currentStatus, m
         alert("操作失败: " + (error as Error).message)
     } finally {
         setLoading(false)
-    }
-  }
-
-  const handleResetPassword = async () => {
-    if (!confirm("确定要将该用户的密码重置为 'password123' 吗？")) return
-    setLoading(true)
-    try {
-      const res = await resetUserPassword(userId)
-      if (res.success) alert(res.message)
-    } catch (error) {
-      alert("操作失败")
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleUpdateRole = async (role: string) => {
-    if (!confirm(`确定要将用户角色修改为 ${role} 吗？`)) return
-    setLoading(true)
-    try {
-      await updateUserRole(userId, role)
-    } catch (error) {
-      alert("操作失败")
-    } finally {
-      setLoading(false)
     }
   }
 

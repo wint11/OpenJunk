@@ -18,8 +18,8 @@ async function checkAdmin() {
 export async function resetUserPassword(userId: string) {
   const session = await checkAdmin()
   
-  // Default password: "password123"
-  const hashedPassword = await bcrypt.hash("password123", 10)
+  // Default password: "123456"
+  const hashedPassword = await bcrypt.hash("123456", 10)
   
   await prisma.user.update({
     where: { id: userId },
@@ -30,7 +30,7 @@ export async function resetUserPassword(userId: string) {
 
   await logAudit("RESET_PASSWORD", `User:${userId}`, "Reset user password to default", session?.user?.id)
   revalidatePath('/admin/users')
-  return { success: true, message: "密码已重置为: password123" }
+  return { success: true, message: "密码已重置为: 123456" }
 }
 
 export async function updateUserRole(userId: string, newRole: string) {

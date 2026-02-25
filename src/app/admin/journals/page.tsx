@@ -16,11 +16,24 @@ import { DeleteJournalButton } from "./delete-button"
 
 export default async function JournalsPage() {
   const session = await auth()
-  if (session?.user?.role !== "SUPER_ADMIN") {
+  const isSuperAdmin = session?.user?.role === "SUPER_ADMIN"
+  const isJournalAdmin = session?.user?.role === "ADMIN" // Assuming Journal Admin is ADMIN role
+  
+  if (!isSuperAdmin && !isJournalAdmin) {
     redirect("/admin")
   }
 
+  // If Journal Admin, only show their managed journal
+  const where = isSuperAdmin ? {} : {
+    admins: {
+      some: {
+        id: session?.user?.id
+      }
+    }
+  }
+
   const journals = await prisma.journal.findMany({
+    where,
     include: {
       _count: {
         select: { papers: true, admins: true, reviewers: true }
@@ -33,7 +46,7 @@ export default async function JournalsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">期刊管理</h1>
-        <JournalDialog mode="create" />
+        {isSuperAdmin && <JournalDialog mode="create" />}
       </div>
 
       <div className="rounded-md border">
@@ -64,7 +77,9 @@ export default async function JournalsPage() {
                 <TableCell>{journal.createdAt.toLocaleDateString()}</TableCell>
                 <TableCell className="text-right space-x-2">
                   <JournalDialog mode="edit" journal={journal} />
-                  <DeleteJournalButton id={journal.id} disabled={journal._count.papers > 0 || journal._count.admins > 0 || journal._count.reviewers > 0} />
+                  {isSuperAdmin && (
+                    <DeleteJournalButton id={journal.id} disabled={journal._count.papers > 0 || journal._count.admins > 0 || journal._count.reviewers > 0} />
+                  )}
                 </TableCell>
               </TableRow>
             ))}

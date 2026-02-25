@@ -16,7 +16,8 @@ export async function incrementPopularity(novelId: string, action: ActionType) {
   try {
     const weight = POPULARITY_WEIGHTS[action]
     
-    await prisma.novel.update({
+    // Use updateMany to avoid updating the `updatedAt` field automatically
+    await prisma.novel.updateMany({
       where: { id: novelId },
       data: {
         popularity: { increment: weight },

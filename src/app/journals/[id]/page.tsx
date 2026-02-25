@@ -90,7 +90,7 @@ export default async function JournalDetailPage(props: JournalDetailPageProps) {
                    <CardDescription className="flex items-center gap-2 text-xs">
                       <span>{paper.author}</span>
                       <span>•</span>
-                      <span>{paper.updatedAt.toLocaleDateString()}</span>
+                      <span>{paper.createdAt.toLocaleDateString()}</span>
                       <Badge variant="secondary" className="text-[10px] px-1 py-0 h-5">{paper.category}</Badge>
                    </CardDescription>
                 </CardHeader>

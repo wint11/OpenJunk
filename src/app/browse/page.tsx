@@ -25,7 +25,7 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
   
   const orderBy: Prisma.NovelOrderByWithRelationInput = sort === 'popular' 
     ? { popularity: 'desc' } 
-    : { updatedAt: 'desc' }
+    : { createdAt: 'desc' }
 
   const where: Prisma.NovelWhereInput = {
     status: 'PUBLISHED',
@@ -76,11 +76,17 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
     select: { id: true, name: true }
   })
 
+  // Sort journals by Pinyin
+  journals.sort((a, b) => a.name.localeCompare(b.name, "zh-CN"))
+
+  // Sort categories by Pinyin
+  categories.sort((a, b) => (a.category || "").localeCompare(b.category || "", "zh-CN"))
+
   return (
     <div className="container mx-auto py-12 px-4">
-      <div className="flex flex-col md:flex-row gap-8">
+      <div className="flex flex-col md:flex-row gap-8 relative">
         {/* Sidebar Filters */}
-        <aside className="w-full md:w-64 space-y-8 flex-shrink-0">
+        <aside className="w-full md:w-64 space-y-8 flex-shrink-0 sticky top-24 h-[calc(100vh-8rem)] overflow-y-auto pr-2 custom-scrollbar">
           <div className="space-y-4">
             <h3 className="font-bold text-lg flex items-center gap-2">
               <Filter className="h-5 w-5" />
