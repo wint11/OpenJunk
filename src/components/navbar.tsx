@@ -18,6 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cookies } from "next/headers"
 import { decode } from "next-auth/jwt"
 import { addNewAccount, switchAccount } from "@/app/actions/account-switch"
+import { prisma } from "@/lib/prisma"
 
 export async function Navbar() {
   const session = await auth()

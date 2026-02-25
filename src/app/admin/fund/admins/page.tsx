@@ -74,8 +74,11 @@ export default async function FundAdminsPage() {
                   </TableCell>
                   <TableCell>{admin.createdAt.toLocaleDateString()}</TableCell>
                   <TableCell className="text-right">
-                    <form action={deleteFundAdmin.bind(null, admin.id)}>
-                      <Button variant="ghost" size="icon" className="text-destructive">
+                    <form action={async () => {
+                      'use server'
+                      await deleteFundAdmin(admin.id)
+                    }}>
+                      <Button type="submit" variant="ghost" size="icon" className="text-destructive">
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </form>

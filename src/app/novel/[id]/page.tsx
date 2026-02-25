@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { BookOpen, Calendar, Eye, FileText, Download, Quote } from "lucide-react"
+import { BookOpen, Calendar, Eye, FileText, Download, Quote, Wallet } from "lucide-react"
 import { AddToBookshelf } from "@/components/add-to-bookshelf"
 import { CitationDialog } from "@/components/citation-dialog"
 
@@ -32,6 +32,9 @@ export default async function NovelDetailPage({ params }: NovelDetailPageProps) 
     },
     include: {
         journal: true,
+        fundApplications: {
+            include: { fund: { include: { category: true } } }
+        },
         comments: {
           include: {
             user: {
@@ -44,7 +47,9 @@ export default async function NovelDetailPage({ params }: NovelDetailPageProps) 
                   select: { id: true, name: true, image: true, role: true }
                 },
                 likes: true,
-                replies: true // Nested replies might need recursion in component, but let's fetch one level deep for now or flat
+                // Nested replies fetching strategy needs to be handled carefully in Prisma
+                // Prisma supports recursive include but usually limited depth
+                // For now, let's keep it simple.
               },
               orderBy: { createdAt: 'asc' }
             }
@@ -149,7 +154,7 @@ export default async function NovelDetailPage({ params }: NovelDetailPageProps) 
                    </p>
                 )}
                 <p className="text-sm text-muted-foreground pt-1">
-                  {novel.journal ? novel.journal.name : "OpenJunk"} · 第1卷 · 第1期
+                  {novel.journal ? novel.journal.name : "OpenJunk"}
                 </p>
               </div>
 
@@ -162,15 +167,15 @@ export default async function NovelDetailPage({ params }: NovelDetailPageProps) 
                     </Link>
                   </Button>
                 )}
-                {novel.pdfUrl && (
-                  <DownloadButton novelId={novel.id} pdfUrl={novel.pdfUrl} />
-                )}
                 <div className="flex items-center gap-3">
+                    {novel.pdfUrl && (
+                      <DownloadButton novelId={novel.id} pdfUrl={novel.pdfUrl} />
+                    )}
                     <CitationDialog novel={{ 
                         id: novel.id, 
                         title: novel.title, 
                         author: novel.author, 
-                        updatedAt: novel.updatedAt,
+                        createdAt: novel.createdAt,
                         journalName: novel.journal?.name
                     }} />
                     <AddToBookshelf novel={{ id: novel.id, title: novel.title, author: novel.author, coverUrl: novel.coverUrl }} />
@@ -184,6 +189,33 @@ export default async function NovelDetailPage({ params }: NovelDetailPageProps) 
       <div className="container mx-auto px-4 py-10 max-w-5xl grid grid-cols-1 lg:grid-cols-3 gap-10">
         {/* Main Content: Abstract & Preview */}
         <div className="lg:col-span-2 space-y-10">
+          {/* Fund Info */}
+          {novel.fundApplications && novel.fundApplications.length > 0 && (
+            <div className="bg-muted/30 border border-muted p-4 rounded-lg flex items-start gap-3">
+              <div className="p-2 bg-background rounded-md shadow-sm">
+                <Wallet className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-sm mb-1">基金项目资助</h3>
+                <div className="text-sm text-muted-foreground space-y-1">
+                  {novel.fundApplications.map(app => (
+                    <div key={app.id}>
+                        <span className="mr-1">•</span>
+                        本文由
+                        <span className="mx-1 font-medium text-foreground">
+                            {app.fund.category.name} ({app.fund.year})
+                        </span>
+                        资助，项目编号：
+                        <span className="mx-1 font-mono text-foreground">{app.serialNo || '暂无'}</span>，
+                        项目名称：
+                        <span className="mx-1 font-medium text-primary">{app.title}</span>。
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
           <section className="space-y-4">
             <h2 className="text-xl font-bold border-l-4 border-primary pl-3">摘要</h2>
             <div className="prose prose-stone dark:prose-invert max-w-none text-muted-foreground leading-relaxed">

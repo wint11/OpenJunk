@@ -18,6 +18,7 @@ const workSchema = z.object({
   category: z.string().min(1, "分类不能为空").max(50),
   description: z.string().min(1, "摘要至少1个字").max(2000),
   journalId: z.string().min(1, "请选择期刊"),
+  fundApplicationIds: z.array(z.string()).optional(),
 })
 
 export type FormState = {
@@ -30,6 +31,7 @@ export type FormState = {
     description?: string[]
     pdfUrl?: string[]
     journalId?: string[]
+    fundApplicationIds?: string[]
   } | null
 }
 
@@ -80,6 +82,8 @@ export async function createWork(prevState: FormState, formData: FormData): Prom
       return { error: { pdfUrl: ["文件大小不能超过10MB"] } } 
   }
 
+  const fundApplicationIds = formData.getAll('fundApplicationIds') as string[]
+
   const rawData = {
     title: formData.get('title'),
     // author: formData.get('author'), // Removed
@@ -88,6 +92,7 @@ export async function createWork(prevState: FormState, formData: FormData): Prom
     category: formData.get('category'),
     description: formData.get('description'),
     journalId: formData.get('journalId'),
+    fundApplicationIds: fundApplicationIds.length > 0 ? fundApplicationIds : undefined,
   }
 
   // Parse authors data
@@ -257,6 +262,10 @@ export async function createWork(prevState: FormState, formData: FormData): Prom
         pdfUrl: pdfUrl,
         pdfHash: pdfHash,
         journalId: journalId,
+        // Connect multiple funds
+        fundApplications: (fundApplicationIds && fundApplicationIds.length > 0) ? {
+            connect: fundApplicationIds.map(id => ({ id }))
+        } : undefined,
         // No chapters created for PDF papers
       }
     })

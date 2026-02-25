@@ -18,7 +18,9 @@ const initialState = {
 }
 
 export default function CheckStatusPage() {
-  const [state, formAction, isPending] = useActionState(queryApplication, initialState)
+  const [state, formAction, isPending] = useActionState(async (prevState: any, formData: FormData) => {
+    return await queryApplication(prevState, formData)
+  }, null)
 
   const handleSubmit = async (formData: FormData) => {
     await formAction(formData)

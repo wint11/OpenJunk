@@ -17,12 +17,22 @@ export async function updateNovelInfo(formData: FormData) {
   const title = formData.get('title') as string
   const author = formData.get('author') as string
   const description = formData.get('description') as string
+  const fundApplicationIds = formData.getAll('fundApplicationIds') as string[]
 
   if (!novelId) return
 
   await prisma.novel.update({
     where: { id: novelId },
-    data: { title, author, description }
+    data: { 
+        title, 
+        author, 
+        description,
+        // Update many-to-many relationship
+        fundApplications: {
+            set: [], // Clear existing
+            connect: fundApplicationIds.map(id => ({ id })) // Connect new
+        }
+    }
   })
 
   revalidatePath('/admin/audit/novels')

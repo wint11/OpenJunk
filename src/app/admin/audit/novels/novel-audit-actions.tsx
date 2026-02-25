@@ -8,36 +8,36 @@ import { UploadPdfDialog } from "./upload-pdf-dialog"
 import { EditInfoDialog } from "./edit-info-dialog"
 
 interface NovelAuditActionsProps {
-  novelId: string
-  pdfUrl: string | null
-  title: string
-  author: string
-  description: string
+  novel: {
+    id: string
+    title: string
+    author: string
+    description: string
+    pdfUrl: string | null
+    fundApplications: { id: string }[]
+  }
+  fundApplications: { id: string, title: string, serialNo: string | null }[]
 }
 
-export function NovelAuditActions({ 
-  novelId, 
-  pdfUrl, 
-  title, 
-  author, 
-  description 
-}: NovelAuditActionsProps) {
+export function NovelAuditActions({ novel, fundApplications }: NovelAuditActionsProps) {
   const [mode, setMode] = useState<'review' | 'publish'>('review')
 
   if (mode === 'publish') {
     return (
       <div className="flex items-center gap-2 animate-in fade-in slide-in-from-right-5 duration-300">
-        <UploadPdfDialog novelId={novelId} />
+        <UploadPdfDialog novelId={novel.id} />
         
         <EditInfoDialog 
-            novelId={novelId}
-            defaultTitle={title}
-            defaultAuthor={author}
-            defaultDescription={description}
+            novelId={novel.id}
+            defaultTitle={novel.title}
+            defaultAuthor={novel.author}
+            defaultDescription={novel.description}
+            defaultFundApplicationIds={novel.fundApplications.map(f => f.id)}
+            fundApplications={fundApplications}
         />
 
         <form action={approveNovel}>
-          <input type="hidden" name="novelId" value={novelId} />
+          <input type="hidden" name="novelId" value={novel.id} />
           <input type="hidden" name="feedback" value="录用发布" />
           <Button 
             size="sm" 
@@ -66,11 +66,11 @@ export function NovelAuditActions({
       {/* Download Button */}
       <Button variant="outline" size="sm" asChild>
         <a 
-          href={pdfUrl || '#'} 
+          href={novel.pdfUrl || '#'} 
           target="_blank" 
           rel="noopener noreferrer"
           download 
-          className={!pdfUrl ? "pointer-events-none opacity-50" : ""}
+          className={!novel.pdfUrl ? "pointer-events-none opacity-50" : ""}
           title="下载稿件"
         >
           <Download className="h-4 w-4" />
@@ -80,7 +80,7 @@ export function NovelAuditActions({
 
       {/* Reject Form */}
       <form action={rejectNovel}>
-        <input type="hidden" name="novelId" value={novelId} />
+        <input type="hidden" name="novelId" value={novel.id} />
         <input type="hidden" name="feedback" value="快速拒稿" />
         <Button 
           variant="destructive" 

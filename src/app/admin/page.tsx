@@ -62,8 +62,12 @@ export default async function AdminDashboardPage() {
     // Determine the scope
     let journalIds: string[] = []
     
+    // Ensure session.user.id exists before querying
+    const userId = session?.user?.id
+    if (!userId) return null // Or handle redirect/error
+
     const currentUser = await prisma.user.findUnique({
-        where: { id: session.user.id },
+        where: { id: userId },
         include: { 
             reviewerJournals: true 
         }

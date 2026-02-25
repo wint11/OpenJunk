@@ -27,7 +27,7 @@ interface CitationDialogProps {
 export function CitationDialog({ novel }: CitationDialogProps) {
   const [copied, setCopied] = useState(false)
 
-  const year = novel.updatedAt.getFullYear()
+  const year = novel.createdAt.getFullYear()
   
   // APA Format
   const apa = `${novel.author}. (${year}). ${novel.title}. ${novel.journalName || "OpenJunk"}, 1(1).`

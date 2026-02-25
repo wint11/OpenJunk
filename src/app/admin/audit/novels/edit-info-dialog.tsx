@@ -14,14 +14,23 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Edit, Loader2 } from "lucide-react"
 import { updateNovelInfo } from "./actions"
+
+interface FundApplication {
+  id: string
+  title: string
+  serialNo: string | null
+}
 
 interface EditInfoDialogProps {
   novelId: string
   defaultTitle: string
   defaultAuthor: string
   defaultDescription: string
+  defaultFundApplicationIds?: string[]
+  fundApplications?: FundApplication[]
   trigger?: React.ReactNode
 }
 
@@ -30,6 +39,8 @@ export function EditInfoDialog({
   defaultTitle, 
   defaultAuthor, 
   defaultDescription,
+  defaultFundApplicationIds = [],
+  fundApplications = [],
   trigger 
 }: EditInfoDialogProps) {
   const [open, setOpen] = useState(false)
@@ -91,6 +102,29 @@ export function EditInfoDialog({
                 required 
             />
           </div>
+
+          {fundApplications.length > 0 && (
+            <div className="grid gap-2">
+              <Label>关联基金项目 (多选)</Label>
+              <div className="border rounded-md p-3 max-h-[150px] overflow-y-auto space-y-2">
+                 {fundApplications.map(app => (
+                    <div key={app.id} className="flex items-center space-x-2">
+                        <input 
+                            type="checkbox" 
+                            id={`edit-fund-${app.id}`} 
+                            name="fundApplicationIds" 
+                            value={app.id}
+                            defaultChecked={defaultFundApplicationIds.includes(app.id)}
+                            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                        />
+                        <label htmlFor={`edit-fund-${app.id}`} className="text-sm cursor-pointer select-none">
+                            <span className="font-medium">[{app.serialNo || '无编号'}]</span> {app.title}
+                        </label>
+                    </div>
+                 ))}
+              </div>
+            </div>
+          )}
 
           <div className="grid gap-2">
             <Label htmlFor="description">摘要</Label>

@@ -26,14 +26,6 @@ export default async function FundPage() {
         <p className="text-lg text-muted-foreground max-w-2xl">
           查看最新的科研基金申报指南，并在线提交申请。无需繁琐流程，助力您的学术研究。
         </p>
-        <div className="mt-8">
-          <Button asChild variant="outline" className="gap-2">
-            <Link href="/fund/check">
-              <FileText className="h-4 w-4" />
-              查询申请状态
-            </Link>
-          </Button>
-        </div>
       </div>
 
       {funds.length === 0 ? (

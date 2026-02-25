@@ -21,7 +21,7 @@ export function MainNav({ role }: { role?: string }) {
       name: "期刊",
       href: "/journals",
       children: [
-        { name: "所有期刊", href: "/journals" },
+        { name: "期刊矩阵", href: "/journals" },
       ]
     },
     {
@@ -31,6 +31,7 @@ export function MainNav({ role }: { role?: string }) {
         { name: "论文库", href: "/browse" },
         { name: "期刊动态", href: "/trends" },
         { name: "在线投稿", href: "/submission" },
+        { name: "申请NOI", href: "https://webofnothing.org", external: true },
       ]
     },
     {
@@ -68,7 +69,9 @@ export function MainNav({ role }: { role?: string }) {
               <DropdownMenuContent align="start">
                 {item.children.map((child) => (
                   <DropdownMenuItem key={child.name} asChild>
-                    <Link href={child.href}>{child.name}</Link>
+                    <Link href={child.href} target={child.external ? "_blank" : undefined} rel={child.external ? "noopener noreferrer" : undefined}>
+                        {child.name}
+                    </Link>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>

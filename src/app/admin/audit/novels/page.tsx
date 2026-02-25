@@ -49,8 +49,15 @@ export default async function NovelAuditPage() {
     orderBy: { lastSubmittedAt: 'desc' },
     include: { 
       uploader: true,
-      journal: true
+      journal: true,
+      fundApplications: true
     }
+  })
+
+  // Fetch all approved fund applications for editing
+  const fundApplications = await prisma.fundApplication.findMany({
+    where: { status: 'APPROVED' },
+    select: { id: true, title: true, serialNo: true }
   })
 
   return (
@@ -101,11 +108,8 @@ export default async function NovelAuditPage() {
                   </TableCell>
                   <TableCell>
                     <NovelAuditActions 
-                      novelId={novel.id} 
-                      pdfUrl={novel.pdfUrl} 
-                      title={novel.title}
-                      author={novel.author}
-                      description={novel.description}
+                        novel={novel} 
+                        fundApplications={fundApplications}
                     />
                   </TableCell>
                 </TableRow>

@@ -20,10 +20,21 @@ export default async function NovelAuditDetailPage({ params }: { params: Promise
   const { id } = await params
   const novel = await prisma.novel.findUnique({
     where: { id },
-    include: { uploader: true }
+    include: { 
+      uploader: true,
+      fundApplications: true
+    }
   })
 
-  if (!novel) return <div>未找到该论文</div>
+  if (!novel) {
+    redirect("/admin/audit/novels")
+  }
+
+  // Fetch fund applications
+  const fundApplications = await prisma.fundApplication.findMany({
+    where: { status: 'APPROVED' },
+    select: { id: true, title: true, serialNo: true }
+  })
 
   // Permission check
   if (role === 'ADMIN') {
@@ -163,11 +174,8 @@ export default async function NovelAuditDetailPage({ params }: { params: Promise
                 </CardHeader>
                 <CardContent className="flex-1">
                     <NovelAuditActions 
-                      novelId={novel.id} 
-                      pdfUrl={novel.pdfUrl} 
-                      title={novel.title}
-                      author={novel.author}
-                      description={novel.description}
+                      novel={novel}
+                      fundApplications={fundApplications}
                     />
                 </CardContent>
             </Card>

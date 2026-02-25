@@ -63,5 +63,16 @@ export default async function NewWorkPage() {
   // Sort journals alphabetically by name (supports Pinyin)
   const journals = rawJournals.sort((a, b) => a.name.localeCompare(b.name, "zh-CN"))
 
-  return <CreateWorkForm journals={journals} isLoggedIn={isLoggedIn} />
+  // Fetch active Fund Applications (Approved projects)
+  // These are specific projects, not general funds.
+  // We should list APPROVED applications. 
+  // Maybe filter by user if logged in? Or just list all if it's public?
+  // User requirement: "支持选择当前已经公开的基金项目" -> public approved projects.
+  const fundApplications = await prisma.fundApplication.findMany({
+    where: { status: 'APPROVED' },
+    select: { id: true, title: true, serialNo: true },
+    orderBy: { createdAt: 'desc' }
+  })
+
+  return <CreateWorkForm journals={journals} fundApplications={fundApplications} isLoggedIn={isLoggedIn} />
 }

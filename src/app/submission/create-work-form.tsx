@@ -15,8 +15,15 @@ interface Journal {
   name: string
 }
 
+interface FundApplication {
+  id: string
+  title: string
+  serialNo: string | null
+}
+
 interface CreateWorkFormProps {
   journals: Journal[]
+  fundApplications?: FundApplication[]
   isLoggedIn?: boolean
 }
 
@@ -24,7 +31,7 @@ const initialState: FormState = {
   error: null,
 }
 
-export function CreateWorkForm({ journals, isLoggedIn = false }: CreateWorkFormProps) {
+export function CreateWorkForm({ journals, fundApplications = [], isLoggedIn = false }: CreateWorkFormProps) {
   const [state, formAction, isPending] = useActionState(createWork, initialState)
   const [authors, setAuthors] = useState<{ name: string; unit: string; roles: string[] }[]>([
     { name: "", unit: "", roles: [] }
@@ -106,6 +113,30 @@ export function CreateWorkForm({ journals, isLoggedIn = false }: CreateWorkFormP
                  <p className="text-sm text-red-500">{state.error.title[0]}</p>
                )}
              </div>
+
+             {/* Fund Application Selection - Multiple */}
+             {fundApplications.length > 0 && (
+               <div className="space-y-2">
+                 <Label htmlFor="fundApplicationIds">关联基金项目 <span className="text-xs text-muted-foreground font-normal">(选填，支持多选)</span></Label>
+                 <div className="border rounded-md p-3 max-h-[200px] overflow-y-auto space-y-2">
+                    {fundApplications.map((app) => (
+                        <div key={app.id} className="flex items-center space-x-2">
+                            <input 
+                                type="checkbox" 
+                                id={`fund-${app.id}`} 
+                                name="fundApplicationIds" 
+                                value={app.id}
+                                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                            />
+                            <label htmlFor={`fund-${app.id}`} className="text-sm cursor-pointer select-none">
+                                <span className="font-medium">[{app.serialNo || '无编号'}]</span> {app.title}
+                            </label>
+                        </div>
+                    ))}
+                 </div>
+                 <p className="text-xs text-muted-foreground">请选择您已立项的基金项目进行关联（仅显示已立项项目）。</p>
+               </div>
+             )}
 
              {/* Authors Section - Redesigned */}
              <div className="space-y-4 border rounded-md p-4 bg-muted/20">
