@@ -201,6 +201,74 @@ model Journal {
   submissionTargetNovels Novel[] @relation("SubmissionTargets")
   admins      User[]   @relation("JournalAdmin")
   reviewers   User[]   @relation("JournalReviewers")
+
+  // Universe & Combat System
+  combatPower Int      @default(100) // Base combat power + accumulated bonus
+  seasonStats UniverseSeasonStat[]
+  quizzes     Quiz[]
+}
+
+model UniverseSeason {
+  id          String   @id @default(cuid())
+  name        String   // e.g. "S1: Genesis"
+  startDate   DateTime @default(now())
+  endDate     DateTime?
+  isActive    Boolean  @default(true)
+  
+  stats       UniverseSeasonStat[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model UniverseSeasonStat {
+  id          String   @id @default(cuid())
+  
+  seasonId    String
+  season      UniverseSeason @relation(fields: [seasonId], references: [id])
+  
+  journalId   String
+  journal     Journal  @relation(fields: [journalId], references: [id])
+  
+  combatPowerContribution Int @default(0) // Contribution in this season
+  
+  updatedAt   DateTime @updatedAt
+
+  @@unique([seasonId, journalId])
+}
+
+model Quiz {
+  id          String   @id @default(cuid())
+  journalId   String
+  journal     Journal  @relation(fields: [journalId], references: [id])
+  paperId     String
+  paperTitle  String
+  
+  question    String
+  options     String   // JSON string: ["A", "B", "C", "D"]
+  correctAnswer Int
+  explanation String
+  
+  difficulty  String   @default("NORMAL")
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  attempts    UserQuizAttempt[]
+}
+
+model UserQuizAttempt {
+  id        String   @id @default(cuid())
+  
+  quizId    String
+  quiz      Quiz     @relation(fields: [quizId], references: [id])
+  
+  userId    String?  // Optional for guests
+  guestIp   String?  // For rate limiting guests
+  
+  isCorrect Boolean
+  
+  createdAt DateTime @default(now())
 }
 
 model Comment {

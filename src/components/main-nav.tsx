@@ -22,6 +22,7 @@ export function MainNav({ role }: { role?: string }) {
       href: "/journals",
       children: [
         { name: "期刊矩阵", href: "/journals" },
+        { name: "Junk宇宙", href: "/universe" },
       ]
     },
     {
