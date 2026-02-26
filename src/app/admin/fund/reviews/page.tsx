@@ -55,8 +55,6 @@ export default async function FundReviewsPage() {
                 <TableHead>申报项目</TableHead>
                 <TableHead>所属基金</TableHead>
                 <TableHead>评审专家</TableHead>
-                <TableHead>评分</TableHead>
-                <TableHead>等级</TableHead>
                 <TableHead>评审意见</TableHead>
                 <TableHead>时间</TableHead>
               </TableRow>
@@ -64,7 +62,7 @@ export default async function FundReviewsPage() {
             <TableBody>
               {reviews.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center h-24 text-muted-foreground">
+                  <TableCell colSpan={5} className="text-center h-24 text-muted-foreground">
                     暂无评审数据
                   </TableCell>
                 </TableRow>
@@ -74,12 +72,6 @@ export default async function FundReviewsPage() {
                     <TableCell className="font-medium">{review.application.title}</TableCell>
                     <TableCell>{review.application.fund.title}</TableCell>
                     <TableCell>{review.expert.user.name || review.expert.realName || 'Unknown'}</TableCell>
-                    <TableCell>{review.score || '-'}</TableCell>
-                    <TableCell>
-                      <Badge variant={review.grade === 'A' ? 'default' : 'secondary'}>
-                        {review.grade || '-'}
-                      </Badge>
-                    </TableCell>
                     <TableCell className="max-w-[200px] truncate" title={review.comments || ''}>
                       {review.comments || '-'}
                     </TableCell>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useActionState, useEffect } from "react"
-import { createFundAdmin } from "./actions"
+import { updateFundAdmin } from "./actions"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -21,11 +21,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Plus, Loader2 } from "lucide-react"
+import { Pencil, Loader2 } from "lucide-react"
 
-export function CreateAdminDialog({ categories }: { categories: any[] }) {
+interface EditAdminDialogProps {
+  admin: {
+    id: string
+    name: string | null
+    email: string
+    fundAdminCategories: { id: string, name: string }[]
+  }
+  categories: { id: string, name: string }[]
+}
+
+export function EditAdminDialog({ admin, categories }: EditAdminDialogProps) {
   const [open, setOpen] = useState(false)
-  const [state, formAction, isPending] = useActionState(createFundAdmin, null)
+  const [state, formAction, isPending] = useActionState(updateFundAdmin, null)
+
+  // Determine current category ID (assuming single category for now based on UI)
+  const currentCategoryId = admin.fundAdminCategories.length > 0 ? admin.fundAdminCategories[0].id : ""
 
   useEffect(() => {
     if (state?.success && open) {
@@ -33,50 +46,48 @@ export function CreateAdminDialog({ categories }: { categories: any[] }) {
     }
   }, [state, open])
 
-  const handleSubmit = async (formData: FormData) => {
-    // useActionState handles pending state automatically
-    await formAction(formData)
-  }
-  
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" /> 添加管理员
+        <Button variant="ghost" size="icon">
+          <Pencil className="h-4 w-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>添加基金管理员</DialogTitle>
+          <DialogTitle>编辑管理员信息</DialogTitle>
           <DialogDescription>
-            创建一个新的管理员账号，并分配其负责的基金大类。
+            修改管理员姓名或调整其负责的基金大类。
           </DialogDescription>
         </DialogHeader>
         
-        <form action={handleSubmit} className="grid gap-4 py-4">
+        <form action={formAction} className="grid gap-4 py-4">
+          <input type="hidden" name="id" value={admin.id} />
+          
           {state?.message && !state.success && (
             <div className="text-red-500 text-sm mb-2">{state.message}</div>
           )}
           
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">姓名</Label>
-            <Input id="name" name="name" className="col-span-3" placeholder="管理员姓名" />
+            <Label htmlFor="email-edit" className="text-right">邮箱</Label>
+            <Input id="email-edit" value={admin.email} disabled className="col-span-3 bg-muted" />
           </div>
 
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="email" className="text-right">邮箱</Label>
-            <Input id="email" name="email" type="email" className="col-span-3" required />
-          </div>
-          
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="password" className="text-right">密码</Label>
-            <Input id="password" name="password" type="password" className="col-span-3" required minLength={6} />
+            <Label htmlFor="name-edit" className="text-right">姓名</Label>
+            <Input 
+                id="name-edit" 
+                name="name" 
+                defaultValue={admin.name || ""} 
+                className="col-span-3" 
+                required 
+            />
           </div>
 
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right">管理权限</Label>
             <div className="col-span-3">
-              <Select name="categoryId" required>
+              <Select name="categoryId" required defaultValue={currentCategoryId}>
                 <SelectTrigger>
                   <SelectValue placeholder="选择基金大类" />
                 </SelectTrigger>
@@ -93,7 +104,7 @@ export function CreateAdminDialog({ categories }: { categories: any[] }) {
 
           <DialogFooter>
             <Button type="submit" disabled={isPending}>
-              {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "创建账号"}
+              {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "保存修改"}
             </Button>
           </DialogFooter>
         </form>

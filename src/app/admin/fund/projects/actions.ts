@@ -3,8 +3,112 @@
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import * as XLSX from 'xlsx'
+import { z } from "zod"
 
-const REQUIRED_HEADERS = ['项目名称', '年度', '基金代码', '开始时间', '结束时间']
+const REQUIRED_HEADERS = ['项目名称', '年度', '基金代码', '项目负责人']
+
+const createFundSchema = z.object({
+  title: z.string().min(1, "项目名称不能为空"),
+  year: z.coerce.number().int().min(2000, "年度格式错误"),
+  categoryId: z.string().min(1, "请选择基金大类"),
+  startDate: z.string().min(1, "请选择开始时间"),
+  endDate: z.string().min(1, "请选择结束时间"),
+  description: z.string().optional()
+})
+
+const updateFundSchema = createFundSchema.extend({
+  id: z.string().min(1, "项目ID不能为空"),
+  status: z.enum(['ACTIVE', 'INACTIVE', 'ARCHIVED']).optional()
+})
+
+export async function createFund(prevState: any, formData: FormData) {
+  const data = {
+    title: formData.get("title") as string,
+    year: formData.get("year"),
+    categoryId: formData.get("categoryId") as string,
+    startDate: formData.get("startDate") as string,
+    endDate: formData.get("endDate") as string,
+    description: formData.get("description") as string
+  }
+
+  const validated = createFundSchema.safeParse(data)
+
+  if (!validated.success) {
+    return {
+      success: false,
+      message: "表单验证失败",
+      errors: validated.error.flatten().fieldErrors
+    }
+  }
+
+  try {
+    const { title, year, categoryId, startDate, endDate, description } = validated.data
+
+    await prisma.fund.create({
+      data: {
+        title,
+        year,
+        categoryId,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+        guideContent: description || "",
+        status: 'ACTIVE'
+      }
+    })
+
+    revalidatePath("/admin/fund/projects")
+    return { success: true, message: "项目创建成功" }
+  } catch (error) {
+    console.error("Create fund error:", error)
+    return { success: false, message: "创建失败，请稍后重试" }
+  }
+}
+
+export async function updateFund(prevState: any, formData: FormData) {
+  const data = {
+    id: formData.get("id") as string,
+    title: formData.get("title") as string,
+    year: formData.get("year"),
+    categoryId: formData.get("categoryId") as string,
+    startDate: formData.get("startDate") as string,
+    endDate: formData.get("endDate") as string,
+    description: formData.get("description") as string,
+    status: formData.get("status") as string
+  }
+
+  const validated = updateFundSchema.safeParse(data)
+
+  if (!validated.success) {
+    return {
+      success: false,
+      message: "表单验证失败",
+      errors: validated.error.flatten().fieldErrors
+    }
+  }
+
+  try {
+    const { id, title, year, categoryId, startDate, endDate, description, status } = validated.data
+
+    await prisma.fund.update({
+      where: { id },
+      data: {
+        title,
+        year,
+        categoryId,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+        guideContent: description || "",
+        status: status as any
+      }
+    })
+
+    revalidatePath("/admin/fund/projects")
+    return { success: true, message: "项目更新成功" }
+  } catch (error) {
+    console.error("Update fund error:", error)
+    return { success: false, message: "更新失败，请稍后重试" }
+  }
+}
 
 export async function importFunds(prevState: any, formData: FormData) {
   const file = formData.get('file') as File
@@ -50,15 +154,25 @@ export async function importFunds(prevState: any, formData: FormData) {
         const title = row['项目名称']
         const year = parseInt(row['年度'])
         const categoryCode = row['基金代码']
+        const manager = row['项目负责人']
         
+        // Start/End date are optional now
         let startDate = row['开始时间']
         let endDate = row['结束时间']
         const guideContent = row['指南内容'] || ''
 
-        if (!title || !year || !categoryCode || !startDate || !endDate) {
-          throw new Error(`必填字段缺失 (项目名称=${title}, 年度=${year}, 基金代码=${categoryCode})`)
+        if (!title || !year || !categoryCode || !manager) {
+          throw new Error(`必填字段缺失 (项目名称, 年度, 基金代码, 项目负责人)`)
         }
         
+        // Default dates if missing: current year Jan 1 to Dec 31
+        if (!startDate) {
+            startDate = new Date(year, 0, 1) // Jan 1
+        }
+        if (!endDate) {
+            endDate = new Date(year, 11, 31) // Dec 31
+        }
+
         // Handle date strings if they are not Date objects
         if (!(startDate instanceof Date)) {
            startDate = new Date(startDate)
@@ -88,7 +202,7 @@ export async function importFunds(prevState: any, formData: FormData) {
             categoryId: category.id,
             startDate: startDate,
             endDate: endDate,
-            guideContent: String(guideContent),
+            guideContent: String(guideContent) + `\n\n项目负责人: ${manager}`, // Append manager to description for now
             status: 'ACTIVE' // Default to Active for imported
           }
         })
@@ -99,58 +213,16 @@ export async function importFunds(prevState: any, formData: FormData) {
         errors.push(`第 ${rowNum} 行: ${error.message}`)
       }
     }
-
-    revalidatePath('/admin/fund/projects')
     
-    if (failCount > 0) {
-      return { 
-        success: true, // Operation completed, return success true to close dialog but show warnings
-        message: `导入完成。成功 ${successCount} 条，失败 ${failCount} 条。`,
-        errors: errors 
-      }
+    revalidatePath("/admin/fund/projects")
+    return { 
+        success: true, 
+        message: `导入完成: 成功 ${successCount} 条, 失败 ${failCount} 条`,
+        errors: errors
     }
 
-    return { success: true, message: `成功导入 ${successCount} 条基金项目` }
-
-  } catch (error: any) {
-    console.error('Import error:', error)
-    return { success: false, message: `导入出错: ${error.message}`, errors: [] }
-  }
-}
-
-export async function updateFund(prevState: any, formData: FormData) {
-  const id = formData.get('id') as string
-  const title = formData.get('title') as string
-  const year = parseInt(formData.get('year') as string)
-  const startDateStr = formData.get('startDate') as string
-  const endDateStr = formData.get('endDate') as string
-  const guideContent = formData.get('guideContent') as string
-  const status = formData.get('status') as string
-
-  if (!id || !title || !year || !startDateStr || !endDateStr) {
-    return { success: false, message: '必填字段缺失' }
-  }
-
-  try {
-    const startDate = new Date(startDateStr)
-    const endDate = new Date(endDateStr)
-
-    await prisma.fund.update({
-      where: { id },
-      data: {
-        title,
-        year,
-        startDate,
-        endDate,
-        guideContent,
-        status
-      }
-    })
-
-    revalidatePath('/admin/fund/projects')
-    return { success: true, message: '基金信息更新成功' }
-  } catch (error: any) {
-    console.error('Update fund error:', error)
-    return { success: false, message: '更新失败: ' + error.message }
+  } catch (error) {
+    console.error("Import error:", error)
+    return { success: false, message: "文件解析失败", errors: [] }
   }
 }

@@ -20,7 +20,7 @@ export default async function ApplyPage({ params }: { params: Promise<{ id: stri
         <div className="mb-8 text-center space-y-2">
            <Badge variant="outline" className="mb-2">{fund.category.name}</Badge>
           <h1 className="text-3xl font-bold tracking-tight">申报项目：{fund.title}</h1>
-          <p className="text-muted-foreground">请填写真实有效的申报信息。提交后将生成唯一的申请ID，请妥善保管。</p>
+          <p className="text-muted-foreground">请填写有效的申报信息。提交后将生成唯一的申请ID，请妥善保管。</p>
         </div>
         
         <ApplyForm fund={fund} />

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { CreateAdminDialog } from "./create-admin-dialog"
+import { EditAdminDialog } from "./edit-admin-dialog"
 import {
   Table,
   TableBody,
@@ -34,7 +35,7 @@ export default async function FundAdminsPage() {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">基金管理员设置</h1>
+          <h1 className="text-2xl font-bold tracking-tight">基金用户管理</h1>
           <p className="text-muted-foreground">管理负责不同基金大类的管理员账号。</p>
         </div>
         <CreateAdminDialog categories={categories} />
@@ -74,14 +75,18 @@ export default async function FundAdminsPage() {
                   </TableCell>
                   <TableCell>{admin.createdAt.toLocaleDateString()}</TableCell>
                   <TableCell className="text-right">
-                    <form action={async () => {
-                      'use server'
-                      await deleteFundAdmin(admin.id)
-                    }}>
-                      <Button type="submit" variant="ghost" size="icon" className="text-destructive">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </form>
+                    <div className="flex items-center justify-end gap-2">
+                      <EditAdminDialog admin={admin} categories={categories} />
+                      
+                      <form action={async () => {
+                        'use server'
+                        await deleteFundAdmin(admin.id)
+                      }}>
+                        <Button type="submit" variant="ghost" size="icon" className="text-destructive">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </form>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

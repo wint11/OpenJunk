@@ -21,7 +21,7 @@ export async function login(formData: FormData) {
     if (user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN') {
       redirectTo = "/admin"
     } else if (user?.role === 'REVIEWER') {
-      redirectTo = "/author/works" // Reviewers can manage works
+      redirectTo = "/submission" // Reviewers can go to submission or home
     }
     
     // Attempt to sign in

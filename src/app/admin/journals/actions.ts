@@ -16,8 +16,10 @@ export async function createJournal(formData: FormData) {
 
   const name = formData.get("name") as string
   const description = formData.get("description") as string
+  const guidelines = formData.get("guidelines") as string
   const status = formData.get("status") as string
   const coverFile = formData.get("cover") as File | null
+  const guidelinesFile = formData.get("guidelinesFile") as File | null
 
   let coverUrl = undefined
   if (coverFile && coverFile.size > 0) {
@@ -33,10 +35,26 @@ export async function createJournal(formData: FormData) {
     coverUrl = `/uploads/journals/${fileName}`
   }
 
+  let guidelinesUrl = undefined
+  if (guidelinesFile && guidelinesFile.size > 0) {
+    const bytes = await guidelinesFile.arrayBuffer()
+    const buffer = Buffer.from(bytes)
+    
+    // Ensure directory exists
+    const uploadDir = join(process.cwd(), "public/uploads/guidelines")
+    await mkdir(uploadDir, { recursive: true })
+    
+    const fileName = `${Date.now()}-${guidelinesFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`
+    await writeFile(join(uploadDir, fileName), buffer)
+    guidelinesUrl = `/uploads/guidelines/${fileName}`
+  }
+
   await prisma.journal.create({
     data: {
       name,
       description,
+      guidelines,
+      guidelinesUrl,
       status: status || "ACTIVE",
       coverUrl,
     },
@@ -70,8 +88,11 @@ export async function updateJournal(id: string, formData: FormData) {
 
   const name = formData.get("name") as string
   const description = formData.get("description") as string
+  const guidelines = formData.get("guidelines") as string
   const status = formData.get("status") as string
   const coverFile = formData.get("cover") as File | null
+  const guidelinesFile = formData.get("guidelinesFile") as File | null
+  const deleteGuidelinesFile = formData.get("deleteGuidelinesFile") === "true"
 
   let coverUrl = undefined
   if (coverFile && coverFile.size > 0) {
@@ -87,13 +108,31 @@ export async function updateJournal(id: string, formData: FormData) {
     coverUrl = `/uploads/journals/${fileName}`
   }
 
+  let guidelinesUrl: string | null | undefined = undefined
+  if (guidelinesFile && guidelinesFile.size > 0) {
+    const bytes = await guidelinesFile.arrayBuffer()
+    const buffer = Buffer.from(bytes)
+    
+    // Ensure directory exists
+    const uploadDir = join(process.cwd(), "public/uploads/guidelines")
+    await mkdir(uploadDir, { recursive: true })
+    
+    const fileName = `${Date.now()}-${guidelinesFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`
+    await writeFile(join(uploadDir, fileName), buffer)
+    guidelinesUrl = `/uploads/guidelines/${fileName}`
+  } else if (deleteGuidelinesFile) {
+    guidelinesUrl = null
+  }
+
   await prisma.journal.update({
     where: { id },
     data: {
       name,
       description,
+      guidelines,
       status,
       ...(coverUrl ? { coverUrl } : {}),
+      ...(guidelinesUrl !== undefined ? { guidelinesUrl } : {}),
     },
   })
 

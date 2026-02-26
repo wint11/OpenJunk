@@ -22,6 +22,12 @@ export default async function UsersPage() {
     include: { 
       managedJournal: true,
       reviewerJournals: true
+    },
+    where: {
+      // Exclude Fund Admins from this list (they are managed in Fund Users)
+      fundAdminCategories: {
+        none: {}
+      }
     }
   }
 
@@ -83,7 +89,7 @@ export default async function UsersPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">用户管理</h1>
+        <h1 className="text-3xl font-bold tracking-tight">论文用户管理</h1>
         <CreateUserDialog currentUserRole={role} journals={journals} />
       </div>
       <div className="rounded-md border overflow-x-auto">

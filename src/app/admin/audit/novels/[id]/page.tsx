@@ -36,24 +36,64 @@ export default async function NovelAuditDetailPage({ params }: { params: Promise
     select: { id: true, title: true, serialNo: true }
   })
 
+  // Get current user details
+  const currentUser = await prisma.user.findUnique({
+    where: { id: session?.user?.id },
+    include: { 
+      managedJournal: true,
+      reviewerJournals: true
+    }
+  })
+
   // Permission check
-  if (role === 'ADMIN') {
-    const currentUser = await prisma.user.findUnique({ where: { id: session?.user?.id } })
-    if (currentUser?.managedJournalId && novel.journalId !== currentUser.managedJournalId) {
-        redirect("/admin/audit/novels")
-    }
-    if (!currentUser?.managedJournalId) {
-        redirect("/admin/audit/novels")
-    }
-  } else if (role === 'REVIEWER') {
-    const currentUser = await prisma.user.findUnique({ 
-        where: { id: session?.user?.id },
-        include: { reviewerJournals: true }
-    })
-    const hasAccess = currentUser?.reviewerJournals.some(j => j.id === novel.journalId)
-    if (!hasAccess) {
-        redirect("/admin/audit/novels")
-    }
+  // For DRAFT/PENDING novels that are multi-submitted, journalId might be null.
+  // We need to check submissionTargets or journalId.
+  // But this page is detail view.
+  // If status is PUBLISHED, journalId is set.
+  // If status is DRAFT, submissionTargets are set.
+  
+  const novelWithTargets = await prisma.novel.findUnique({
+      where: { id },
+      include: { submissionTargets: true }
+  })
+
+  let hasAccess = false
+  if (role === 'SUPER_ADMIN') {
+      hasAccess = true
+  } else {
+      const allowedJournalIds: string[] = []
+      if (currentUser?.managedJournalId) allowedJournalIds.push(currentUser.managedJournalId)
+      if (currentUser?.reviewerJournals) allowedJournalIds.push(...currentUser.reviewerJournals.map(j => j.id))
+      
+      if (novel.journalId) {
+          // Already assigned/published
+          hasAccess = allowedJournalIds.includes(novel.journalId)
+      } else if (novelWithTargets && novelWithTargets.submissionTargets.length > 0) {
+          // Check if any target matches user's journals
+          hasAccess = novelWithTargets.submissionTargets.some(t => allowedJournalIds.includes(t.id))
+      }
+  }
+
+  if (!hasAccess) {
+      redirect("/admin/audit/novels")
+  }
+
+  // Get available journals for publishing
+  let availableJournals: { id: string, name: string }[] = []
+  if (role === 'SUPER_ADMIN') {
+      const allJournals = await prisma.journal.findMany({ select: { id: true, name: true } })
+      availableJournals = allJournals
+  } else {
+      if (currentUser?.managedJournal) {
+          availableJournals.push({ id: currentUser.managedJournal.id, name: currentUser.managedJournal.name })
+      }
+      if (currentUser?.reviewerJournals) {
+          currentUser.reviewerJournals.forEach(j => {
+              if (!availableJournals.find(aj => aj.id === j.id)) {
+                  availableJournals.push({ id: j.id, name: j.name })
+              }
+          })
+      }
   }
 
   // Check if PDF file exists
@@ -176,6 +216,7 @@ export default async function NovelAuditDetailPage({ params }: { params: Promise
                     <NovelAuditActions 
                       novel={novel}
                       fundApplications={fundApplications}
+                      availableJournals={availableJournals}
                     />
                 </CardContent>
             </Card>

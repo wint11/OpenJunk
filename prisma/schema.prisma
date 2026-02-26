@@ -96,6 +96,8 @@ model Novel {
   journalId   String?
   journal     Journal? @relation(fields: [journalId], references: [id])
   
+  submissionTargets Journal[] @relation("SubmissionTargets")
+  
   // 关联基金项目 (Optional)
   // 修改为多对多关联 FundApplication (具体立项项目)
   fundApplications FundApplication[]
@@ -188,12 +190,15 @@ model Journal {
   id          String   @id @default(cuid())
   name        String
   description String?
+  guidelines  String?  // Submission guidelines
+  guidelinesUrl String? // URL to downloadable guidelines file
   coverUrl    String?
   status      String   @default("ACTIVE") // ACTIVE, ARCHIVED
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
   papers      Novel[]
+  submissionTargetNovels Novel[] @relation("SubmissionTargets")
   admins      User[]   @relation("JournalAdmin")
   reviewers   User[]   @relation("JournalReviewers")
 }
@@ -248,6 +253,9 @@ model FundCategory {
   admins      User[]   @relation("FundCategoryAdmins")
   
   funds       Fund[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 // 基金专家档案 (独立于 User 表的扩展信息)

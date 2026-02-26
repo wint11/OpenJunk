@@ -7,28 +7,15 @@ import { Input } from "@/components/ui/input"
 
 export default async function Home() {
   console.log("Fetching home page data...");
-  const [featuredPapers, latestPapers, rawCategories, rawJournals] = await Promise.all([
+  const [featuredPapers, rawCategories, rawJournals] = await Promise.all([
     prisma.novel.findMany({
       where: { 
         status: 'PUBLISHED', 
         isRecommended: true,
         journal: { status: 'ACTIVE' }
       },
-      take: 3,
-      orderBy: { views: 'desc' },
-      include: {
-        journal: {
-          select: { id: true, name: true }
-        }
-      }
-    }),
-    prisma.novel.findMany({
-      where: { 
-        status: 'PUBLISHED',
-        journal: { status: 'ACTIVE' }
-      },
-      orderBy: { updatedAt: 'desc' },
       take: 10,
+      orderBy: { views: 'desc' },
       include: {
         journal: {
           select: { id: true, name: true }
@@ -72,7 +59,7 @@ export default async function Home() {
   }).slice(0, 5);
 
   
-  console.log(`Featured: ${featuredPapers.length}, Latest: ${latestPapers.length}, Categories: ${categories.length}`);
+  console.log(`Featured: ${featuredPapers.length}, Categories: ${categories.length}`);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -166,22 +153,6 @@ export default async function Home() {
             </div>
             <div className="grid gap-6">
               {featuredPapers.map((paper) => (
-                <PaperCard key={paper.id} paper={paper} />
-              ))}
-            </div>
-          </section>
-
-          {/* Latest Papers */}
-          <section className="space-y-6">
-            <div className="flex items-center justify-between border-b pb-2">
-              <h2 className="text-2xl font-bold tracking-tight">最新发表</h2>
-              <Link href="/browse?sort=latest" className="group flex items-center text-sm font-medium text-muted-foreground hover:text-primary">
-                查看全部
-                <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </div>
-            <div className="grid gap-4">
-              {latestPapers.map((paper) => (
                 <PaperCard key={paper.id} paper={paper} />
               ))}
             </div>

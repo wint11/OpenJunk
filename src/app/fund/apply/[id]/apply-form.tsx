@@ -85,7 +85,7 @@ export function ApplyForm({ fund }: { fund: any }) {
                 id="applicantName" 
                 name="applicantName" 
                 required 
-                placeholder="请输入您的真实姓名" 
+                placeholder="请输入您的姓名" 
                 className="h-11"
               />
               {result?.errors?.applicantName && <p className="text-xs text-red-500">{result.errors.applicantName[0]}</p>}

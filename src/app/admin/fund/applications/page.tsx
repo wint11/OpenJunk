@@ -15,6 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Eye } from "lucide-react"
+import { ImportApplicationsDialog } from "./import-dialog"
 
 export default async function FundApplicationsPage() {
   const session = await auth()
@@ -54,6 +55,9 @@ export default async function FundApplicationsPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">基金申报管理</h1>
           <p className="text-muted-foreground">查看和管理所有的基金申报书</p>
+        </div>
+        <div>
+           <ImportApplicationsDialog />
         </div>
       </div>
 

@@ -22,34 +22,61 @@ export default async function NovelAuditPage() {
     }
   })
 
-  const whereClause: any = { 
-    status: 'PENDING' 
+  // For ADMIN/REVIEWER, restrict to their journals.
+  // SUPER_ADMIN sees all.
+  let whereClause: any = { 
+    status: 'DRAFT' 
   }
 
-  // If ADMIN (and not SUPER_ADMIN), restrict to managed journal
-  if (role === 'ADMIN') {
-    if (currentUser?.managedJournalId) {
-      whereClause.journalId = currentUser.managedJournalId
-    } else {
-      // Admin with no journal sees nothing
-      whereClause.journalId = "NO_ACCESS"
-    }
-  } else if (role === 'REVIEWER') {
-    // Reviewer can only see papers in their assigned journals
-    const journalIds = currentUser?.reviewerJournals.map(j => j.id) || []
-    if (journalIds.length > 0) {
-       whereClause.journalId = { in: journalIds }
-    } else {
-       whereClause.journalId = "NO_ACCESS"
-    }
+  // Update logic for multi-submission:
+  // A novel can be pending for multiple journals.
+  // We need to check if the novel's submissionTargets overlap with the user's managed journals.
+  
+  if (role !== 'SUPER_ADMIN') {
+      let allowedJournalIds: string[] = []
+      
+      if (role === 'ADMIN' && currentUser?.managedJournalId) {
+          allowedJournalIds = [currentUser.managedJournalId]
+      } else if (role === 'REVIEWER') {
+          allowedJournalIds = currentUser?.reviewerJournals.map(j => j.id) || []
+      }
+      
+      if (allowedJournalIds.length > 0) {
+          // To be safe, let's use a very explicit OR query combined with status
+          // Prisma can be tricky with top-level properties mixed with OR
+          
+          whereClause = {
+            AND: [
+                { status: 'DRAFT' },
+                {
+                    OR: [
+                        {
+                            submissionTargets: {
+                                some: {
+                                    id: { in: allowedJournalIds }
+                                }
+                            }
+                        },
+                        {
+                            journalId: { in: allowedJournalIds }
+                        }
+                    ]
+                }
+            ]
+          }
+      } else {
+          // No access if no journals assigned
+          whereClause = { id: "NO_ACCESS" }
+      }
   }
 
   const novels = await prisma.novel.findMany({
     where: whereClause,
-    orderBy: { lastSubmittedAt: 'desc' },
+    orderBy: { createdAt: 'desc' }, // Changed to createdAt as lastSubmittedAt might be null
     include: { 
       uploader: true,
       journal: true,
+      submissionTargets: true, // Include targets to show which journals it was submitted to
       fundApplications: true
     }
   })
@@ -59,6 +86,29 @@ export default async function NovelAuditPage() {
     where: { status: 'APPROVED' },
     select: { id: true, title: true, serialNo: true }
   })
+
+  // Get available journals for the current user to publish to
+  let availableJournals: { id: string, name: string }[] = []
+  
+  if (role === 'SUPER_ADMIN') {
+      // Super admin can publish to any journal
+      const allJournals = await prisma.journal.findMany({
+          select: { id: true, name: true }
+      })
+      availableJournals = allJournals
+  } else {
+      if (currentUser?.managedJournal) {
+          availableJournals.push({ id: currentUser.managedJournal.id, name: currentUser.managedJournal.name })
+      }
+      if (currentUser?.reviewerJournals) {
+          // Add reviewer journals if not already added
+          currentUser.reviewerJournals.forEach(j => {
+              if (!availableJournals.find(aj => aj.id === j.id)) {
+                  availableJournals.push({ id: j.id, name: j.name })
+              }
+          })
+      }
+  }
 
   return (
     <div className="space-y-6">
@@ -95,7 +145,18 @@ export default async function NovelAuditPage() {
                     {novel.journal ? (
                        <Badge variant="outline">{novel.journal.name}</Badge>
                     ) : (
-                       <span className="text-muted-foreground text-sm">无期刊</span>
+                       <div className="flex flex-wrap gap-1">
+                         {novel.submissionTargets.length > 0 ? (
+                           novel.submissionTargets.map(t => (
+                             <Badge key={t.id} variant="secondary" className="text-xs">{t.name}</Badge>
+                           ))
+                         ) : (
+                           <span className="text-muted-foreground text-sm">无期刊</span>
+                         )}
+                       </div>
+                    )}
+                    {novel.submissionTargets.length > 1 && !novel.journal && (
+                        <span className="ml-2 text-xs text-orange-500 font-bold border border-orange-200 bg-orange-50 px-1 rounded">一稿多投</span>
                     )}
                   </TableCell>
                   <TableCell>{novel.author}</TableCell>
@@ -110,6 +171,7 @@ export default async function NovelAuditPage() {
                     <NovelAuditActions 
                         novel={novel} 
                         fundApplications={fundApplications}
+                        availableJournals={availableJournals}
                     />
                   </TableCell>
                 </TableRow>

@@ -9,12 +9,14 @@ export default async function NewWorkPage() {
   
   let rawJournals: { id: string, name: string }[] = []
 
+  // Filter journals based on user role and login status
+  // 1. If not logged in: Can submit to ALL active journals.
+  // 2. If logged in (Fast Track):
+  //    - ADMIN (Editor): Can ONLY submit to their managed journal.
+  //    - REVIEWER (Editor): Can ONLY submit to their reviewer journals.
+  //    - SUPER_ADMIN: Can submit to ALL active journals.
+  
   if (isLoggedIn && session.user.id) {
-    // If logged in:
-    // 1. SUPER_ADMIN: Can submit to ALL active journals
-    // 2. ADMIN (Editor-in-Chief): Only managed journal
-    // 3. REVIEWER (Editor): Only reviewer journals
-    
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       include: {
@@ -25,35 +27,30 @@ export default async function NewWorkPage() {
 
     if (user) {
       if (user.role === 'SUPER_ADMIN') {
-         // Fetch ALL active journals for SUPER_ADMIN
+         // SUPER_ADMIN: All active journals
          rawJournals = await prisma.journal.findMany({
             where: { status: 'ACTIVE' },
             select: { id: true, name: true }
          })
       } else if (user.role === 'ADMIN') {
-         // For ADMIN (Editor-in-Chief), only their managed journal
+         // ADMIN: Only managed journal
          const managedJournal = user.managedJournal
          if (managedJournal && managedJournal.status === 'ACTIVE') {
             rawJournals = [managedJournal]
          }
       } else {
-         // For REVIEWER (Editor), only their reviewer journals
+         // REVIEWER: Only reviewer journals
          // Note: Assuming 'REVIEWER' role or any other role falls here
-         const reviewerJournals = user.reviewerJournals
+         // Filter to only active journals
+         const reviewerJournals = user.reviewerJournals.filter(j => j.status === 'ACTIVE')
          
-         const journalMap = new Map<string, { id: string, name: string }>()
-         
-         reviewerJournals.forEach(j => {
-           if (j.status === 'ACTIVE') {
-             journalMap.set(j.id, j)
-           }
-         })
-         
-         rawJournals = Array.from(journalMap.values())
+         if (reviewerJournals.length > 0) {
+             rawJournals = reviewerJournals.map(j => ({ id: j.id, name: j.name }))
+         }
       }
     }
   } else {
-    // If not logged in (Guest), fetch ALL active journals
+    // Guest: All active journals
     rawJournals = await prisma.journal.findMany({
       where: { status: 'ACTIVE' },
       select: { id: true, name: true }
@@ -64,15 +61,15 @@ export default async function NewWorkPage() {
   const journals = rawJournals.sort((a, b) => a.name.localeCompare(b.name, "zh-CN"))
 
   // Fetch active Fund Applications (Approved projects)
-  // These are specific projects, not general funds.
-  // We should list APPROVED applications. 
-  // Maybe filter by user if logged in? Or just list all if it's public?
-  // User requirement: "支持选择当前已经公开的基金项目" -> public approved projects.
   const fundApplications = await prisma.fundApplication.findMany({
     where: { status: 'APPROVED' },
     select: { id: true, title: true, serialNo: true },
     orderBy: { createdAt: 'desc' }
   })
 
-  return <CreateWorkForm journals={journals} fundApplications={fundApplications} isLoggedIn={isLoggedIn} />
+  return <CreateWorkForm 
+            journals={journals} 
+            fundApplications={fundApplications} 
+            isLoggedIn={isLoggedIn}
+         />
 }

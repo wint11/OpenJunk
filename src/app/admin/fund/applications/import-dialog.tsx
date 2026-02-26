@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Upload, AlertCircle, CheckCircle2, FileSpreadsheet } from "lucide-react"
-import { importFunds } from "./actions"
+import { importApplications } from "./import-actions"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { toast } from "sonner"
@@ -25,9 +25,9 @@ const initialState = {
   errors: [] as string[]
 }
 
-export function ImportFundsDialog() {
+export function ImportApplicationsDialog() {
   const [open, setOpen] = useState(false)
-  const [state, formAction, isPending] = useActionState(importFunds, initialState)
+  const [state, formAction, isPending] = useActionState(importApplications, initialState)
 
   useEffect(() => {
     if (state.success && state.errors?.length === 0) {
@@ -50,9 +50,9 @@ export function ImportFundsDialog() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>导入基金项目</DialogTitle>
+          <DialogTitle>导入基金申报书</DialogTitle>
           <DialogDescription>
-            请上传符合格式的 Excel 文件 (.xlsx)。
+            请上传符合格式的 Excel 文件 (.xlsx)。用于导入线下申报数据。
           </DialogDescription>
         </DialogHeader>
         
@@ -63,13 +63,12 @@ export function ImportFundsDialog() {
             <AlertDescription className="text-xs text-muted-foreground mt-2">
               <p>第一行必须包含以下列名（顺序不限）：</p>
               <ul className="list-disc list-inside mt-1 font-mono">
+                <li>受理编号 (唯一)</li>
                 <li>项目名称</li>
-                <li>年度 (数字, 如 2026)</li>
-                <li>基金代码 (如 NSFC)</li>
-                <li>项目负责人</li>
-                <li>开始时间 (选填, yyyy-MM-dd)</li>
-                <li>结束时间 (选填, yyyy-MM-dd)</li>
-                <li>指南内容 (选填)</li>
+                <li>所属基金 (必须完全匹配已有基金名称)</li>
+                <li>申请人</li>
+                <li>状态 (已立项/已提交)</li>
+                <li>提交时间 (选填, yyyy-MM-dd)</li>
               </ul>
             </AlertDescription>
           </Alert>
@@ -100,9 +99,6 @@ export function ImportFundsDialog() {
         </div>
 
         <DialogFooter>
-          <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-            取消
-          </Button>
           <Button type="submit" form="import-form" disabled={isPending}>
             {isPending ? "导入中..." : "开始导入"}
           </Button>

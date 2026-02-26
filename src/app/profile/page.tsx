@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { LogOut, User, Settings, Shield } from "lucide-react"
+import { LogOut, User, Settings, Shield, Award } from "lucide-react"
 import { ReaderSettingsCard } from "@/app/profile/reader-settings"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ProfileForm } from "./profile-form"
@@ -19,20 +19,42 @@ export default async function ProfilePage() {
 
   // Verify user exists in DB (handle stale sessions after DB reset)
   const dbUser = await prisma.user.findUnique({
-      where: { id: session.user.id }
+      where: { id: session.user.id },
+      include: {
+        managedJournal: true,
+        reviewerJournals: true,
+        fundAdminCategories: true
+      }
   })
   if (!dbUser) {
-      redirect("/api/auth/signout")
+      // redirect("/api/auth/signout") // Loop issue
+      return <div>User not found. Please logout.</div>
   }
 
   const role = session.user.role ?? ""
   
-  const roleMap: Record<string, string> = {
-    "USER": "普通读者",
-    "AUTHOR": "投稿作者",
-    "REVIEWER": "责任编辑",
-    "ADMIN": "总编",
-    "SUPER_ADMIN": "总编"
+  // Determine specific role title
+  let roleTitle = "普通读者"
+  if (role === 'SUPER_ADMIN') {
+      roleTitle = "平台总编"
+  } else if (role === 'ADMIN') {
+      if (dbUser.fundAdminCategories.length > 0) {
+          const categoryNames = dbUser.fundAdminCategories.map(c => c.name).join(', ')
+          roleTitle = `基金管理员 (${categoryNames})`
+      } else if (dbUser.managedJournal) {
+          roleTitle = `期刊主编 (${dbUser.managedJournal.name})`
+      } else {
+          roleTitle = "期刊管理员 (未分配)"
+      }
+  } else if (role === 'REVIEWER') {
+      if (dbUser.reviewerJournals.length > 0) {
+          const journalNames = dbUser.reviewerJournals.map(j => j.name).join(', ')
+          roleTitle = `责任编辑 (${journalNames})`
+      } else {
+          roleTitle = "责任编辑 (未分配)"
+      }
+  } else if (role === 'AUTHOR') {
+      roleTitle = "投稿作者"
   }
 
   return (
@@ -68,6 +90,10 @@ export default async function ProfilePage() {
               <Shield className="mr-2 h-4 w-4" />
               账号安全
            </TabsTrigger>
+           <TabsTrigger value="honors" className="w-full justify-start px-3 py-2 h-auto data-[state=active]:bg-background">
+              <Award className="mr-2 h-4 w-4" />
+              我的荣誉
+           </TabsTrigger>
 
            <div className="mt-auto pt-4 border-t w-full">
               <form action={async () => {
@@ -97,7 +123,7 @@ export default async function ProfilePage() {
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
                          <h3 className="text-2xl font-semibold">{session.user.name}</h3>
-                         <Badge variant="secondary">{roleMap[role] || role}</Badge>
+                         <Badge variant="secondary">{roleTitle}</Badge>
                       </div>
                       <p className="text-muted-foreground">{session.user.email}</p>
                       <Button variant="outline" size="sm" className="mt-2" disabled>更换头像 (开发中)</Button>
@@ -134,6 +160,20 @@ export default async function ProfilePage() {
                           </div>
                           <Button variant="outline" disabled>暂未开放</Button>
                       </div>
+                  </CardContent>
+              </Card>
+           </TabsContent>
+
+           <TabsContent value="honors" className="mt-0 h-full">
+              <Card className="h-full flex flex-col">
+                  <CardHeader>
+                      <CardTitle>我的荣誉</CardTitle>
+                      <CardDescription>查看您获得的证书和成就</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6 flex-1 overflow-y-auto flex flex-col items-center justify-center text-muted-foreground">
+                      <Award className="h-16 w-16 mb-4 opacity-20" />
+                      <p>暂无荣誉记录</p>
+                      <p className="text-sm">当您获得奖项时，将在此处展示。</p>
                   </CardContent>
               </Card>
            </TabsContent>

@@ -12,7 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ImportFundsDialog } from "./import-dialog"
+import { CreateFundDialog } from "./create-dialog"
 import { EditFundDialog } from "./edit-dialog"
 
 export default async function FundProjectsPage() {
@@ -28,15 +28,18 @@ export default async function FundProjectsPage() {
     orderBy: { createdAt: 'desc' }
   })
 
+  // Fetch all categories for the create dialog
+  const categories = await prisma.fundCategory.findMany()
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">基金项目管理</h1>
-          <p className="text-muted-foreground">管理所有的基金项目（鸡精）</p>
+          <p className="text-muted-foreground">管理所有的基金项目（指南）</p>
         </div>
         <div>
-           <ImportFundsDialog />
+           <CreateFundDialog categories={categories} />
         </div>
       </div>
 

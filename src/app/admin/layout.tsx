@@ -2,7 +2,7 @@ import { auth } from "@/auth"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { LayoutDashboard, FileText, Users, History, BookOpen, Layers, Mail, ClipboardList, Wallet } from "lucide-react"
+import { LayoutDashboard, FileText, Users, History, BookOpen, Layers, Mail, ClipboardList, Wallet, Landmark } from "lucide-react"
 import { prisma } from "@/lib/prisma"
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -46,19 +46,18 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </Button>
 
           <Button variant="ghost" className="justify-start w-full" asChild>
-            <Link href="/admin/messages" className="flex items-center justify-between">
-               <div className="flex items-center">
-                 <Mail className="mr-2 h-4 w-4"/> 消息中心
-               </div>
+            <Link href="/admin/messages">
+               <Mail className="mr-2 h-4 w-4"/>
+               <span>消息中心</span>
                {unreadCount > 0 && (
-                 <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[1.25rem] text-center flex items-center justify-center h-5">
+                 <span className="ml-auto bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[1.25rem] text-center flex items-center justify-center h-5">
                    {unreadCount > 99 ? '99+' : unreadCount}
                  </span>
                )}
             </Link>
           </Button>
           
-          {/* SUPER ADMIN MENUS */}
+          {/* SUPER ADMIN MENUS - Platform Management */}
           {role === "SUPER_ADMIN" && (
             <>
               <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase mt-2">平台管理</div>
@@ -66,15 +65,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                 <Link href="/admin/journals"><Layers className="mr-2 h-4 w-4"/> 期刊列表</Link>
               </Button>
               <Button variant="ghost" className="justify-start w-full pl-6" asChild>
-                <Link href="/admin/users"><Users className="mr-2 h-4 w-4"/> 用户管理</Link>
+                <Link href="/admin/fund/categories"><Landmark className="mr-2 h-4 w-4"/> 基金列表</Link>
               </Button>
               <Button variant="ghost" className="justify-start w-full pl-6" asChild>
                 <Link href="/admin/audit"><History className="mr-2 h-4 w-4"/> 审计日志</Link>
-              </Button>
-
-              <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase mt-2">基金管理</div>
-              <Button variant="ghost" className="justify-start w-full pl-6" asChild>
-                <Link href="/admin/fund/admins"><Users className="mr-2 h-4 w-4"/> 管理员设置</Link>
               </Button>
             </>
           )}
@@ -92,10 +86,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             </>
           )}
 
-          {/* FUND ADMIN MENUS */}
+          {/* FUND ADMIN / SUPER_ADMIN MENUS - Fund Management */}
           {(isFundAdmin || role === 'SUPER_ADMIN') && (
             <>
-              <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase mt-2">基金业务</div>
+              <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase mt-2">基金管理</div>
               <Button variant="ghost" className="justify-start w-full pl-6" asChild>
                 <Link href="/admin/fund/projects"><Wallet className="mr-2 h-4 w-4"/> 项目管理</Link>
               </Button>
@@ -105,32 +99,36 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <Button variant="ghost" className="justify-start w-full pl-6" asChild>
                 <Link href="/admin/fund/reviews"><FileText className="mr-2 h-4 w-4"/> 评审管理</Link>
               </Button>
+              {role === 'SUPER_ADMIN' && (
+                <Button variant="ghost" className="justify-start w-full pl-6" asChild>
+                  <Link href="/admin/fund/admins"><Users className="mr-2 h-4 w-4"/> 基金用户</Link>
+                </Button>
+              )}
             </>
           )}
 
-          {/* JOURNAL ADMIN / REVIEWER MENUS (Hide for Fund Admin unless they have dual roles, but assuming separation for now) */}
+          {/* MANUSCRIPT MANAGEMENT (SUPER_ADMIN, JOURNAL ADMIN, REVIEWER) */}
           {(!isFundAdmin || role === 'SUPER_ADMIN') && ["ADMIN", "SUPER_ADMIN", "REVIEWER"].includes(role) && (
             <>
-              <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase mt-2">审稿管理</div>
+              <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase mt-2">稿件管理</div>
+              {role === 'SUPER_ADMIN' && (
+                <Button variant="ghost" className="justify-start w-full pl-6" asChild>
+                  <Link href="/admin/users"><Users className="mr-2 h-4 w-4"/> 论文用户</Link>
+                </Button>
+              )}
               <Button variant="ghost" className="justify-start w-full pl-6" asChild>
-                <Link href="/admin/audit/novels"><FileText className="mr-2 h-4 w-4"/> 新稿件审阅</Link>
-              </Button>
-              <Button variant="ghost" className="justify-start w-full pl-6" asChild>
-                <Link href="/admin/audit/chapters"><FileText className="mr-2 h-4 w-4"/> 修订稿审阅</Link>
+                <Link href="/admin/audit/novels"><FileText className="mr-2 h-4 w-4"/> 稿件审阅</Link>
               </Button>
               <Button variant="ghost" className="justify-start w-full pl-6" asChild>
                 <Link href="/admin/audit/history"><History className="mr-2 h-4 w-4"/> 审稿记录</Link>
               </Button>
-            </>
-          )}
-
-          {/* CONTENT MANAGEMENT (Only for Journal Admin/Super Admin) */}
-          {(!isFundAdmin || role === 'SUPER_ADMIN') && ["ADMIN", "SUPER_ADMIN"].includes(role) && (
-            <>
-              <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase">内容管理</div>
-              <Button variant="ghost" className="justify-start w-full pl-6" asChild>
-                <Link href="/admin/novels"><BookOpen className="mr-2 h-4 w-4"/> 已录用稿件</Link>
-              </Button>
+              
+              {/* Accepted Manuscripts - Only for ADMIN/SUPER_ADMIN */}
+              {["ADMIN", "SUPER_ADMIN"].includes(role) && (
+                <Button variant="ghost" className="justify-start w-full pl-6" asChild>
+                  <Link href="/admin/novels"><BookOpen className="mr-2 h-4 w-4"/> 录用稿件</Link>
+                </Button>
+              )}
             </>
           )}
         </nav>

@@ -17,7 +17,7 @@ const workSchema = z.object({
   type: z.enum(["NOVEL", "PAPER", "AUTOBIOGRAPHY", "ARTICLE"]),
   category: z.string().min(1, "分类不能为空").max(50),
   description: z.string().min(1, "摘要至少1个字").max(2000),
-  journalId: z.string().min(1, "请选择期刊"),
+  journalIds: z.array(z.string()).min(1, "请至少选择一个期刊"),
   fundApplicationIds: z.array(z.string()).optional(),
 })
 
@@ -30,7 +30,7 @@ export type FormState = {
     category?: string[]
     description?: string[]
     pdfUrl?: string[]
-    journalId?: string[]
+    journalIds?: string[]
     fundApplicationIds?: string[]
   } | null
 }
@@ -38,8 +38,17 @@ export type FormState = {
 export async function createWork(prevState: FormState, formData: FormData): Promise<FormState> {
   // Check authentication status
   const session = await auth()
-  const user = session?.user
+  // Ensure we check for session AND user existence properly
+  const user = session?.user && session.user.id ? session.user : null
   
+  // DEBUG LOG
+  console.log("Submission Request:", {
+      hasSession: !!session,
+      hasUser: !!user,
+      userId: user?.id,
+      role: user?.role
+  })
+
   // Get client IP
   const { headers } = await import('next/headers')
   const headersList = await headers()
@@ -83,6 +92,18 @@ export async function createWork(prevState: FormState, formData: FormData): Prom
   }
 
   const fundApplicationIds = formData.getAll('fundApplicationIds') as string[]
+  const journalIds = formData.getAll('journalIds') as string[]
+
+  // Validate journal count based on user role
+  if (user) {
+      if (journalIds.length > 1) {
+          return { error: { journalIds: ["快速通道仅支持选择一个期刊"] } }
+      }
+  } else {
+      if (journalIds.length > 3) {
+          return { error: { journalIds: ["最多同时投稿3个期刊"] } }
+      }
+  }
 
   const rawData = {
     title: formData.get('title'),
@@ -91,13 +112,13 @@ export async function createWork(prevState: FormState, formData: FormData): Prom
     type: formData.get('type'),
     category: formData.get('category'),
     description: formData.get('description'),
-    journalId: formData.get('journalId'),
+    journalIds: journalIds,
     fundApplicationIds: fundApplicationIds.length > 0 ? fundApplicationIds : undefined,
   }
 
   // Parse authors data
   const authorsDataStr = formData.get('authorsData') as string
-  let authors: { name: string, unit: string, roles: string[] }[] = []
+  let authors: { name: string, unit: string, roles: string[], contact?: string }[] = []
   try {
       authors = JSON.parse(authorsDataStr)
   } catch (e) {
@@ -108,9 +129,20 @@ export async function createWork(prevState: FormState, formData: FormData): Prom
   if (!authors || authors.length === 0) {
       return { error: { author: ["请至少添加一位作者"] } }
   }
+  
+  let hasCorresponding = false
   for (const a of authors) {
       if (!a.name || !a.name.trim()) return { error: { author: ["作者姓名不能为空"] } }
-      // unit is optional
+      if (a.roles.includes('通讯作者')) {
+          hasCorresponding = true
+          if (!a.contact || !a.contact.trim()) {
+              return { error: { correspondingAuthor: ["通讯作者必须填写联系方式(小红书ID或邮箱)"] } }
+          }
+      }
+  }
+
+  if (!hasCorresponding) {
+      return { error: { correspondingAuthor: ["请至少指定一位通讯作者"] } }
   }
 
   const validatedFields = workSchema.omit({ author: true, correspondingAuthor: true }).safeParse(rawData)
@@ -119,7 +151,7 @@ export async function createWork(prevState: FormState, formData: FormData): Prom
     return { error: validatedFields.error.flatten().fieldErrors }
   }
 
-  const { title, type, category, description, journalId } = validatedFields.data
+  const { title, type, category, description } = validatedFields.data
 
   // Construct author string (names only)
   const authorNames = authors.map(a => a.name).join(', ')
@@ -149,181 +181,94 @@ export async function createWork(prevState: FormState, formData: FormData): Prom
         where: { pdfHash: pdfHash }
       })
 
-      if (existingNovel && existingNovel.pdfUrl) {
-         // Verify if file actually exists on disk
-         const existingPath = join(process.cwd(), 'public', existingNovel.pdfUrl)
-         if (existsSync(existingPath)) {
+      if (existingNovel) {
+        // If file exists, check if user is same or different
+        // For simplicity, we just reuse the URL if it's the same content
+        // But we create a new Novel entry
+        if (existingNovel.pdfUrl) {
             pdfUrl = existingNovel.pdfUrl
-            // If duplicate found AND file exists, we reuse the existing file URL
-         }
+        }
       }
-      
+
       if (!pdfUrl) {
-          // Determine extension
-          let extension = '.pdf'
-          const name = pdfFile.name.toLowerCase()
-          
-          if (name.endsWith('.docx')) {
-             extension = '.docx'
-          } else if (name.endsWith('.doc')) {
-             extension = '.doc'
-          } else if (name.endsWith('.zip')) {
-             extension = '.zip'
-          } else if (name.endsWith('.rar')) {
-             extension = '.rar'
-          }
-
-          const fileName = `${uuidv4()}${extension}`
+          // New file
           const uploadDir = join(process.cwd(), 'public', 'uploads', 'pdfs')
-          
-          try {
-            await mkdir(uploadDir, { recursive: true })
-            const filePath = join(uploadDir, fileName)
-            await writeFile(filePath, buffer)
-            
-            // Double check if file was written
-            if (!existsSync(filePath)) {
-                throw new Error(`File write verification failed at ${filePath}`)
-            }
-            
-            pdfUrl = `/uploads/pdfs/${fileName}`
-          } catch (err) {
-            console.error("File write error:", err)
-            throw err
+          if (!existsSync(uploadDir)) {
+              await mkdir(uploadDir, { recursive: true })
           }
+          
+          const uniqueId = uuidv4()
+          // Preserve extension
+          const originalName = pdfFile.name
+          const ext = originalName.substring(originalName.lastIndexOf('.'))
+          const filename = `${uniqueId}${ext}`
+          const filepath = join(uploadDir, filename)
+          
+          await writeFile(filepath, new Uint8Array(buffer))
+          pdfUrl = `/uploads/pdfs/${filename}`
       }
-
-  } catch (e) {
-      console.error("File upload failed", e)
-      return { error: "文件上传或处理失败" }
+  } catch (error) {
+      console.error("Upload error:", error)
+      return { error: "文件上传失败" }
   }
-
-  // Session and user are already retrieved at the top
-  
-  // Use constructed author names
-  const finalAuthorName = authorNames
 
   try {
-    // Check if journal exists
-    const journal = await prisma.journal.findUnique({
-      where: { id: journalId },
-      include: {
-        admins: { select: { id: true } },
-        reviewers: { select: { id: true } }
-      }
-    })
+      // Determine initial status
+      // If user is logged in, use PENDING
+      // If guest, use DRAFT
+      // Use !!user to ensure boolean
+      // FORCE CHECK: If user object exists, status MUST be PENDING.
+      
+      const status = (user && user.id) ? "PENDING" : "DRAFT"
 
-    if (!journal) {
-      return { error: { journalId: ["所选期刊不存在"] } }
-    }
+      console.log(`Creating novel with status: ${status} for user: ${user?.id || 'guest'}`)
 
-    // If user is logged in, verify they have permission to post to this journal (Managed or Reviewer)
-    // 1. SUPER_ADMIN: Can submit to ALL active journals
-    // 2. ADMIN (Editor-in-Chief): Only managed journal
-    // 3. REVIEWER (Editor): Only reviewer journals
-    if (user) {
-        if (user.role === 'SUPER_ADMIN') {
-           // Allow
-        } else if (user.role === 'ADMIN') {
-           const isJournalAdmin = journal.admins.some(admin => admin.id === user.id)
-           if (!isJournalAdmin) {
-               return { error: { journalId: ["您没有权限向该期刊投稿（快速通道仅限所属期刊内部人员）"] } }
-           }
-        } else {
-           const isJournalReviewer = journal.reviewers.some(reviewer => reviewer.id === user.id)
-           if (!isJournalReviewer) {
-               return { error: { journalId: ["您没有权限向该期刊投稿（快速通道仅限所属期刊内部人员）"] } }
-           }
-        }
-    }
+      // If user is logged in and submitted a single journal, we might want to set journalId directly?
+      // No, let's keep it consistent with submissionTargets for multi-submission support.
+      // But if it's single submission (which is enforced for logged-in users now), we can also set journalId for easier querying.
+      
+      const primaryJournalId = journalIds.length === 1 ? journalIds[0] : undefined
 
-    // Determine status and review fields based on user login status
-    // If user is logged in (e.g. editor/admin), skip review process
-    const isDirectPublish = !!user
-    const status = isDirectPublish ? "PUBLISHED" : "PENDING"
-    const aiReviewPassed = isDirectPublish ? true : null
-    const lastApprovedAt = isDirectPublish ? new Date() : null
-    const uploaderId = user?.id || null
+      const novel = await prisma.novel.create({
+          data: {
+              title,
+              author: authorNames,
+              correspondingAuthor: correspondingAuthors,
+              extraAuthors: extraAuthors, // Store full author info including contact
+              description,
+              category,
+              type,
+              status, 
+              pdfUrl,
+              pdfHash,
+              uploaderId: user?.id,
+              uploaderIp: ip,
+              journalId: primaryJournalId, // Set journalId if single submission
+              
+              // Connect multiple journals
+              submissionTargets: {
+                  connect: journalIds.map(id => ({ id }))
+              },
 
-    const novel = await prisma.novel.create({
-      data: {
-        title,
-        type,
-        category,
-        description,
-        author: finalAuthorName,
-        correspondingAuthor: correspondingAuthors,
-        extraAuthors, // Now contains the full JSON array of author objects
-        uploaderId: uploaderId, 
-        uploaderIp: ip,
-        status: status,
-        aiReviewPassed: aiReviewPassed,
-        lastApprovedAt: lastApprovedAt,
-        pdfUrl: pdfUrl,
-        pdfHash: pdfHash,
-        journalId: journalId,
-        // Connect multiple funds
-        fundApplications: (fundApplicationIds && fundApplicationIds.length > 0) ? {
-            connect: fundApplicationIds.map(id => ({ id }))
-        } : undefined,
-        // No chapters created for PDF papers
-      }
-    })
-
-    // Notify journal editors only if it requires review (PENDING)
-    if (!isDirectPublish) {
-      const editors = await prisma.user.findMany({
-        where: {
-          reviewerJournals: {
-            some: { id: journalId }
+              // Connect funds if any
+              fundApplications: validatedFields.data.fundApplicationIds 
+                  ? { connect: validatedFields.data.fundApplicationIds.map(id => ({ id })) }
+                  : undefined
           }
-        },
-        select: { id: true }
       })
 
-      // Also notify journal admin
-      const journalAdmin = await prisma.journal.findUnique({
-        where: { id: journalId },
-        include: {
-            admins: { select: { id: true } }
-        }
-      })
+      // Log audit
+      await logAudit(
+          "CREATE_NOVEL",
+          "Novel",
+          `Created novel: ${novel.title} (${novel.id}), status: ${status}, submitted to journals: ${journalIds.join(', ')}`,
+          user?.id || null // Pass null if user is undefined
+      )
 
-      const recipientIds = new Set(editors.map(e => e.id))
-      if (journalAdmin?.admins) {
-          journalAdmin.admins.forEach(admin => recipientIds.add(admin.id))
-      }
-
-      if (recipientIds.size > 0) {
-        await prisma.notification.createMany({
-            data: Array.from(recipientIds).map(userId => ({
-                userId,
-                type: 'REVIEW',
-                title: `New Manuscript: ${title}`,
-                content: `A new manuscript "${title}" has been submitted to your journal from ${ip}.`,
-                status: 'UNREAD',
-                data: JSON.stringify({ novelId: novel.id, journalId })
-            }))
-        })
-      }
-    }
-
-    await logAudit(
-      "CREATE_WORK", 
-      `Novel:${novel.id}`, 
-      `Created work: ${title} (${type}) by ${finalAuthorName} (IP: ${ip}, Status: ${status})`, 
-      user?.id || null
-    )
-  } catch (error: any) {
-    console.error("Failed to create work:", error)
-    // Add more detailed error logging
-    if (error.code === 'P2003') {
-        console.error("Foreign key constraint failed on field: " + error.meta?.field_name)
-        return { error: "关联数据错误：所选期刊或用户无效，请刷新页面重试" }
-    }
-    return { error: "数据库错误: " + (error.message || "Unknown error") }
+  } catch (error) {
+      console.error("Database error:", error)
+      return { error: "提交失败，请稍后重试" }
   }
 
-  // Redirect to browse or success page after submission
-  redirect('/browse')
+  redirect('/')
 }

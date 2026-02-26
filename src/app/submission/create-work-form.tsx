@@ -33,9 +33,10 @@ const initialState: FormState = {
 
 export function CreateWorkForm({ journals, fundApplications = [], isLoggedIn = false }: CreateWorkFormProps) {
   const [state, formAction, isPending] = useActionState(createWork, initialState)
-  const [authors, setAuthors] = useState<{ name: string; unit: string; roles: string[] }[]>([
+  const [authors, setAuthors] = useState<{ name: string; unit: string; roles: string[]; contact?: string }[]>([
     { name: "", unit: "", roles: [] }
   ])
+  const [selectedJournals, setSelectedJournals] = useState<string[]>([])
 
   const addAuthor = () => {
     setAuthors([...authors, { name: "", unit: "", roles: [] }])
@@ -48,7 +49,7 @@ export function CreateWorkForm({ journals, fundApplications = [], isLoggedIn = f
     setAuthors(newAuthors)
   }
 
-  const updateAuthor = (index: number, field: 'name' | 'unit', value: string) => {
+  const updateAuthor = (index: number, field: 'name' | 'unit' | 'contact', value: string) => {
     const newAuthors = [...authors]
     newAuthors[index] = { ...newAuthors[index], [field]: value }
     setAuthors(newAuthors)
@@ -63,6 +64,27 @@ export function CreateWorkForm({ journals, fundApplications = [], isLoggedIn = f
       newAuthors[index].roles = [...currentRoles, "通讯作者"]
     }
     setAuthors(newAuthors)
+  }
+
+  const handleJournalChange = (journalId: string, checked: boolean) => {
+    // Determine limit based on login status
+    // If logged in: limit is 1
+    // If guest: limit is 3
+    const limit = isLoggedIn ? 1 : 3
+
+    if (checked) {
+      if (selectedJournals.length >= limit) {
+        // If limit is 1, replace the selection
+        if (limit === 1) {
+            setSelectedJournals([journalId])
+            return
+        }
+        return // Limit reached for guest
+      }
+      setSelectedJournals([...selectedJournals, journalId])
+    } else {
+      setSelectedJournals(selectedJournals.filter(id => id !== journalId))
+    }
   }
 
   return (
@@ -87,22 +109,71 @@ export function CreateWorkForm({ journals, fundApplications = [], isLoggedIn = f
              {/* Hidden input to pass authors data */}
              <input type="hidden" name="authorsData" value={JSON.stringify(authors)} />
 
-             {/* Journal Selection - Moved to Top */}
-             <div className="space-y-2">
-               <Label htmlFor="journalId">投稿期刊 <span className="text-red-500">*</span></Label>
-               <Select name="journalId" required>
-                 <SelectTrigger>
-                   <SelectValue placeholder="选择要投稿的期刊" />
-                 </SelectTrigger>
-                 <SelectContent position="popper" className="max-h-[300px] overflow-y-auto">
-                   {journals.map((journal) => (
-                     <SelectItem key={journal.id} value={journal.id}>
-                       {journal.name}
-                     </SelectItem>
-                   ))}
-                 </SelectContent>
-               </Select>
-               <p className="text-xs text-muted-foreground">请选择最适合您论文主题的期刊。</p>
+             {/* Top Section: Journal, Paper Type, Category */}
+             <div className="grid gap-6 md:grid-cols-2">
+               {/* Journal Selection - Multiple */}
+               <div className="space-y-2 col-span-2">
+                 <Label htmlFor="journalIds">投稿期刊 (Submission Journals) <span className="text-red-500">*</span></Label>
+                 <div className="border rounded-md p-3 max-h-[200px] overflow-y-auto space-y-2">
+                    {journals.map((journal) => {
+                      const isChecked = selectedJournals.includes(journal.id)
+                      const limit = isLoggedIn ? 1 : 3
+                      // If limit is 1, don't disable other options, allow switching. 
+                      // If limit > 1, disable when full.
+                      const isDisabled = limit > 1 && !isChecked && selectedJournals.length >= limit
+                      
+                      return (
+                        <div key={journal.id} className="flex items-center space-x-2">
+                            <input 
+                                type={isLoggedIn ? "radio" : "checkbox"} 
+                                id={`journal-${journal.id}`} 
+                                name="journalIds" 
+                                value={journal.id}
+                                checked={isChecked}
+                                onChange={(e) => handleJournalChange(journal.id, e.target.checked)}
+                                disabled={isDisabled}
+                                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                            />
+                            <label htmlFor={`journal-${journal.id}`} className={`text-sm select-none ${isDisabled ? 'text-muted-foreground cursor-not-allowed' : 'cursor-pointer'}`}>
+                                {journal.name}
+                            </label>
+                        </div>
+                      )
+                    })}
+                 </div>
+                 <p className="text-xs text-muted-foreground">
+                    {isLoggedIn 
+                        ? "快速通道投稿仅支持选择一个所属期刊。" 
+                        : "请选择要投稿的期刊，支持一稿多投（最多选择3个）。"
+                    } 
+                    已选: {selectedJournals.length}/{isLoggedIn ? 1 : 3}
+                 </p>
+                 {state.error && typeof state.error === 'object' && state.error.journalIds && (
+                   <p className="text-sm text-red-500">{state.error.journalIds[0]}</p>
+                 )}
+               </div>
+
+               <div className="space-y-2">
+                 <Label htmlFor="type">论文类型 <span className="text-red-500">*</span></Label>
+                 <Select name="type" required defaultValue="NOVEL" disabled>
+                   <SelectTrigger>
+                     <SelectValue placeholder="选择类型" />
+                   </SelectTrigger>
+                   <SelectContent>
+                    <SelectItem value="NOVEL">期刊论文 (Journal Paper)</SelectItem>
+                  </SelectContent>
+                 </Select>
+                 {/* Hidden input to ensure value is submitted even when disabled */}
+                 <input type="hidden" name="type" value="NOVEL" />
+               </div>
+               
+               <div className="space-y-2">
+                 <Label htmlFor="category">学科分类 <span className="text-red-500">*</span></Label>
+                 <Input id="category" name="category" placeholder="例如：计算机科学、人工智能" required />
+                 {state.error && typeof state.error === 'object' && state.error.category && (
+                   <p className="text-sm text-red-500">{state.error.category[0]}</p>
+                 )}
+               </div>
              </div>
 
              {/* Basic Info */}
@@ -146,6 +217,12 @@ export function CreateWorkForm({ journals, fundApplications = [], isLoggedIn = f
                     <Plus className="h-4 w-4 mr-2" /> 添加作者
                   </Button>
                 </div>
+                {state.error && typeof state.error === 'object' && state.error.author && (
+                  <p className="text-sm text-red-500 px-1">{state.error.author[0]}</p>
+                )}
+                {state.error && typeof state.error === 'object' && state.error.correspondingAuthor && (
+                  <p className="text-sm text-red-500 px-1">{state.error.correspondingAuthor[0]}</p>
+                )}
                 
                 <div className="space-y-6">
                   {authors.map((author, index) => (
@@ -184,50 +261,41 @@ export function CreateWorkForm({ journals, fundApplications = [], isLoggedIn = f
                             id={`author-unit-${index}`}
                             value={author.unit} 
                             onChange={(e) => updateAuthor(index, 'unit', e.target.value)}
-                            placeholder="RedNote xx."
+                            placeholder="例如：北京大学"
                           />
                         </div>
                       </div>
 
-                      <div className="flex items-center space-x-2 pt-2">
-                        <input
-                          type="checkbox"
-                          id={`author-corresponding-${index}`}
-                          checked={author.roles.includes("通讯作者")}
-                          onChange={() => toggleCorrespondingAuthor(index)}
-                          className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                        />
-                        <Label htmlFor={`author-corresponding-${index}`} className="text-sm font-normal cursor-pointer">
-                          设置为通讯作者 (Corresponding Author)
-                        </Label>
+                      <div className="flex items-center space-x-2 pt-2 flex-wrap gap-4">
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="checkbox"
+                            id={`author-corresponding-${index}`}
+                            checked={author.roles.includes("通讯作者")}
+                            onChange={() => toggleCorrespondingAuthor(index)}
+                            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                          />
+                          <Label htmlFor={`author-corresponding-${index}`} className="text-sm font-normal cursor-pointer">
+                            设置为通讯作者 (Corresponding Author)
+                          </Label>
+                        </div>
+                        
+                        {/* Conditional Contact Input for Corresponding Author */}
+                        {author.roles.includes("通讯作者") && (
+                          <div className="flex-1 min-w-[200px]">
+                             <Input 
+                               placeholder="小红书ID 或 邮箱 (必填)" 
+                               value={author.contact || ''}
+                               onChange={(e) => updateAuthor(index, 'contact', e.target.value)}
+                               required
+                               className="h-8 text-sm"
+                             />
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
                 </div>
-             </div>
-
-             <div className="grid gap-6 md:grid-cols-2">
-               <div className="space-y-2">
-                 <Label htmlFor="type">论文类型 <span className="text-red-500">*</span></Label>
-                 <Select name="type" required defaultValue="NOVEL">
-                   <SelectTrigger>
-                     <SelectValue placeholder="选择类型" />
-                   </SelectTrigger>
-                   <SelectContent>
-                    <SelectItem value="NOVEL">期刊论文 (Journal Paper)</SelectItem>
-                    <SelectItem value="PAPER">会议论文 (Conference Paper)</SelectItem>
-                    <SelectItem value="AUTOBIOGRAPHY">技术报告 (Technical Report)</SelectItem>
-                    <SelectItem value="ARTICLE">综述文章 (Review Article)</SelectItem>
-                  </SelectContent>
-                 </Select>
-               </div>
-               <div className="space-y-2">
-                 <Label htmlFor="category">学科分类 <span className="text-red-500">*</span></Label>
-                 <Input id="category" name="category" placeholder="例如：计算机科学、人工智能" required />
-                 {state.error && typeof state.error === 'object' && state.error.category && (
-                   <p className="text-sm text-red-500">{state.error.category[0]}</p>
-                 )}
-               </div>
              </div>
 
              <div className="space-y-2">
