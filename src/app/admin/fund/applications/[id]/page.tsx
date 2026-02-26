@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ArrowLeft, User, FileText, Clock } from "lucide-react"
 import { ReviewDialog } from "./review-dialog"
+import { RevokeButton } from "./revoke-button"
 
 export default async function FundApplicationDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -67,9 +68,12 @@ export default async function FundApplicationDetailPage({ params }: { params: Pr
             <span>{getStatusBadge(application.status)}</span>
           </p>
         </div>
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-2">
           {['SUBMITTED', 'UNDER_REVIEW'].includes(application.status) && (
             <ReviewDialog applicationId={application.id} />
+          )}
+          {['APPROVED', 'REJECTED'].includes(application.status) && (
+            <RevokeButton applicationId={application.id} />
           )}
         </div>
       </div>
@@ -128,11 +132,6 @@ export default async function FundApplicationDetailPage({ params }: { params: Pr
                           {format(review.createdAt, 'yyyy-MM-dd HH:mm')}
                         </div>
                       </div>
-                      <div className="flex gap-4 mb-2 text-sm">
-                        <Badge variant={review.grade === 'A' ? 'default' : 'secondary'}>
-                          评分: {review.score} ({review.grade})
-                        </Badge>
-                      </div>
                       <div className="text-sm bg-muted/50 p-3 rounded">
                         {review.comments || '无评审意见'}
                       </div>
@@ -185,6 +184,7 @@ export default async function FundApplicationDetailPage({ params }: { params: Pr
                 <div className="flex gap-3">
                   <div className="flex flex-col items-center">
                     <div className={`h-2 w-2 rounded-full mt-1.5 ${application.updatedAt > application.createdAt ? 'bg-primary' : 'bg-muted'}`} />
+                    {application.status === 'APPROVED' && <div className="w-0.5 flex-1 bg-primary my-1" />}
                   </div>
                   <div>
                     <div className="text-sm font-medium">最近更新</div>
@@ -193,6 +193,20 @@ export default async function FundApplicationDetailPage({ params }: { params: Pr
                     </div>
                   </div>
                 </div>
+
+                {application.status === 'APPROVED' && (
+                  <div className="flex gap-3">
+                    <div className="flex flex-col items-center">
+                      <div className="h-2 w-2 rounded-full bg-green-500 mt-1.5" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-green-600">立项成功</div>
+                      <div className="text-xs text-muted-foreground">
+                        {format(application.updatedAt, 'yyyy-MM-dd HH:mm')}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

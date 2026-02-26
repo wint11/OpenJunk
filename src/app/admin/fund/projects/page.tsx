@@ -21,15 +21,42 @@ export default async function FundProjectsPage() {
     redirect("/")
   }
 
+  // Get user's managed categories
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    include: { fundAdminCategories: true }
+  })
+
+  // Filter funds based on user role and managed categories
+  let whereClause = {}
+  if (session.user.role !== 'SUPER_ADMIN') {
+    const categoryIds = user?.fundAdminCategories.map(c => c.id) || []
+    whereClause = {
+      categoryId: { in: categoryIds }
+    }
+  }
+
   const funds = await prisma.fund.findMany({
+    where: whereClause,
     include: {
       category: true
     },
     orderBy: { createdAt: 'desc' }
   })
 
-  // Fetch all categories for the create dialog
-  const categories = await prisma.fundCategory.findMany()
+  // Fetch categories for the create dialog
+  // If not super admin, only show managed categories
+  let categoryWhere = {}
+  if (session.user.role !== 'SUPER_ADMIN') {
+    const categoryIds = user?.fundAdminCategories.map(c => c.id) || []
+    categoryWhere = {
+      id: { in: categoryIds }
+    }
+  }
+
+  const categories = await prisma.fundCategory.findMany({
+    where: categoryWhere
+  })
 
   return (
     <div className="space-y-6">

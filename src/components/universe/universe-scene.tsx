@@ -5,6 +5,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import { OrbitControls, Stars, Billboard } from "@react-three/drei"
 import * as THREE from "three"
 import { useRouter } from "next/navigation"
+import { ArrowLeft } from "lucide-react"
 
 interface Journal {
   id: string
@@ -219,52 +220,71 @@ function SceneContent({ journals, onSelect }: { journals: Journal[], onSelect: (
     return Math.max(...journals.map(j => j.totalPopularity), 1)
   }, [journals])
 
-  // Initialize positions based on popularity-gravity model
+  // Initialize positions based on constrained random walk
+  // Only re-run if journal IDs change (structure changes), not when properties like combatPower change
+  const journalIdsHash = journals.map(j => j.id).join(',')
+  
   useEffect(() => {
-    const newPositions = journals.map((journal, index) => {
+    const newPositions: {id: string, pos: THREE.Vector3, size: number}[] = []
+    
+    // Starting position (center of the universe)
+    // Randomize start position slightly to avoid always starting exactly at 0,0,0
+    let currentPos = new THREE.Vector3(
+      (Math.random() - 0.5) * 50,
+      (Math.random() - 0.5) * 50,
+      (Math.random() - 0.5) * 50
+    )
+    const maxRadius = 150 // Boundary radius
+    const stepSizeBase = 20 // Increased distance between related journals to spread them out more
+
+    journals.forEach((journal) => {
       const size = 1.2 + Math.log10(Math.max(1, journal.paperCount)) * 1.5
       
-      // Gravity Simulation Logic:
-      // Larger/More popular planets are pulled closer to center (0,0,0)
-      // Smaller planets are pushed further out
-      
-      // Calculate a "Weight" score based on paperCount and popularity
-      // Normalize between 0 and 1 roughly
-      const popularityScore = Math.min(journal.totalPopularity / maxPopularity, 1)
-      const sizeScore = Math.min(Math.log10(Math.max(1, journal.paperCount)) / 3, 1)
-      const totalWeight = (popularityScore * 0.7 + sizeScore * 0.3)
-      
-      // Distance is inversely proportional to weight
-      // High weight -> Small distance (Core)
-      // Low weight -> Large distance (Outer Rim)
-      // Base distance range: 5 to 60
-      const minDistance = 8
-      const maxDistance = 60
-      const distance = maxDistance - (totalWeight * (maxDistance - minDistance))
-      
-      // Add randomness to angle to distribute them
-      // Use Golden Angle for even distribution on a sphere surface approximation
-      const phi = Math.acos(-1 + (2 * index) / journals.length)
-      const theta = Math.sqrt(journals.length * Math.PI) * phi
-      
-      // Convert spherical to cartesian
-      // Add some noise to distance so it's not perfect layers
-      const noisyDistance = distance + (Math.random() - 0.5) * 5
-      
-      const x = noisyDistance * Math.cos(theta) * Math.sin(phi)
-      const y = noisyDistance * Math.sin(theta) * Math.sin(phi)
-      const z = noisyDistance * Math.cos(phi)
-      
-      // Flatten the universe a bit to look like a galaxy disc?
-      // Multiply y by 0.4 to flatten
-      return {
-        id: journal.id,
-        pos: new THREE.Vector3(x, y * 0.4, z),
-        size
+      // Generate a random direction vector
+      // Bias slightly towards keeping the current general direction to create "streams"
+      const randomDir = new THREE.Vector3(
+        (Math.random() - 0.5) * 2,
+        (Math.random() - 0.5) * 2,
+        (Math.random() - 0.5) * 2
+      ).normalize()
+
+      // Calculate next position
+      // Add randomness to step size
+      const stepSize = stepSizeBase + (Math.random() - 0.5) * 10
+      let nextPos = currentPos.clone().add(randomDir.multiplyScalar(stepSize))
+
+      // Check boundary: if too far, pull back towards center
+      if (nextPos.length() > maxRadius) {
+        const directionToCenter = new THREE.Vector3(0, 0, 0).sub(currentPos).normalize()
+        // Mix the random direction with the direction to center
+        // Stronger pull back
+        const correctedDir = randomDir.add(directionToCenter.multiplyScalar(2.0)).normalize()
+        nextPos = currentPos.clone().add(correctedDir.multiplyScalar(stepSize))
       }
+
+      // Apply some local jitter so they aren't perfectly on a line
+      // Reduced jitter relative to step size to keep the "chain" more visible but still organic
+      const jitter = new THREE.Vector3(
+        (Math.random() - 0.5) * 15,
+        (Math.random() - 0.5) * 15,
+        (Math.random() - 0.5) * 15
+      )
+      
+      const finalPos = nextPos.clone().add(jitter)
+
+      newPositions.push({
+        id: journal.id,
+        pos: finalPos,
+        size
+      })
+
+      // Update currentPos for the next iteration
+      // We use nextPos (without jitter) as the anchor for the next point to maintain the "backbone"
+      currentPos = nextPos
     })
+
     setPositions(newPositions)
-  }, [journals, maxPopularity])
+  }, [journalIdsHash]) // Only depend on IDs hash to prevent re-calc on combat power update
 
   return (
     <>
@@ -273,7 +293,7 @@ function SceneContent({ journals, onSelect }: { journals: Journal[], onSelect: (
       <pointLight position={[50, 50, 50]} intensity={1} color="#ffffff" />
       <pointLight position={[-50, -50, -50]} intensity={0.5} color="#4444ff" />
       
-      <Stars radius={200} depth={100} count={8000} factor={6} saturation={0.5} fade speed={0.5} />
+      <Stars radius={300} depth={100} count={10000} factor={6} saturation={0.5} fade speed={0.5} />
       
       {journals.map((journal) => {
         const posData = positions.find(p => p.id === journal.id)
@@ -295,22 +315,37 @@ function SceneContent({ journals, onSelect }: { journals: Journal[], onSelect: (
         enablePan={true} 
         enableZoom={true} 
         enableRotate={true} 
-        autoRotate={true}
-        autoRotateSpeed={0.2}
+        autoRotate={false}
         minDistance={5}
-        maxDistance={200}
+        maxDistance={500}
+        mouseButtons={{
+          LEFT: THREE.MOUSE.ROTATE,
+          MIDDLE: THREE.MOUSE.PAN,
+          RIGHT: THREE.MOUSE.DOLLY
+        }}
       />
     </>
   )
 }
 
-// Removed JournalDetailModal in favor of UniverseHUD
-
 import { UniverseHUD } from "./hud/universe-hud"
 
 export default function UniverseScene({ journals, currentSeason }: UniverseSceneProps) {
+  const router = useRouter()
   const [selectedJournal, setSelectedJournal] = useState<Journal | null>(null)
   const [localJournals, setLocalJournals] = useState(journals)
+
+  // Handle scrollbar hiding
+  useEffect(() => {
+    // Add no-scroll class to body and html
+    document.body.classList.add('no-scroll')
+    document.documentElement.classList.add('no-scroll')
+    
+    return () => {
+      document.body.classList.remove('no-scroll')
+      document.documentElement.classList.remove('no-scroll')
+    }
+  }, [])
 
   useEffect(() => {
     setLocalJournals(journals)
@@ -327,24 +362,34 @@ export default function UniverseScene({ journals, currentSeason }: UniverseScene
     }
   }
 
-  if (!localJournals || localJournals.length === 0) {
-    return (
-      <div className="flex h-[calc(100vh-4rem)] items-center justify-center text-muted-foreground">
-        暂无期刊数据
-      </div>
-    )
-  }
-
   return (
-    <div className="h-[calc(100vh-4rem)] w-full bg-black relative">
-      <Canvas camera={{ position: [0, 20, 60], fov: 50 }}>
-        <SceneContent journals={localJournals} onSelect={setSelectedJournal} />
+    <div className="w-full h-full relative">
+      <Canvas camera={{ position: [0, 20, 100], fov: 60 }}>
+        <SceneContent 
+          journals={localJournals} 
+          onSelect={setSelectedJournal} 
+        />
       </Canvas>
       
-      <div className="absolute bottom-8 left-8 text-white/50 text-sm pointer-events-none select-none">
-        <p>当前赛季: <span className="text-yellow-400 font-bold">{currentSeason.name}</span></p>
-        <p>拖动旋转 • 滚轮缩放 • 点击星球加入阵营</p>
-        <p>星球大小代表论文数量，亮度代表总热度</p>
+      {/* UI Overlay */}
+      <div className="absolute top-4 left-4 z-10 pointer-events-none">
+        <div className="flex items-start gap-4">
+          <button 
+            onClick={() => router.back()} 
+            className="pointer-events-auto p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors backdrop-blur-sm"
+            aria-label="返回"
+          >
+            <ArrowLeft className="w-6 h-6" />
+          </button>
+          <div>
+            <h1 className="text-4xl font-bold text-white opacity-80 tracking-widest drop-shadow-md">
+              {currentSeason.name}
+            </h1>
+            <p className="text-white/60 mt-2 text-sm max-w-md">
+              探索期刊星系。滚轮缩放，左键旋转，中键平移。
+            </p>
+          </div>
+        </div>
       </div>
 
       <UniverseHUD 

@@ -230,11 +230,11 @@ export function UniverseHUD({ currentJournal, currentSeason, onLeave, onCombatUp
                   
                   <div className="space-y-2">
                     {quiz.options.map((option, idx) => {
-                      let stateStyle = "bg-white/5 hover:bg-white/10 border-white/5"
+                      let stateStyle = "bg-white/5 hover:bg-white/10 border-white/5 text-white"
                       if (showResult) {
                         if (idx === quiz.correctAnswer) stateStyle = "bg-green-500/20 border-green-500/50 text-green-200"
                         else if (idx === selectedOption) stateStyle = "bg-red-500/20 border-red-500/50 text-red-200"
-                        else stateStyle = "opacity-50"
+                        else stateStyle = "opacity-50 text-white/50"
                       }
 
                       return (

@@ -78,7 +78,7 @@ export default async function UniversePage() {
   }))
 
   return (
-    <div className="w-full h-full overflow-hidden bg-black relative">
+    <div className="absolute inset-0 w-full h-full overflow-hidden bg-black z-50">
       <UniverseClient 
         journals={formattedJournals} 
         currentSeason={{ id: seasonId!, name: seasonName }}

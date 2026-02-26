@@ -284,7 +284,7 @@ export function CreateWorkForm({ journals, fundApplications = [], isLoggedIn = f
                         {author.roles.includes("通讯作者") && (
                           <div className="flex-1 min-w-[200px]">
                              <Input 
-                               placeholder="小红书ID 或 邮箱 (必填)" 
+                               placeholder="小红书ID 或 真实邮箱 (必填)" 
                                value={author.contact || ''}
                                onChange={(e) => updateAuthor(index, 'contact', e.target.value)}
                                required

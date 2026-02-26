@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { BookOpen, Calendar, FileText, Users, Download } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import ReactMarkdown from "react-markdown"
 
 interface JournalDetailPageProps {
   params: Promise<{ id: string }>
@@ -75,15 +76,34 @@ export default async function JournalDetailPage(props: JournalDetailPageProps) {
       </section>
 
       {/* Main Content: Guidelines & Papers */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-        {/* Left Column: Submission Guidelines */}
-        <aside className="lg:col-span-1 space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-10 gap-12">
+        {/* Left Column: Submission Guidelines (40%) */}
+        <aside className="lg:col-span-4 space-y-6">
           <h2 className="text-2xl font-bold tracking-tight border-l-4 border-primary pl-4">
              投稿指南
           </h2>
            <div className="bg-muted/10 rounded-xl border p-6 space-y-4">
-              <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground whitespace-pre-wrap">
-                 {journal.guidelines ? journal.guidelines : "该期刊暂未发布详细的投稿指南。"}
+              <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground break-words">
+                 {journal.guidelines ? (
+                    <ReactMarkdown
+                      components={{
+                        h1: (props) => <h1 className="text-xl font-bold mt-6 mb-4 text-foreground" {...props} />,
+                        h2: (props) => <h2 className="text-lg font-bold mt-5 mb-3 text-foreground" {...props} />,
+                        h3: (props) => <h3 className="text-base font-bold mt-4 mb-2 text-foreground" {...props} />,
+                        p: (props) => <p className="mb-4 leading-relaxed" {...props} />,
+                        ul: (props) => <ul className="list-disc pl-5 mb-4 space-y-1" {...props} />,
+                        ol: (props) => <ol className="list-decimal pl-5 mb-4 space-y-1" {...props} />,
+                        li: (props) => <li className="pl-1" {...props} />,
+                        blockquote: (props) => <blockquote className="border-l-4 border-muted pl-4 italic my-4 text-muted-foreground" {...props} />,
+                        a: (props) => <a className="text-primary hover:underline underline-offset-4" target="_blank" rel="noopener noreferrer" {...props} />,
+                        code: (props) => <code className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono" {...props} />,
+                      }}
+                    >
+                      {journal.guidelines}
+                    </ReactMarkdown>
+                 ) : (
+                    "该期刊暂未发布详细的投稿指南。"
+                 )}
               </div>
               {journal.guidelinesUrl && (
                 <div className="pt-4 border-t">
@@ -98,8 +118,8 @@ export default async function JournalDetailPage(props: JournalDetailPageProps) {
            </div>
         </aside>
 
-        {/* Right Column: Latest Papers */}
-        <main className="lg:col-span-2 space-y-6">
+        {/* Right Column: Latest Papers (60%) */}
+        <main className="lg:col-span-6 space-y-6">
           <h2 className="text-2xl font-bold tracking-tight border-l-4 border-primary pl-4">
             最新录用
           </h2>
@@ -108,16 +128,16 @@ export default async function JournalDetailPage(props: JournalDetailPageProps) {
             <div className="flex flex-col gap-4">
               {journal.papers.map((paper) => (
                 <Card key={paper.id} className="group hover:shadow-md transition-all">
-                  <CardHeader>
+                  <CardHeader className="pb-2">
                      <Link href={`/novel/${paper.id}`} className="block hover:underline decoration-primary underline-offset-4">
                         <CardTitle className="text-lg line-clamp-1">{paper.title}</CardTitle>
                      </Link>
-                     <CardDescription className="flex items-center gap-2 text-xs">
-                        <span>{paper.author}</span>
+                     <div className="flex items-center gap-2 text-xs text-muted-foreground pt-1">
+                        <span>{paper.uploader?.name || "匿名作者"}</span>
                         <span>•</span>
-                        <span>{paper.createdAt.toLocaleDateString()}</span>
-                        <Badge variant="secondary" className="text-[10px] px-1 py-0 h-5">{paper.category}</Badge>
-                     </CardDescription>
+                        <span>{new Date(paper.updatedAt).toLocaleDateString()}</span>
+                        {paper.category && <Badge variant="secondary" className="text-[10px] px-1 py-0 h-5">{paper.category}</Badge>}
+                     </div>
                   </CardHeader>
                   <CardContent>
                      <p className="text-sm text-muted-foreground line-clamp-2">

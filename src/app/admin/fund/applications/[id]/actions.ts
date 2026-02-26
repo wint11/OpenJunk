@@ -18,6 +18,26 @@ export async function reviewApplication(prevState: any, formData: FormData) {
     return { success: false, message: '参数缺失' }
   }
 
+  // Permission check
+  if (session.user.role !== 'SUPER_ADMIN') {
+    const application = await prisma.fundApplication.findUnique({
+      where: { id: applicationId },
+      include: { fund: true }
+    })
+    
+    if (!application) return { success: false, message: '申请不存在' }
+
+    const user = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        include: { fundAdminCategories: true }
+    })
+    
+    const hasPermission = user?.fundAdminCategories.some(c => c.id === application.fund.categoryId)
+    if (!hasPermission) {
+        return { success: false, message: '无权操作此申请' }
+    }
+  }
+
   const newStatus = action === 'APPROVE' ? 'APPROVED' : 'REJECTED'
 
   try {
@@ -65,5 +85,63 @@ export async function reviewApplication(prevState: any, formData: FormData) {
   } catch (error: any) {
     console.error('Review error:', error)
     return { success: false, message: '操作失败: ' + error.message }
+  }
+}
+
+export async function revokeApplication(prevState: any, formData: FormData) {
+  const session = await auth()
+  if (!session?.user || (session.user.role !== 'ADMIN' && session.user.role !== 'SUPER_ADMIN')) {
+    return { success: false, message: '无权操作' }
+  }
+
+  const applicationId = formData.get('applicationId') as string
+
+  if (!applicationId) {
+    return { success: false, message: '参数缺失' }
+  }
+
+  // Permission check
+  if (session.user.role !== 'SUPER_ADMIN') {
+    const application = await prisma.fundApplication.findUnique({
+      where: { id: applicationId },
+      include: { fund: true }
+    })
+    
+    if (!application) return { success: false, message: '申请不存在' }
+
+    const user = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        include: { fundAdminCategories: true }
+    })
+    
+    const hasPermission = user?.fundAdminCategories.some(c => c.id === application.fund.categoryId)
+    if (!hasPermission) {
+        return { success: false, message: '无权操作此申请' }
+    }
+  }
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      // 1. Reset status to SUBMITTED
+      await tx.fundApplication.update({
+        where: { id: applicationId },
+        data: {
+          status: 'SUBMITTED',
+        }
+      })
+
+      // 2. Delete all review records associated with this application
+      // Since we are "revoking/undoing", we assume the reviews are invalid or part of the test
+      await tx.fundReview.deleteMany({
+        where: { applicationId }
+      })
+    })
+
+    revalidatePath(`/admin/fund/applications/${applicationId}`)
+    revalidatePath(`/admin/fund/applications`)
+    return { success: true, message: '已撤销立项状态，重置为已提交' }
+  } catch (error: any) {
+    console.error('Revoke error:', error)
+    return { success: false, message: '撤销失败: ' + error.message }
   }
 }

@@ -23,10 +23,25 @@ export default async function FundApplicationsPage() {
     redirect("/")
   }
 
-  // In a real scenario, we should filter by the fund categories the admin manages.
-  // For now, we show all for simplicity as requested to "implement the page".
-  
+  // Get user's managed categories
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    include: { fundAdminCategories: true }
+  })
+
+  // Filter applications based on user role and managed categories
+  let whereClause = {}
+  if (session.user.role !== 'SUPER_ADMIN') {
+    const categoryIds = user?.fundAdminCategories.map(c => c.id) || []
+    whereClause = {
+      fund: {
+        categoryId: { in: categoryIds }
+      }
+    }
+  }
+
   const applications = await prisma.fundApplication.findMany({
+    where: whereClause,
     include: {
       fund: true,
       reviews: true

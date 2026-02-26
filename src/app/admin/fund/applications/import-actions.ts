@@ -3,10 +3,25 @@
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import * as XLSX from 'xlsx'
+import { auth } from "@/auth"
 
 const REQUIRED_HEADERS = ['受理编号', '项目名称', '所属基金', '申请人', '状态']
 
 export async function importApplications(prevState: any, formData: FormData) {
+  const session = await auth()
+  if (!session?.user || (session.user.role !== 'ADMIN' && session.user.role !== 'SUPER_ADMIN')) {
+    return { success: false, message: '无权操作' }
+  }
+
+  let allowedCategoryIds: string[] = []
+  if (session.user.role !== 'SUPER_ADMIN') {
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      include: { fundAdminCategories: true }
+    })
+    allowedCategoryIds = user?.fundAdminCategories.map(c => c.id) || []
+  }
+
   const file = formData.get('file') as File
   
   if (!file) {
@@ -81,14 +96,18 @@ export async function importApplications(prevState: any, formData: FormData) {
             }
         }
 
-        // Find Fund by Name (Title)
-        // We need to find an active fund with this name
+        // Find Fund by Name (Title) and Permission
+        const fundWhere: any = { title: String(fundName) }
+        if (session.user.role !== 'SUPER_ADMIN') {
+            fundWhere.categoryId = { in: allowedCategoryIds }
+        }
+
         const fund = await prisma.fund.findFirst({
-          where: { title: String(fundName) }
+          where: fundWhere
         })
 
         if (!fund) {
-          throw new Error(`找不到名为 "${fundName}" 的基金项目`)
+          throw new Error(`找不到名为 "${fundName}" 的基金项目或无权操作`)
         }
 
         // Check for duplicate Serial No

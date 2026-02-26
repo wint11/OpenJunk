@@ -214,12 +214,13 @@ export async function createWork(prevState: FormState, formData: FormData): Prom
 
   try {
       // Determine initial status
-      // If user is logged in, use PENDING
-      // If guest, use DRAFT
-      // Use !!user to ensure boolean
-      // FORCE CHECK: If user object exists, status MUST be PENDING.
+      // If user is ADMIN or SUPER_ADMIN, status is PUBLISHED
+      // Otherwise (USER/AUTHOR/GUEST), status is DRAFT (waiting for review)
       
-      const status = (user && user.id) ? "PENDING" : "DRAFT"
+      let status = "DRAFT"
+      if (user && (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN')) {
+          status = "PUBLISHED"
+      }
 
       console.log(`Creating novel with status: ${status} for user: ${user?.id || 'guest'}`)
 

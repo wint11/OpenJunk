@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import * as XLSX from 'xlsx'
 import { z } from "zod"
+import { auth } from "@/auth"
 
 const REQUIRED_HEADERS = ['项目名称', '年度', '基金代码', '项目负责人']
 
@@ -18,10 +19,15 @@ const createFundSchema = z.object({
 
 const updateFundSchema = createFundSchema.extend({
   id: z.string().min(1, "项目ID不能为空"),
-  status: z.enum(['ACTIVE', 'INACTIVE', 'ARCHIVED']).optional()
+  status: z.enum(['DRAFT', 'ACTIVE', 'CLOSED', 'ARCHIVED']).optional()
 })
 
 export async function createFund(prevState: any, formData: FormData) {
+  const session = await auth()
+  if (!session?.user || (session.user.role !== 'ADMIN' && session.user.role !== 'SUPER_ADMIN')) {
+    return { success: false, message: '无权操作' }
+  }
+
   const data = {
     title: formData.get("title") as string,
     year: formData.get("year"),
@@ -38,6 +44,18 @@ export async function createFund(prevState: any, formData: FormData) {
       success: false,
       message: "表单验证失败",
       errors: validated.error.flatten().fieldErrors
+    }
+  }
+
+  // Check permission
+  if (session.user.role !== 'SUPER_ADMIN') {
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      include: { fundAdminCategories: true }
+    })
+    const hasPermission = user?.fundAdminCategories.some(c => c.id === validated.data.categoryId)
+    if (!hasPermission) {
+      return { success: false, message: '无权在该基金大类下创建项目' }
     }
   }
 
@@ -65,6 +83,11 @@ export async function createFund(prevState: any, formData: FormData) {
 }
 
 export async function updateFund(prevState: any, formData: FormData) {
+  const session = await auth()
+  if (!session?.user || (session.user.role !== 'ADMIN' && session.user.role !== 'SUPER_ADMIN')) {
+    return { success: false, message: '无权操作' }
+  }
+
   const data = {
     id: formData.get("id") as string,
     title: formData.get("title") as string,
@@ -83,6 +106,18 @@ export async function updateFund(prevState: any, formData: FormData) {
       success: false,
       message: "表单验证失败",
       errors: validated.error.flatten().fieldErrors
+    }
+  }
+
+  // Check permission
+  if (session.user.role !== 'SUPER_ADMIN') {
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      include: { fundAdminCategories: true }
+    })
+    const hasPermission = user?.fundAdminCategories.some(c => c.id === validated.data.categoryId)
+    if (!hasPermission) {
+      return { success: false, message: '无权操作该基金项目' }
     }
   }
 

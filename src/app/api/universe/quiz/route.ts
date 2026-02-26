@@ -192,7 +192,7 @@ export async function GET(request: Request) {
       请严格按照以下 JSON 格式返回（不要包含 Markdown 代码块标记）：
       {
         "question": "题目内容",
-        "options": ["选项A", "选项B", "选项C", "选项D"],
+        "options": ["选项内容1", "选项内容2", "选项内容3", "选项内容4"], // 选项中绝对不要包含 A. B. C. D. 等前缀
         "correctAnswer": 0, // 0-3 代表正确选项的索引
         "explanation": "简短解析"
       }

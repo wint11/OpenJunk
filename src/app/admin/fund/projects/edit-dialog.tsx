@@ -59,6 +59,7 @@ export function EditFundDialog({ fund }: { fund: any }) {
 
         <form id="edit-fund-form" action={formAction} className="space-y-4 py-4">
           <input type="hidden" name="id" value={fund.id} />
+          <input type="hidden" name="categoryId" value={fund.categoryId} />
           
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -115,7 +116,7 @@ export function EditFundDialog({ fund }: { fund: any }) {
             <Label htmlFor="guideContent">指南内容</Label>
             <Textarea 
               id="guideContent" 
-              name="guideContent" 
+              name="description" 
               defaultValue={fund.guideContent || ''} 
               className="min-h-[150px]"
             />

@@ -90,6 +90,11 @@ body {
   overflow-y: scroll !important;
 }
 
+.no-scroll,
+.no-scroll body {
+  overflow: hidden !important;
+}
+
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
