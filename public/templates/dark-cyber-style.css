@@ -1,0 +1,266 @@
+/* 
+  OpenJunk 期刊自定义样式示例 - "赛博终端 (Cyber Terminal)"
+  
+  颠覆性布局：
+  1. 将原本顶部的期刊信息栏变为【左侧固定边栏】。
+  2. 将右侧的内容区域变为【全屏滚动流】。
+  3. 视觉风格：复古 CRT 显示器效果 + 绿色黑客代码风。
+  
+  注意：此样式严重依赖 position: fixed 和 flex 布局来强制改变文档流。
+  仅在大屏幕 (Desktop) 上生效，移动端保持默认堆叠。
+*/
+
+/* --- 基础设置：复古终端字体与背景 --- */
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+.journal-container {
+  background-color: #050505 !important;
+  background-image: 
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+    linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)) !important;
+  background-size: 100% 2px, 3px 100% !important;
+  color: #00ff41 !important; /* 黑客绿 */
+  font-family: 'Share Tech Mono', 'Courier New', monospace !important;
+  max-width: 100% !important;
+  min-height: 100vh !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow-x: hidden !important;
+}
+
+/* 屏幕扫描线动画 */
+.journal-container::after {
+  content: " ";
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(18, 16, 16, 0.1);
+  opacity: 0;
+  z-index: 9999;
+  pointer-events: none;
+  animation: flicker 0.15s infinite;
+}
+
+@keyframes flicker {
+  0% { opacity: 0.02; }
+  50% { opacity: 0.05; }
+  100% { opacity: 0.02; }
+}
+
+/* --- 颠覆布局：Header 变 Sidebar --- */
+@media (min-width: 1024px) {
+  .journal-header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 300px !important;
+    height: 100vh !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    background: #000 !important;
+    border: none !important;
+    border-right: 2px solid #00ff41 !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 2rem !important;
+    z-index: 50;
+    overflow-y: auto;
+  }
+
+  /* 调整 Header 内部元素布局 */
+  .journal-header > div {
+    width: 100% !important;
+  }
+
+  /* 内容区域整体右移 */
+  .journal-container > .grid {
+    margin-left: 300px !important;
+    width: calc(100% - 300px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 2rem !important;
+    gap: 2rem !important;
+  }
+}
+
+/* --- 1. Header 样式细节 --- */
+.journal-title {
+  color: #00ff41 !important;
+  text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41;
+  font-size: 2rem !important;
+  border-bottom: 2px dashed #00ff41;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.journal-description {
+  color: #008f11 !important; /* 稍暗的绿色 */
+  font-size: 0.9rem !important;
+  border-left: 4px solid #003b00;
+  padding-left: 1rem;
+  margin-top: 2rem !important;
+}
+
+.journal-meta {
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 1rem !important;
+  margin-top: 3rem !important;
+  border-top: 1px solid #003b00;
+  padding-top: 1rem;
+}
+
+.journal-meta span {
+  width: 100%;
+  border: 1px solid #003b00 !important;
+  background: #050505 !important;
+  color: #008f11 !important;
+  border-radius: 0 !important;
+  padding: 0.5rem !important;
+}
+
+/* --- 2. 投稿指南 (变成顶部通栏或第一个板块) --- */
+.journal-guidelines-section {
+  background: rgba(0, 20, 0, 0.8) !important;
+  border: 1px solid #00ff41 !important;
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.2) !important;
+  border-radius: 0 !important;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 装饰性边角 */
+.journal-guidelines-section::before {
+  content: "SYSTEM_NOTICE";
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #00ff41;
+  color: #000;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  font-weight: bold;
+}
+
+.journal-guidelines-title {
+  color: #00ff41 !important;
+  border-left: 10px solid #00ff41 !important;
+  padding-left: 1rem !important;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.journal-guidelines-content .prose {
+  color: #00cc33 !important;
+}
+
+.journal-guidelines-content a {
+  color: #fff !important;
+  background: #008f11;
+  padding: 0 4px;
+  text-decoration: none !important;
+}
+
+/* --- 3. 论文列表 (变成网格卡片) --- */
+.journal-papers-section {
+  /* 强制把论文列表变成 Grid 布局 */
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
+  gap: 1.5rem !important;
+  align-content: start !important;
+}
+
+/* 标题需要跨越整行 */
+.journal-papers-title {
+  grid-column: 1 / -1 !important; /* 占满一行 */
+  color: #fff !important;
+  background: #00ff41;
+  color: #000 !important;
+  padding: 0.5rem 1rem !important;
+  margin-bottom: 1rem !important;
+  width: fit-content;
+  border: none !important;
+  clip-path: polygon(0 0, 95% 0, 100% 100%, 0% 100%);
+}
+
+/* 隐藏原本包裹论文卡片的 flex 容器（如果 HTML 结构允许） */
+/* 注意：这里 HTML 是 .flex-col.gap-4，我们需要把它变成 grid 的一部分或者覆盖它的样式 */
+.journal-papers-section > div {
+  display: contents !important; /* 让子元素直接参与 Grid 布局 */
+}
+
+/* --- 4. 论文卡片 (数据块风格) --- */
+.journal-paper-card {
+  background: #000 !important;
+  border: 1px solid #003b00 !important;
+  border-radius: 0 !important;
+  position: relative;
+  transition: all 0.2s !important;
+  box-shadow: none !important;
+}
+
+.journal-paper-card:hover {
+  border-color: #00ff41 !important;
+  transform: scale(1.02) !important;
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.3) !important;
+  z-index: 10;
+}
+
+/* 卡片角落装饰 */
+.journal-paper-card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  border-bottom: 2px solid #00ff41;
+  border-right: 2px solid #00ff41;
+  opacity: 0.5;
+}
+
+.journal-paper-title {
+  color: #00ff41 !important;
+  font-size: 1.1rem !important;
+  line-height: 1.4 !important;
+}
+
+.journal-paper-meta {
+  color: #008f11 !important;
+  font-size: 0.8rem !important;
+  text-transform: uppercase;
+}
+
+.journal-paper-abstract {
+  color: #006600 !important;
+  font-size: 0.85rem !important;
+  border-top: 1px dashed #003b00;
+  padding-top: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+/* 徽章 Badge */
+.badge {
+  background: transparent !important;
+  border: 1px solid #00ff41 !important;
+  color: #00ff41 !important;
+  border-radius: 0 !important;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #000;
+}
+::-webkit-scrollbar-thumb {
+  background: #003b00;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00ff41;
+}

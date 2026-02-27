@@ -20,6 +20,7 @@ export async function createJournal(formData: FormData) {
   const status = formData.get("status") as string
   const coverFile = formData.get("cover") as File | null
   const guidelinesFile = formData.get("guidelinesFile") as File | null
+  const customCssFile = formData.get("customCss") as File | null
 
   let coverUrl = undefined
   if (coverFile && coverFile.size > 0) {
@@ -49,12 +50,27 @@ export async function createJournal(formData: FormData) {
     guidelinesUrl = `/uploads/guidelines/${fileName}`
   }
 
+  let customCssUrl = undefined
+  if (customCssFile && customCssFile.size > 0) {
+    const bytes = await customCssFile.arrayBuffer()
+    const buffer = Buffer.from(bytes)
+    
+    // Ensure directory exists
+    const uploadDir = join(process.cwd(), "public/uploads/css")
+    await mkdir(uploadDir, { recursive: true })
+    
+    const fileName = `style-${Date.now()}-${customCssFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`
+    await writeFile(join(uploadDir, fileName), buffer)
+    customCssUrl = `/uploads/css/${fileName}`
+  }
+
   await prisma.journal.create({
     data: {
       name,
       description,
       guidelines,
       guidelinesUrl,
+      customCssUrl,
       status: status || "ACTIVE",
       coverUrl,
     },
@@ -93,6 +109,8 @@ export async function updateJournal(id: string, formData: FormData) {
   const coverFile = formData.get("cover") as File | null
   const guidelinesFile = formData.get("guidelinesFile") as File | null
   const deleteGuidelinesFile = formData.get("deleteGuidelinesFile") === "true"
+  const customCssFile = formData.get("customCss") as File | null
+  const deleteCustomCss = formData.get("deleteCustomCss") === "true"
 
   let coverUrl = undefined
   if (coverFile && coverFile.size > 0) {
@@ -124,6 +142,22 @@ export async function updateJournal(id: string, formData: FormData) {
     guidelinesUrl = null
   }
 
+  let customCssUrl: string | null | undefined = undefined
+  if (customCssFile && customCssFile.size > 0) {
+    const bytes = await customCssFile.arrayBuffer()
+    const buffer = Buffer.from(bytes)
+    
+    // Ensure directory exists
+    const uploadDir = join(process.cwd(), "public/uploads/css")
+    await mkdir(uploadDir, { recursive: true })
+    
+    const fileName = `style-${Date.now()}-${customCssFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`
+    await writeFile(join(uploadDir, fileName), buffer)
+    customCssUrl = `/uploads/css/${fileName}`
+  } else if (deleteCustomCss) {
+    customCssUrl = null
+  }
+
   await prisma.journal.update({
     where: { id },
     data: {
@@ -133,6 +167,7 @@ export async function updateJournal(id: string, formData: FormData) {
       status,
       ...(coverUrl ? { coverUrl } : {}),
       ...(guidelinesUrl !== undefined ? { guidelinesUrl } : {}),
+      ...(customCssUrl !== undefined ? { customCssUrl } : {}),
     },
   })
 

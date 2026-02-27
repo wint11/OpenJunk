@@ -46,19 +46,23 @@ export default async function JournalDetailPage(props: JournalDetailPageProps) {
   }
 
   return (
-    <div className="container mx-auto py-12 px-4 space-y-12">
+    <div className="container mx-auto py-12 px-4 space-y-12 journal-container">
+      {journal.customCssUrl && (
+        <link rel="stylesheet" href={journal.customCssUrl} />
+      )}
+
       {/* Journal Header */}
-      <section className="bg-muted/30 p-8 rounded-xl border flex flex-col md:flex-row gap-8 items-start">
+      <section className="bg-muted/30 p-8 rounded-xl border flex flex-col md:flex-row gap-8 items-start journal-header">
         <div className="flex-1 space-y-4">
           <div className="flex items-center gap-3">
              <BookOpen className="h-8 w-8 text-primary" />
-             <h1 className="text-3xl font-bold tracking-tight">{journal.name}</h1>
+             <h1 className="text-3xl font-bold tracking-tight journal-title">{journal.name}</h1>
              {journal.status === 'ARCHIVED' && <Badge variant="secondary">已归档</Badge>}
           </div>
-          <p className="text-lg text-muted-foreground leading-relaxed">
+          <p className="text-lg text-muted-foreground leading-relaxed journal-description">
             {journal.description || "暂无描述"}
           </p>
-          <div className="flex gap-6 text-sm text-muted-foreground pt-2">
+          <div className="flex gap-6 text-sm text-muted-foreground pt-2 journal-meta">
             <span className="flex items-center gap-1.5">
                <FileText className="h-4 w-4" />
                已收录 {journal._count.papers} 篇论文
@@ -78,11 +82,11 @@ export default async function JournalDetailPage(props: JournalDetailPageProps) {
       {/* Main Content: Guidelines & Papers */}
       <div className="grid grid-cols-1 lg:grid-cols-10 gap-12">
         {/* Left Column: Submission Guidelines (40%) */}
-        <aside className="lg:col-span-4 space-y-6">
-          <h2 className="text-2xl font-bold tracking-tight border-l-4 border-primary pl-4">
+        <aside className="lg:col-span-4 space-y-6 journal-guidelines-section">
+          <h2 className="text-2xl font-bold tracking-tight border-l-4 border-primary pl-4 journal-guidelines-title">
              投稿指南
           </h2>
-           <div className="bg-muted/10 rounded-xl border p-6 space-y-4">
+           <div className="bg-muted/10 rounded-xl border p-6 space-y-4 journal-guidelines-content">
               <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground break-words">
                  {journal.guidelines ? (
                     <ReactMarkdown
@@ -119,20 +123,20 @@ export default async function JournalDetailPage(props: JournalDetailPageProps) {
         </aside>
 
         {/* Right Column: Latest Papers (60%) */}
-        <main className="lg:col-span-6 space-y-6">
-          <h2 className="text-2xl font-bold tracking-tight border-l-4 border-primary pl-4">
+        <main className="lg:col-span-6 space-y-6 journal-papers-section">
+          <h2 className="text-2xl font-bold tracking-tight border-l-4 border-primary pl-4 journal-papers-title">
             最新录用
           </h2>
           
           {journal.papers.length > 0 ? (
             <div className="flex flex-col gap-4">
               {journal.papers.map((paper) => (
-                <Card key={paper.id} className="group hover:shadow-md transition-all">
+                <Card key={paper.id} className="group hover:shadow-md transition-all journal-paper-card">
                   <CardHeader className="pb-2">
                      <Link href={`/novel/${paper.id}`} className="block hover:underline decoration-primary underline-offset-4">
-                        <CardTitle className="text-lg line-clamp-1">{paper.title}</CardTitle>
+                        <CardTitle className="text-lg line-clamp-1 journal-paper-title">{paper.title}</CardTitle>
                      </Link>
-                     <div className="flex items-center gap-2 text-xs text-muted-foreground pt-1">
+                     <div className="flex items-center gap-2 text-xs text-muted-foreground pt-1 journal-paper-meta">
                         <span>{paper.uploader?.name || "匿名作者"}</span>
                         <span>•</span>
                         <span>{new Date(paper.updatedAt).toLocaleDateString()}</span>
@@ -140,7 +144,7 @@ export default async function JournalDetailPage(props: JournalDetailPageProps) {
                      </div>
                   </CardHeader>
                   <CardContent>
-                     <p className="text-sm text-muted-foreground line-clamp-2">
+                     <p className="text-sm text-muted-foreground line-clamp-2 journal-paper-abstract">
                        {paper.description || "暂无摘要"}
                      </p>
                   </CardContent>

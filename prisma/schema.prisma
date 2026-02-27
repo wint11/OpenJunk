@@ -193,6 +193,7 @@ model Journal {
   guidelines  String?  // Submission guidelines
   guidelinesUrl String? // URL to downloadable guidelines file
   coverUrl    String?
+  customCssUrl String? // URL to custom CSS file
   status      String   @default("ACTIVE") // ACTIVE, ARCHIVED
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

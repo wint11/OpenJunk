@@ -32,6 +32,7 @@ interface JournalDialogProps {
     description: string | null
     guidelines: string | null
     guidelinesUrl: string | null
+    customCssUrl?: string | null
     status: string
     coverUrl?: string | null
   }
@@ -40,6 +41,7 @@ interface JournalDialogProps {
 export function JournalDialog({ mode, journal }: JournalDialogProps) {
   const [open, setOpen] = useState(false)
   const [deleteAttachment, setDeleteAttachment] = useState(false)
+  const [deleteCustomCss, setDeleteCustomCss] = useState(false)
 
   async function handleSubmit(formData: FormData) {
     try {
@@ -51,11 +53,15 @@ export function JournalDialog({ mode, journal }: JournalDialogProps) {
         if (deleteAttachment) {
             formData.set("deleteGuidelinesFile", "true")
         }
+        if (deleteCustomCss) {
+            formData.set("deleteCustomCss", "true")
+        }
         await updateJournal(journal.id, formData)
         toast.success("期刊更新成功")
       }
       setOpen(false)
       setDeleteAttachment(false) // Reset state
+      setDeleteCustomCss(false)
     } catch (error) {
       toast.error("操作失败")
       console.error(error)
@@ -125,6 +131,52 @@ export function JournalDialog({ mode, journal }: JournalDialogProps) {
                      <p className="text-xs text-muted-foreground">
                          当前已有封面，上传新文件将覆盖
                      </p>
+                   )}
+                </div>
+
+                <div className="grid gap-2 border-t pt-4">
+                  <Label htmlFor="customCss">自定义样式 (CSS)</Label>
+                  <p className="text-xs text-muted-foreground">
+                    上传 .css 文件以覆盖默认样式。
+                    <a href="/templates/journal-style.css" download className="text-primary hover:underline ml-1">
+                      下载模板
+                    </a>
+                  </p>
+                  <Input
+                     id="customCss"
+                     name="customCss"
+                     type="file"
+                     accept=".css"
+                   />
+                   {journal?.customCssUrl && !deleteCustomCss && (
+                     <div className="flex items-center justify-between bg-muted/20 p-2 rounded text-sm mt-1">
+                        <span className="truncate max-w-[200px]" title={journal.customCssUrl.split('/').pop()}>
+                            已启用: {journal.customCssUrl.split('/').pop()}
+                        </span>
+                        <Button 
+                            type="button" 
+                            variant="destructive" 
+                            size="sm" 
+                            className="h-6 text-xs"
+                            onClick={() => setDeleteCustomCss(true)}
+                        >
+                            删除
+                        </Button>
+                     </div>
+                   )}
+                   {deleteCustomCss && (
+                        <div className="text-xs text-destructive flex items-center gap-2 mt-1">
+                            <span>将在保存后移除自定义样式</span>
+                            <Button 
+                                type="button" 
+                                variant="ghost" 
+                                size="sm" 
+                                className="h-6 px-2 text-xs"
+                                onClick={() => setDeleteCustomCss(false)}
+                            >
+                                撤销
+                            </Button>
+                        </div>
                    )}
                 </div>
              </div>

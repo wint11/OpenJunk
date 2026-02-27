@@ -1,0 +1,42 @@
+/* 
+  OpenJunk 期刊自定义样式模板
+  上传此文件（修改后）以覆盖期刊主页的默认样式。
+  
+  注意：
+  1. 请使用 !important 来确保覆盖 Tailwind 默认样式，或者使用更高优先级的选择器。
+  2. 建议使用浏览器的开发者工具查看具体的 HTML 结构和类名。
+  3. 仅支持 CSS 样式修改，不支持修改 HTML 结构或 JavaScript。
+*/
+
+/* 1. 期刊头部背景和布局 */
+.journal-header {
+  /* 示例：修改头部背景颜色 */
+  /* background-color: #f0f9ff !important; */
+}
+
+/* 2. 期刊标题 */
+.journal-title {
+  /* 示例：修改标题颜色和字体 */
+  /* color: #0369a1 !important; */
+  /* font-family: "Songti SC", serif !important; */
+}
+
+/* 3. 期刊描述 */
+.journal-description {
+  /* font-size: 1.1rem !important; */
+}
+
+/* 4. 投稿按钮 */
+.journal-submit-btn {
+  /* background-color: #0ea5e9 !important; */
+}
+
+/* 5. 论文卡片 */
+.paper-card {
+  /* border: 1px solid #e2e8f0 !important; */
+}
+
+/* 6. 论文标题 */
+.paper-title {
+  /* color: #334155 !important; */
+}
