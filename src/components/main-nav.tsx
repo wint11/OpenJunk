@@ -22,17 +22,19 @@ export function MainNav({ role }: { role?: string }) {
       href: "/journals",
       children: [
         { name: "期刊矩阵", href: "/journals" },
-        { name: "Junk宇宙", href: "/universe" },
+        { name: "期刊论文", href: "/journals/browse" },
+        { name: "期刊动态", href: "/journals/trends" },
+        { name: "在线投稿", href: "/journals/submission" },
       ]
     },
     {
-      name: "论文",
-      href: "/browse",
+      name: "会议",
+      href: "/conferences",
       children: [
-        { name: "论文库", href: "/browse" },
-        { name: "期刊动态", href: "/trends" },
-        { name: "在线投稿", href: "/submission" },
-        { name: "申请NOI", href: "https://webofnothing.org", external: true },
+        { name: "会议矩阵", href: "/conferences" },
+        { name: "会议论文", href: "/conferences/browse" },
+        { name: "会议动态", href: "/conferences/trends" },
+        { name: "会议投稿", href: "/conferences/submission" },
       ]
     },
     {
@@ -44,10 +46,14 @@ export function MainNav({ role }: { role?: string }) {
         { name: "查询状态", href: "/fund/check" },
       ]
     },
+    { name: "奖项", href: "/awards" },
+    { name: "作者", href: "/authors" },
     {
-      name: "关于",
-      href: "/about",
+      name: "其它",
+      href: "/others",
       children: [
+        { name: "Junk宇宙", href: "/universe" },
+        { name: "申请NOI", href: "https://webofnothing.org", external: true },
         { name: "关于我们", href: "/about" },
         { name: "联系我们", href: "/contact" },
         { name: "隐私政策", href: "/privacy" },

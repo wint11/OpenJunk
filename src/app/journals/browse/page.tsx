@@ -97,7 +97,7 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
               <h4 className="text-sm font-medium text-muted-foreground">所属期刊</h4>
               <div className="flex flex-col space-y-1">
                 <Link 
-                  href={`/browse?${new URLSearchParams({ ...(q && { q }), ...(sort && { sort }), ...(category && { category }) }).toString()}`}
+                  href={`/journals/browse?${new URLSearchParams({ ...(q && { q }), ...(sort && { sort }), ...(category && { category }) }).toString()}`}
                   className={`px-3 py-2 rounded-md text-sm transition-colors flex justify-between items-center ${!journal ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-muted-foreground'}`}
                 >
                   <span>全部期刊</span>

@@ -103,7 +103,7 @@ export default async function NovelDetailPage({ params }: NovelDetailPageProps) 
           </Link>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" asChild>
-               <Link href="/browse">浏览更多</Link>
+               <Link href="/journals/browse">浏览更多</Link>
             </Button>
           </div>
         </div>

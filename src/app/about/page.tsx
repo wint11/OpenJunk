@@ -96,13 +96,13 @@ export default function AboutPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="h-12 px-8 text-lg" asChild>
-              <Link href="/submission">
+              <Link href="/journals/submission">
                 <Trash2 className="mr-2 h-5 w-5" />
                 扔垃圾（投稿）
               </Link>
             </Button>
             <Button size="lg" variant="outline" className="h-12 px-8 text-lg" asChild>
-              <Link href="/browse">
+              <Link href="/journals/browse">
                 <Users className="mr-2 h-5 w-5" />
                 去翻垃圾堆
               </Link>

@@ -76,7 +76,7 @@ export default async function Home() {
           </div>
           
           <div className="max-w-2xl mx-auto relative">
-            <form action="/browse" className="flex gap-2">
+            <form action="/journals/browse" className="flex gap-2">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input 
@@ -105,7 +105,7 @@ export default async function Home() {
               {categories.map((cat) => (
                 <Link 
                   key={cat.category} 
-                  href={`/browse?category=${cat.category}`}
+                  href={`/journals/browse?category=${cat.category}`}
                   className="flex justify-between items-center px-3 py-2 rounded-md hover:bg-muted text-sm group transition-colors"
                 >
                   <span className="font-medium group-hover:text-primary">{cat.category}</span>

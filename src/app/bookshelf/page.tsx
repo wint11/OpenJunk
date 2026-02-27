@@ -69,7 +69,7 @@ export default function BookshelfPage() {
           </p>
         </div>
         <Button variant="outline" asChild>
-          <Link href="/browse">去捡垃圾</Link>
+          <Link href="/journals/browse">去捡垃圾</Link>
         </Button>
       </div>
 
