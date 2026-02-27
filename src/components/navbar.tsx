@@ -32,8 +32,13 @@ export async function Navbar() {
       where: { id: session.user.id },
       include: { fundAdminCategories: true }
     })
-    if (dbUser && dbUser.fundAdminCategories.length > 0) {
-      dashboardName = "基金管理后台"
+
+    if (dbUser) {
+      if (dbUser.fundAdminCategories.length > 0) {
+        dashboardName = "基金管理后台"
+      } else if (dbUser.managedAwardId) {
+        dashboardName = "奖项管理后台"
+      }
     }
   }
 

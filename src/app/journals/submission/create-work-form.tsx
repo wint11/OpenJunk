@@ -25,18 +25,22 @@ interface CreateWorkFormProps {
   journals: Journal[]
   fundApplications?: FundApplication[]
   isLoggedIn?: boolean
+  mode?: "journal" | "conference"
 }
 
 const initialState: FormState = {
   error: null,
 }
 
-export function CreateWorkForm({ journals, fundApplications = [], isLoggedIn = false }: CreateWorkFormProps) {
+export function CreateWorkForm({ journals, fundApplications = [], isLoggedIn = false, mode = "journal" }: CreateWorkFormProps) {
   const [state, formAction, isPending] = useActionState(createWork, initialState)
   const [authors, setAuthors] = useState<{ name: string; unit: string; roles: string[]; contact?: string }[]>([
     { name: "", unit: "", roles: [] }
   ])
   const [selectedJournals, setSelectedJournals] = useState<string[]>([])
+
+  const isConference = mode === "conference"
+  const targetLabel = isConference ? "会议" : "期刊"
 
   const addAuthor = () => {
     setAuthors([...authors, { name: "", unit: "", roles: [] }])
@@ -89,13 +93,13 @@ export function CreateWorkForm({ journals, fundApplications = [], isLoggedIn = f
 
   return (
     <div className="max-w-3xl mx-auto space-y-6 py-8">
-       <h1 className="text-3xl font-bold tracking-tight">投稿新论文</h1>
+       <h1 className="text-3xl font-bold tracking-tight">{isConference ? "会议论文投稿" : "投稿新论文"}</h1>
        <Card>
          <CardHeader>
-           <CardTitle>论文投稿</CardTitle>
+           <CardTitle>{isConference ? "会议投稿" : "论文投稿"}</CardTitle>
            <CardDescription>
              {isLoggedIn 
-               ? "您已登录，提交后文章将直接发布到期刊库，无需审核。" 
+               ? `您已登录，提交后文章将直接发布到${targetLabel}库，无需审核。` 
                : "请填写论文详细信息并提交审核"}
            </CardDescription>
          </CardHeader>
@@ -113,7 +117,7 @@ export function CreateWorkForm({ journals, fundApplications = [], isLoggedIn = f
              <div className="grid gap-6 md:grid-cols-2">
                {/* Journal Selection - Multiple */}
                <div className="space-y-2 col-span-2">
-                 <Label htmlFor="journalIds">投稿期刊 (Submission Journals) <span className="text-red-500">*</span></Label>
+                 <Label htmlFor="journalIds">投稿{targetLabel} (Submission {isConference ? "Conference" : "Journals"}) <span className="text-red-500">*</span></Label>
                  <div className="border rounded-md p-3 max-h-[200px] overflow-y-auto space-y-2">
                     {journals.map((journal) => {
                       const isChecked = selectedJournals.includes(journal.id)
@@ -143,8 +147,8 @@ export function CreateWorkForm({ journals, fundApplications = [], isLoggedIn = f
                  </div>
                  <p className="text-xs text-muted-foreground">
                     {isLoggedIn 
-                        ? "快速通道投稿仅支持选择一个所属期刊。" 
-                        : "请选择要投稿的期刊，支持一稿多投（最多选择3个）。"
+                        ? `快速通道投稿仅支持选择一个所属${targetLabel}。` 
+                        : `请选择要投稿的${targetLabel}，支持一稿多投（最多选择3个）。`
                     } 
                     已选: {selectedJournals.length}/{isLoggedIn ? 1 : 3}
                  </p>
@@ -155,16 +159,17 @@ export function CreateWorkForm({ journals, fundApplications = [], isLoggedIn = f
 
                <div className="space-y-2">
                  <Label htmlFor="type">论文类型 <span className="text-red-500">*</span></Label>
-                 <Select name="type" required defaultValue="NOVEL" disabled>
+                 <Select name="type" required defaultValue={isConference ? "PAPER" : "NOVEL"} disabled>
                    <SelectTrigger>
                      <SelectValue placeholder="选择类型" />
                    </SelectTrigger>
                    <SelectContent>
                     <SelectItem value="NOVEL">期刊论文 (Journal Paper)</SelectItem>
+                    <SelectItem value="PAPER">会议论文 (Conference Paper)</SelectItem>
                   </SelectContent>
                  </Select>
                  {/* Hidden input to ensure value is submitted even when disabled */}
-                 <input type="hidden" name="type" value="NOVEL" />
+                 <input type="hidden" name="type" value={isConference ? "PAPER" : "NOVEL"} />
                </div>
                
                <div className="space-y-2">

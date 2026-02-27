@@ -18,13 +18,23 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
-  managedJournalId String?
+  // Admin Roles
+  managedJournalId String? @unique
   managedJournal   Journal? @relation("JournalAdmin", fields: [managedJournalId], references: [id])
+  
+  managedConferenceId String?
+  managedConference   Conference? @relation("ConferenceAdmin", fields: [managedConferenceId], references: [id])
+
+  managedAwardId      String?
+  managedAward        Award?      @relation("AwardAdmin", fields: [managedAwardId], references: [id])
 
   reviewerJournals Journal[] @relation("JournalReviewers")
+  reviewerConferences Conference[] @relation("ConferenceReviewers")
 
   readingHistory ReadingHistory[]
   uploadedNovels Novel[]          @relation("UserUploads")
+  uploadedPreprints Preprint[]
+  awardApplications AwardApplication[]
   auditLogs      AuditLog[]
   reviews        ReviewLog[]
   
@@ -96,7 +106,12 @@ model Novel {
   journalId   String?
   journal     Journal? @relation(fields: [journalId], references: [id])
   
+  conferenceId String?
+  conference   Conference? @relation(fields: [conferenceId], references: [id])
+  
   submissionTargets Journal[] @relation("SubmissionTargets")
+
+  awardApplications AwardApplication[] @relation("AwardNominationPapers")
   
   // 关联基金项目 (Optional)
   // 修改为多对多关联 FundApplication (具体立项项目)
@@ -207,6 +222,84 @@ model Journal {
   combatPower Int      @default(100) // Base combat power + accumulated bonus
   seasonStats UniverseSeasonStat[]
   quizzes     Quiz[]
+}
+
+model Conference {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  guidelines  String?  // Submission guidelines
+  guidelinesUrl String? // URL to downloadable guidelines file
+  coverUrl    String?
+  customCssUrl String? // URL to custom CSS file
+  status      String   @default("ACTIVE") // ACTIVE, ARCHIVED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  papers      Novel[]
+  admins      User[]   @relation("ConferenceAdmin")
+  reviewers   User[]   @relation("ConferenceReviewers")
+}
+
+model Award {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  criteria    String?  // Selection criteria
+  coverUrl    String?
+  status      String   @default("ACTIVE") // ACTIVE, ARCHIVED
+  
+  // Who manages this award (usually SUPER_ADMIN or specific Award Committee)
+  admins      User[]   @relation("AwardAdmin")
+  
+  // Applications/Nominations for this award
+  applications AwardApplication[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AwardApplication {
+  id          String   @id @default(cuid())
+  awardId     String
+  award       Award    @relation(fields: [awardId], references: [id])
+  
+  applicantId String?
+  applicant   User?    @relation(fields: [applicantId], references: [id])
+  
+  // For self-nomination or nomination of others
+  nomineeName String
+  workDescription String?
+
+  // Linked Papers (Proof of work)
+  nominationPapers Novel[] @relation("AwardNominationPapers")
+  
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Preprint {
+  id          String   @id @default(cuid())
+  title       String
+  abstract    String
+  authors     String
+  pdfUrl      String
+  
+  uploaderId  String?
+  uploader    User?    @relation(fields: [uploaderId], references: [id])
+  uploaderIp  String?
+
+  // Update System
+  pendingTitle    String?
+  pendingAbstract String?
+  pendingAuthors  String?
+  pendingPdfUrl   String?
+  updateStatus    String   @default("IDLE") // IDLE, PENDING, REJECTED
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model UniverseSeason {

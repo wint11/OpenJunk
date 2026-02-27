@@ -159,14 +159,22 @@ export default async function NovelDetailPage({ params }: NovelDetailPageProps) 
               </div>
 
               <div className="flex flex-wrap gap-3 items-center">
-                {novel.pdfUrl && (
+                {/* Online Read Button */}
+                {novel.pdfUrl && novel.pdfUrl.endsWith('.pdf') ? (
                   <Button size="lg" className="shadow-sm" asChild>
                     <Link href={`/novel/${novel.id}/read`}>
                       <BookOpen className="mr-2 h-4 w-4" />
                       在线阅读PDF
                     </Link>
                   </Button>
+                ) : (
+                  <Button size="lg" className="shadow-sm" disabled>
+                    <BookOpen className="mr-2 h-4 w-4" />
+                    无法在线预览
+                  </Button>
                 )}
+
+                {/* Download & Other Tools */}
                 <div className="flex items-center gap-3">
                     {novel.pdfUrl && (
                       <DownloadButton novelId={novel.id} pdfUrl={novel.pdfUrl} />

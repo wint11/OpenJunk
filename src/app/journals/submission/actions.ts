@@ -230,6 +230,20 @@ export async function createWork(prevState: FormState, formData: FormData): Prom
       
       const primaryJournalId = journalIds.length === 1 ? journalIds[0] : undefined
 
+      // Determine if the target is a Journal or Conference
+      // We check if the primary target exists in Conference table
+      let targetConferenceId = undefined
+      let targetJournalId = undefined
+
+      if (primaryJournalId) {
+          const conf = await prisma.conference.findUnique({ where: { id: primaryJournalId } })
+          if (conf) {
+              targetConferenceId = primaryJournalId
+          } else {
+              targetJournalId = primaryJournalId
+          }
+      }
+
       const novel = await prisma.novel.create({
           data: {
               title,
@@ -244,12 +258,21 @@ export async function createWork(prevState: FormState, formData: FormData): Prom
               pdfHash,
               uploaderId: user?.id,
               uploaderIp: ip,
-              journalId: primaryJournalId, // Set journalId if single submission
+              journalId: targetJournalId, 
+              conferenceId: targetConferenceId,
               
-              // Connect multiple journals
-              submissionTargets: {
+              // Connect multiple journals (legacy support for multi-journal submission)
+              // Ideally we should split submissionTargets into journalTargets and conferenceTargets
+              // But for now, submissionTargets relates to Journal model.
+              // If we submit to a Conference, we can't put it in submissionTargets(Journal).
+              // We need to check if we are submitting to Journals or Conferences.
+              
+              // Assumption: Users submit to EITHER Journals OR Conferences in one batch.
+              // Mixed submission is rare and complex.
+              
+              submissionTargets: targetJournalId ? {
                   connect: journalIds.map(id => ({ id }))
-              },
+              } : undefined,
 
               // Connect funds if any
               fundApplications: validatedFields.data.fundApplicationIds 

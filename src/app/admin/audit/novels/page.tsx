@@ -37,14 +37,17 @@ export default async function NovelAuditPage() {
       
       if (role === 'ADMIN' && currentUser?.managedJournalId) {
           allowedJournalIds = [currentUser.managedJournalId]
-      } else if (role === 'REVIEWER') {
-          allowedJournalIds = currentUser?.reviewerJournals.map(j => j.id) || []
+      }
+      // Allow admins to also see journals they review if any
+      if (currentUser?.reviewerJournals?.length) {
+          const reviewerIds = currentUser.reviewerJournals.map(j => j.id)
+          allowedJournalIds = [...allowedJournalIds, ...reviewerIds]
       }
       
+      // Deduplicate ids
+      allowedJournalIds = Array.from(new Set(allowedJournalIds))
+      
       if (allowedJournalIds.length > 0) {
-          // To be safe, let's use a very explicit OR query combined with status
-          // Prisma can be tricky with top-level properties mixed with OR
-          
           whereClause = {
             AND: [
                 { status: 'DRAFT' },

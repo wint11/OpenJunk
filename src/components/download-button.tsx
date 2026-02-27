@@ -15,11 +15,20 @@ export function DownloadButton({ novelId, pdfUrl }: DownloadButtonProps) {
     incrementPopularity(novelId, 'DOWNLOAD')
   }
 
+  const getFileLabel = (url: string) => {
+    const lowerUrl = url.toLowerCase()
+    if (lowerUrl.endsWith('.pdf')) return '下载PDF'
+    if (lowerUrl.endsWith('.docx') || lowerUrl.endsWith('.doc')) return '下载Word'
+    if (lowerUrl.endsWith('.zip') || lowerUrl.endsWith('.rar') || lowerUrl.endsWith('.7z')) return '下载压缩包'
+    if (lowerUrl.endsWith('.tex')) return '下载LaTeX'
+    return '下载文件'
+  }
+
   return (
     <Button variant="outline" size="lg" asChild onClick={handleDownload}>
       <a href={pdfUrl} download>
         <Download className="mr-2 h-4 w-4" />
-        下载PDF
+        {getFileLabel(pdfUrl)}
       </a>
     </Button>
   )

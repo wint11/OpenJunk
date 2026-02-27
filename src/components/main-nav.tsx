@@ -25,6 +25,7 @@ export function MainNav({ role }: { role?: string }) {
         { name: "期刊论文", href: "/journals/browse" },
         { name: "期刊动态", href: "/journals/trends" },
         { name: "在线投稿", href: "/journals/submission" },
+        { name: "创办期刊", href: "/journals/new" },
       ]
     },
     {
@@ -35,6 +36,7 @@ export function MainNav({ role }: { role?: string }) {
         { name: "会议论文", href: "/conferences/browse" },
         { name: "会议动态", href: "/conferences/trends" },
         { name: "会议投稿", href: "/conferences/submission" },
+        { name: "创办会议", href: "/conferences/new" },
       ]
     },
     {
@@ -46,17 +48,25 @@ export function MainNav({ role }: { role?: string }) {
         { name: "查询状态", href: "/fund/check" },
       ]
     },
-    { name: "奖项", href: "/awards" },
-    { name: "作者", href: "/authors" },
     {
-      name: "其它",
-      href: "/others",
+      name: "奖项",
+      href: "/awards",
       children: [
+        { name: "奖项矩阵", href: "/awards" },
+        { name: "奖项动态", href: "/awards/trends" },
+        { name: "申请奖项", href: "/awards/application" },
+        { name: "创办奖项", href: "/awards/new" },
+      ]
+    },
+    {
+      name: "发现",
+      href: "/discovery",
+      children: [
+        { name: "预印本", href: "/preprints" },
+        { name: "作者", href: "/authors" },
         { name: "Junk宇宙", href: "/universe" },
         { name: "申请NOI", href: "https://webofnothing.org", external: true },
         { name: "关于我们", href: "/about" },
-        { name: "联系我们", href: "/contact" },
-        { name: "隐私政策", href: "/privacy" },
       ]
     }
   ]
