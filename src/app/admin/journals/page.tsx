@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { JournalDialog } from "./journal-dialog"
 import { DeleteJournalButton } from "./delete-button"
+import { Palette } from "lucide-react"
+import Link from "next/link"
 
 export default async function JournalsPage() {
   const session = await auth()
@@ -76,6 +78,11 @@ export default async function JournalsPage() {
                 <TableCell>{journal._count.admins} / {journal._count.reviewers}</TableCell>
                 <TableCell>{journal.createdAt.toLocaleDateString()}</TableCell>
                 <TableCell className="text-right space-x-2">
+                  <Button variant="outline" size="sm" asChild title="装修主页">
+                    <Link href={`/admin/journals/${journal.id}/design`}>
+                      <Palette className="h-4 w-4" />
+                    </Link>
+                  </Button>
                   <JournalDialog mode="edit" journal={journal} />
                   {isSuperAdmin && (
                     <DeleteJournalButton id={journal.id} disabled={journal._count.papers > 0 || journal._count.admins > 0 || journal._count.reviewers > 0} />

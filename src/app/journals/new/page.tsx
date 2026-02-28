@@ -102,12 +102,6 @@ export default function CreateJournalPage() {
                 <Input id="guidelinesFile" name="guidelinesFile" type="file" accept=".pdf,.doc,.docx" />
                 <p className="text-xs text-muted-foreground">可选，上传 PDF 或 Word 格式的投稿指南文档</p>
               </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="customCss">自定义样式 (CSS)</Label>
-                <Input id="customCss" name="customCss" type="file" accept=".css" />
-                <p className="text-xs text-muted-foreground">可选，上传 CSS 文件以自定义期刊页面样式</p>
-              </div>
             </CardContent>
           </Card>
 

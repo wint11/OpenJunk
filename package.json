@@ -12,6 +12,7 @@
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
     "@prisma/client": "^5.22.0",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-avatar": "^1.1.11",
@@ -37,7 +38,9 @@
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.34.3",
+    "handlebars": "^4.7.8",
     "lucide-react": "^0.562.0",
+    "monaco-editor": "^0.55.1",
     "next": "16.1.1",
     "next-auth": "^5.0.0-beta.30",
     "next-themes": "^0.4.6",

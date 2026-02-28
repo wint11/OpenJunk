@@ -6,6 +6,7 @@ import { BookOpen, Calendar, FileText, Users, Download } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import ReactMarkdown from "react-markdown"
+import { JournalCustomRenderer } from "./custom-renderer"
 
 interface JournalDetailPageProps {
   params: Promise<{ id: string }>
@@ -45,12 +46,31 @@ export default async function JournalDetailPage(props: JournalDetailPageProps) {
     notFound()
   }
 
+  if (journal.customConfig) {
+    // We need to serialize the data to pass it to the client renderer
+    const journalData = {
+        name: journal.name,
+        description: journal.description,
+        paperCount: journal._count.papers,
+        adminCount: journal._count.admins + journal._count.reviewers,
+        createdAt: journal.createdAt.toLocaleDateString(),
+        guidelines: journal.guidelines,
+        guidelinesUrl: journal.guidelinesUrl,
+        papers: journal.papers.map(p => ({
+            id: p.id,
+            title: p.title,
+            description: p.description,
+            author: p.uploader?.name || "匿名作者",
+            date: p.updatedAt.toLocaleDateString(),
+            category: p.category
+        }))
+    }
+    // We must pass the code and data to a CLIENT component to render the iframe
+    return <JournalCustomRenderer code={journal.customConfig} data={journalData} />
+  }
+
   return (
     <div className="container mx-auto py-12 px-4 space-y-12 journal-container">
-      {journal.customCssUrl && (
-        <link rel="stylesheet" href={journal.customCssUrl} />
-      )}
-
       {/* Journal Header */}
       <section className="bg-muted/30 p-8 rounded-xl border flex flex-col md:flex-row gap-8 items-start journal-header">
         <div className="flex-1 space-y-4">

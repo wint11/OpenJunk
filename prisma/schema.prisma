@@ -208,7 +208,7 @@ model Journal {
   guidelines  String?  // Submission guidelines
   guidelinesUrl String? // URL to downloadable guidelines file
   coverUrl    String?
-  customCssUrl String? // URL to custom CSS file
+  customConfig String? // JSON string for custom homepage design (html/js/css)
   status      String   @default("ACTIVE") // ACTIVE, ARCHIVED
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -506,4 +506,14 @@ model FundReview {
   
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+}
+
+model JournalTemplate {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  code        String   // The JSX/TSX code of the template
+  description String?
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
