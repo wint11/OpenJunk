@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma"
 import OpenAI from "openai"
 import { revalidatePath } from "next/cache"
+import { auth } from "@/auth"
 
 const openai = new OpenAI({
   baseURL: process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com',
@@ -25,6 +26,47 @@ export async function saveDesign(journalId: string, config: string | null) {
 
 export async function generateDesign(prompt: string, currentCode: string) {
   try {
+    const session = await auth()
+    if (!session || !session.user) {
+      return { success: false, error: "Unauthorized" }
+    }
+
+    const userId = session.user.id
+    const userRole = session.user.role
+
+    // --- Rate Limit Check ---
+    if (userRole !== 'SUPER_ADMIN') {
+      const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { aiDesignUsage: true }
+      })
+
+      let usage = { date: today, count: 0 }
+      if (user?.aiDesignUsage) {
+        try {
+          const parsed = JSON.parse(user.aiDesignUsage)
+          if (parsed.date === today) {
+            usage = parsed
+          }
+        } catch (e) {
+          // ignore parsing error, reset usage
+        }
+      }
+
+      if (usage.count >= 20) {
+        return { success: false, error: "您今日的 AI 装修次数已达上限 (20次/天)。请明天再试，或联系总编操作。" }
+      }
+
+      // Increment usage
+      usage.count += 1
+      await prisma.user.update({
+        where: { id: userId },
+        data: { aiDesignUsage: JSON.stringify(usage) }
+      })
+    }
+    // --- End Rate Limit Check ---
+
     const systemPrompt = `You are an expert web designer.
     You are helping a user customize their journal homepage template (HTML/Handlebars/Tailwind).
     

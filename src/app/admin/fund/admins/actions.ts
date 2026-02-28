@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import { revalidatePath } from "next/cache"
 import bcrypt from "bcryptjs"
+import { auth } from "@/auth"
 
 const adminSchema = z.object({
   email: z.string().email("请输入有效的邮箱"),
@@ -19,6 +20,11 @@ const updateAdminSchema = z.object({
 })
 
 export async function createFundAdmin(prevState: any, formData: FormData) {
+  const session = await auth()
+  if (session?.user?.role !== "SUPER_ADMIN") {
+    return { success: false, message: "无权操作" }
+  }
+
   const data = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
@@ -98,6 +104,11 @@ export async function createFundAdmin(prevState: any, formData: FormData) {
 }
 
 export async function updateFundAdmin(prevState: any, formData: FormData) {
+  const session = await auth()
+  if (session?.user?.role !== "SUPER_ADMIN") {
+    return { success: false, message: "无权操作" }
+  }
+
   const data = {
     id: formData.get("id") as string,
     name: formData.get("name") as string,
@@ -140,6 +151,11 @@ export async function updateFundAdmin(prevState: any, formData: FormData) {
 }
 
 export async function deleteFundAdmin(adminId: string) {
+  const session = await auth()
+  if (session?.user?.role !== "SUPER_ADMIN") {
+    return { success: false, message: "无权操作" }
+  }
+
   try {
     // 物理删除用户
     await prisma.user.delete({

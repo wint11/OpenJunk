@@ -89,6 +89,22 @@ export function CreateFundDialog({ categories }: { categories: any[] }) {
           </div>
 
           <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="projectTypeChar" className="text-right">类别码</Label>
+            <div className="col-span-3 flex items-center gap-2">
+                <Input id="projectTypeChar" name="projectTypeChar" maxLength={1} className="w-20" placeholder="1" required />
+                <span className="text-xs text-muted-foreground">1位 (立项编号第4位)</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="customNumber" className="text-right">自定义码</Label>
+            <div className="col-span-3 flex items-center gap-2">
+                <Input id="customNumber" name="customNumber" maxLength={1} className="w-20" placeholder="5" required />
+                <span className="text-xs text-muted-foreground">1位 (立项编号第5位)</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="startDate" className="text-right">开始时间</Label>
             <Input id="startDate" name="startDate" type="date" className="col-span-3" required />
           </div>

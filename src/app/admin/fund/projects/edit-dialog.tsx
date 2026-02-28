@@ -97,6 +97,17 @@ export function EditFundDialog({ fund }: { fund: any }) {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
+              <Label htmlFor="projectTypeChar">类别码 (第4位)</Label>
+              <Input id="projectTypeChar" name="projectTypeChar" maxLength={1} defaultValue={fund.projectTypeChar || ''} required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="customNumber">自定义码 (第5位)</Label>
+              <Input id="customNumber" name="customNumber" maxLength={1} defaultValue={fund.customNumber || ''} required />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
                <Label htmlFor="status">状态</Label>
                <Select name="status" defaultValue={fund.status}>
                   <SelectTrigger>

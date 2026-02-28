@@ -1,4 +1,6 @@
 import { prisma } from "@/lib/prisma"
+import { auth } from "@/auth"
+import { redirect } from "next/navigation"
 import { CreateAdminDialog } from "./create-admin-dialog"
 import { EditAdminDialog } from "./edit-admin-dialog"
 import {
@@ -15,6 +17,11 @@ import { Trash2 } from "lucide-react"
 import { deleteFundAdmin } from "./actions"
 
 export default async function FundAdminsPage() {
+  const session = await auth()
+  if (session?.user?.role !== "SUPER_ADMIN") {
+    redirect("/admin")
+  }
+
   // 获取所有的基金大类，用于创建弹窗
   const categories = await prisma.fundCategory.findMany()
 

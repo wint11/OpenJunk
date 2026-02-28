@@ -62,14 +62,14 @@ export default async function ConferenceSubmissionPage() {
   // Fetch active Fund Applications (Approved projects)
   const fundApplications = await prisma.fundApplication.findMany({
     where: { status: 'APPROVED' },
-    select: { id: true, title: true, serialNo: true },
+    select: { id: true, title: true, projectNo: true },
     orderBy: { createdAt: 'desc' }
   })
 
   // Reuse the existing CreateWorkForm component
   // It handles the submission logic to /app/journals/submission/actions.ts which is generic enough for both types
   return (
-    <div className="container mx-auto py-8">
+    <div className="container max-w-4xl mx-auto py-8">
         <CreateWorkForm 
             journals={journals} 
             fundApplications={fundApplications} 

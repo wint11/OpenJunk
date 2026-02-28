@@ -9,10 +9,19 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react"
 import { submitApplication } from "../../actions"
 import { Card, CardContent } from "@/components/ui/card"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { PaperSearch } from "./paper-search"
 
-export function ApplyForm({ fund }: { fund: any }) {
+export function ApplyForm({ fund, departments }: { fund: any, departments: any[] }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [result, setResult] = useState<any>(null)
+  const [paperIds, setPaperIds] = useState<string[]>([])
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -21,6 +30,7 @@ export function ApplyForm({ fund }: { fund: any }) {
 
     const formData = new FormData(event.currentTarget)
     formData.append("fundId", fund.id)
+    formData.append("paperIds", JSON.stringify(paperIds))
 
     try {
       // Call server action directly
@@ -78,6 +88,27 @@ export function ApplyForm({ fund }: { fund: any }) {
 
           <div className="space-y-4">
             <div className="space-y-2">
+              <Label htmlFor="departmentId" className="text-base font-semibold">
+                申报学部/部门 <span className="text-red-500">*</span>
+              </Label>
+              <Select name="departmentId" required>
+                <SelectTrigger>
+                  <SelectValue placeholder="请选择申报部门" />
+                </SelectTrigger>
+                <SelectContent>
+                  {departments && departments.length > 0 ? departments.map((dept) => (
+                    <SelectItem key={dept.id} value={dept.id}>
+                       {dept.code} - {dept.name}
+                    </SelectItem>
+                  )) : (
+                    <SelectItem value="none" disabled>暂无可选部门</SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
+              {result?.errors?.departmentId && <p className="text-xs text-red-500">{result.errors.departmentId[0]}</p>}
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="applicantName" className="text-base font-semibold">
                 申请人姓名 <span className="text-red-500">*</span>
               </Label>
@@ -123,11 +154,12 @@ export function ApplyForm({ fund }: { fund: any }) {
               <Label htmlFor="achievements" className="text-base font-semibold">
                 已有成果 (可选)
               </Label>
+              <PaperSearch onSelect={(papers) => setPaperIds(papers.map(p => p.id))} />
               <Textarea 
                 id="achievements" 
                 name="achievements" 
-                placeholder="列出与本项目相关的代表性成果（论文、专利、奖项等）" 
-                className="min-h-[100px] resize-y text-base"
+                placeholder="除了关联上述论文外，您还可以补充列出其他代表性成果（专利、奖项等）" 
+                className="min-h-[100px] resize-y text-base mt-2"
               />
               <p className="text-xs text-muted-foreground">支持 Markdown 格式，或简单的文本列表。</p>
             </div>

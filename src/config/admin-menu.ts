@@ -1,5 +1,5 @@
 
-import { LayoutDashboard, FileText, Users, History, Layers, Mail, ClipboardList, Wallet, Landmark, Trophy, LucideIcon, BookOpen } from "lucide-react"
+import { LayoutDashboard, FileText, Users, History, Layers, Mail, ClipboardList, Wallet, Landmark, Trophy, LucideIcon, BookOpen, Stamp } from "lucide-react"
 
 export type AdminRole = 'SUPER_ADMIN' | 'ADMIN' | 'REVIEWER' | 'FUND_ADMIN' | 'AWARD_ADMIN' | 'JOURNAL_ADMIN'
 
@@ -60,6 +60,12 @@ export const adminMenuConfig: MenuGroup[] = [
         roles: ['SUPER_ADMIN']
       },
       {
+        title: "组织介绍",
+        href: "/admin/fund/organization",
+        icon: Landmark,
+        roles: ['FUND_ADMIN', 'SUPER_ADMIN']
+      },
+      {
         title: "审计日志",
         href: "/admin/audit",
         icon: History,
@@ -111,6 +117,12 @@ export const adminMenuConfig: MenuGroup[] = [
     title: "基金管理",
     items: [
       {
+        title: "部门管理",
+        href: "/admin/fund/departments",
+        icon: Layers,
+        roles: ['SUPER_ADMIN', 'FUND_ADMIN']
+      },
+      {
         title: "项目管理",
         href: "/admin/fund/projects",
         icon: Wallet,
@@ -123,6 +135,12 @@ export const adminMenuConfig: MenuGroup[] = [
         roles: ['FUND_ADMIN', 'SUPER_ADMIN']
       },
       {
+        title: "立项管理",
+        href: "/admin/fund/approvals",
+        icon: Stamp,
+        roles: ['FUND_ADMIN', 'SUPER_ADMIN']
+      },
+      {
         title: "评审管理",
         href: "/admin/fund/reviews",
         icon: FileText,
@@ -132,7 +150,7 @@ export const adminMenuConfig: MenuGroup[] = [
         title: "专家库",
         href: "/admin/fund/admins",
         icon: Users,
-        roles: ['FUND_ADMIN', 'SUPER_ADMIN']
+        roles: ['SUPER_ADMIN']
       }
     ]
   },

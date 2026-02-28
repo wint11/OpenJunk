@@ -11,10 +11,10 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Trash2 } from "lucide-react"
-import { deleteFundCategory } from "./actions"
 import { CreateCategoryDialog } from "./create-category-dialog"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { DeleteCategoryButton } from "./delete-category-button"
+import { EditCategoryDialog } from "./edit-category-dialog"
 
 export default async function FundCategoriesPage() {
   const session = await auth()
@@ -96,14 +96,10 @@ export default async function FundCategoriesPage() {
                     <TableCell>{category._count.funds}</TableCell>
                     <TableCell>{category.createdAt.toLocaleDateString()}</TableCell>
                     <TableCell className="text-right">
-                      <form action={async () => {
-                        'use server'
-                        await deleteFundCategory(category.id)
-                      }}>
-                        <Button type="submit" variant="ghost" size="icon" className="text-destructive">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </form>
+                      <div className="flex justify-end gap-2">
+                        <EditCategoryDialog category={category} />
+                        <DeleteCategoryButton id={category.id} />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))

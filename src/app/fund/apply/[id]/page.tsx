@@ -14,6 +14,11 @@ export default async function ApplyPage({ params }: { params: Promise<{ id: stri
     notFound()
   }
 
+  const departments = await prisma.fundDepartment.findMany({
+    where: { categoryId: fund.categoryId },
+    orderBy: { code: 'asc' }
+  })
+
   return (
     <div className="min-h-screen bg-muted/10 py-12">
       <div className="container mx-auto max-w-2xl px-4">
@@ -23,7 +28,7 @@ export default async function ApplyPage({ params }: { params: Promise<{ id: stri
           <p className="text-muted-foreground">请填写有效的申报信息。提交后将生成唯一的申请ID，请妥善保管。</p>
         </div>
         
-        <ApplyForm fund={fund} />
+        <ApplyForm fund={fund} departments={departments} />
       </div>
     </div>
   )

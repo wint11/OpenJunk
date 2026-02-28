@@ -214,7 +214,7 @@ export default async function NovelDetailPage({ params }: NovelDetailPageProps) 
                             {app.fund.category.name} ({app.fund.year})
                         </span>
                         资助，项目编号：
-                        <span className="mx-1 font-mono text-foreground">{app.serialNo || '暂无'}</span>，
+                        <span className="mx-1 font-mono text-foreground">{app.projectNo || '暂无'}</span>，
                         项目名称：
                         <span className="mx-1 font-medium text-primary">{app.title}</span>。
                     </div>

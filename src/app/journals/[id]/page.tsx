@@ -30,7 +30,13 @@ export default async function JournalDetailPage(props: JournalDetailPageProps) {
     where: { id: params.id },
     include: {
       _count: {
-        select: { papers: true, admins: true, reviewers: true }
+        select: { 
+            papers: {
+                where: { status: 'PUBLISHED' }
+            },
+            admins: true, 
+            reviewers: true 
+        }
       },
       papers: {
         where: { status: 'PUBLISHED' },

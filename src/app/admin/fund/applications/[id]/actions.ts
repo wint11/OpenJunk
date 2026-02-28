@@ -58,11 +58,43 @@ export async function reviewApplication(prevState: any, formData: FormData) {
     }
 
     await prisma.$transaction(async (tx) => {
+      // Logic for Project No generation
+      let projectNoUpdate = {}
+      if (newStatus === 'APPROVED') {
+          const app = await tx.fundApplication.findUnique({
+              where: { id: applicationId },
+              include: { fund: true, department: true }
+          })
+          
+          if (app && !app.projectNo) {
+              const deptCode = app.department?.code ? app.department.code.charAt(0) : '0'
+              const yearShort = app.fund.year.toString().slice(-2)
+              const typeChar = app.fund.projectTypeChar || 'A'
+              const customNum = app.fund.customNumber || '0'
+              
+              // Count existing approved projects with projectNo in this fund & department
+              const count = await tx.fundApplication.count({
+                  where: {
+                      fundId: app.fundId,
+                      departmentId: app.departmentId,
+                      status: 'APPROVED',
+                      projectNo: { not: null }
+                  }
+              })
+              
+              const sequence = (count + 1).toString().padStart(3, '0')
+              projectNoUpdate = {
+                  projectNo: `${deptCode}${yearShort}${typeChar}${customNum}${sequence}`
+              }
+          }
+      }
+
       // Update application status
       await tx.fundApplication.update({
         where: { id: applicationId },
         data: {
           status: newStatus,
+          ...projectNoUpdate
         }
       })
 

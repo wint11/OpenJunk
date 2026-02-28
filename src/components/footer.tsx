@@ -8,7 +8,8 @@ export function Footer() {
   const pathname = usePathname()
 
   // Only show footer on Home ("/") and About ("/about") pages
-  const shouldShow = pathname === "/" || pathname === "/about"
+  // EXCEPTION: Do NOT show footer on Home anymore, because Home has its own full-screen layout
+  const shouldShow = pathname === "/about"
 
   if (!shouldShow) {
     return null

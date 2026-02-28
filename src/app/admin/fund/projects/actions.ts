@@ -14,7 +14,9 @@ const createFundSchema = z.object({
   categoryId: z.string().min(1, "请选择基金大类"),
   startDate: z.string().min(1, "请选择开始时间"),
   endDate: z.string().min(1, "请选择结束时间"),
-  description: z.string().optional()
+  description: z.string().optional(),
+  projectTypeChar: z.string().length(1, "项目类别必须为1位字符").regex(/^[A-Za-z0-9]$/, "必须是字母或数字"),
+  customNumber: z.string().length(1, "自定义数字必须为1位").regex(/^\d$/, "必须是数字"),
 })
 
 const updateFundSchema = createFundSchema.extend({
@@ -34,7 +36,9 @@ export async function createFund(prevState: any, formData: FormData) {
     categoryId: formData.get("categoryId") as string,
     startDate: formData.get("startDate") as string,
     endDate: formData.get("endDate") as string,
-    description: formData.get("description") as string
+    description: formData.get("description") as string,
+    projectTypeChar: formData.get("projectTypeChar") as string,
+    customNumber: formData.get("customNumber") as string,
   }
 
   const validated = createFundSchema.safeParse(data)
@@ -60,7 +64,7 @@ export async function createFund(prevState: any, formData: FormData) {
   }
 
   try {
-    const { title, year, categoryId, startDate, endDate, description } = validated.data
+    const { title, year, categoryId, startDate, endDate, description, projectTypeChar, customNumber } = validated.data
 
     await prisma.fund.create({
       data: {
@@ -70,7 +74,9 @@ export async function createFund(prevState: any, formData: FormData) {
         startDate: new Date(startDate),
         endDate: new Date(endDate),
         guideContent: description || "",
-        status: 'ACTIVE'
+        status: 'ACTIVE',
+        projectTypeChar,
+        customNumber
       }
     })
 
@@ -79,6 +85,79 @@ export async function createFund(prevState: any, formData: FormData) {
   } catch (error) {
     console.error("Create fund error:", error)
     return { success: false, message: "创建失败，请稍后重试" }
+  }
+}
+
+export async function deleteFund(id: string) {
+  const session = await auth()
+  if (!session?.user || (session.user.role !== 'ADMIN' && session.user.role !== 'SUPER_ADMIN')) {
+    return { success: false, message: '无权操作' }
+  }
+
+  try {
+    const fund = await prisma.fund.findUnique({
+      where: { id },
+      include: {
+        _count: {
+          select: { applications: true }
+        }
+      }
+    })
+
+    if (!fund) {
+      return { success: false, message: "项目不存在" }
+    }
+
+    // Check permission
+    if (session.user.role !== 'SUPER_ADMIN') {
+      const user = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        include: { fundAdminCategories: true }
+      })
+      const hasPermission = user?.fundAdminCategories.some(c => c.id === fund.categoryId)
+      if (!hasPermission) {
+        return { success: false, message: '无权删除该基金项目' }
+      }
+    }
+
+    // If there are applications, delete them first (Cascade delete manually or via Prisma if configured)
+    // Since schema doesn't have onDelete: Cascade for applications on Fund relation (it might, let's check schema or do manual)
+    // The requirement is to delete everything.
+    
+    // Use transaction to ensure data integrity
+    await prisma.$transaction(async (tx) => {
+      // 1. Delete all reviews associated with applications of this fund
+      // Find all application IDs first
+      const applications = await tx.fundApplication.findMany({
+        where: { fundId: id },
+        select: { id: true }
+      })
+      
+      const applicationIds = applications.map(app => app.id)
+      
+      if (applicationIds.length > 0) {
+        // Delete reviews
+        await tx.fundReview.deleteMany({
+          where: { applicationId: { in: applicationIds } }
+        })
+        
+        // Delete applications
+        await tx.fundApplication.deleteMany({
+          where: { fundId: id }
+        })
+      }
+
+      // 2. Delete the fund itself
+      await tx.fund.delete({
+        where: { id }
+      })
+    })
+
+    revalidatePath("/admin/fund/projects")
+    return { success: true, message: "删除成功，相关申请已全部清除" }
+  } catch (error) {
+    console.error("Delete fund error:", error)
+    return { success: false, message: "删除失败，请稍后重试" }
   }
 }
 
@@ -96,7 +175,9 @@ export async function updateFund(prevState: any, formData: FormData) {
     startDate: formData.get("startDate") as string,
     endDate: formData.get("endDate") as string,
     description: formData.get("description") as string,
-    status: formData.get("status") as string
+    status: formData.get("status") as string,
+    projectTypeChar: formData.get("projectTypeChar") as string,
+    customNumber: formData.get("customNumber") as string,
   }
 
   const validated = updateFundSchema.safeParse(data)
@@ -122,7 +203,7 @@ export async function updateFund(prevState: any, formData: FormData) {
   }
 
   try {
-    const { id, title, year, categoryId, startDate, endDate, description, status } = validated.data
+    const { id, title, year, categoryId, startDate, endDate, description, status, projectTypeChar, customNumber } = validated.data
 
     await prisma.fund.update({
       where: { id },
@@ -132,8 +213,10 @@ export async function updateFund(prevState: any, formData: FormData) {
         categoryId,
         startDate: new Date(startDate),
         endDate: new Date(endDate),
-        guideContent: description || "",
-        status: status as any
+        guideContent: description,
+        status,
+        projectTypeChar,
+        customNumber
       }
     })
 

@@ -18,7 +18,7 @@ interface Journal {
 interface FundApplication {
   id: string
   title: string
-  serialNo: string | null
+  projectNo?: string | null
 }
 
 interface CreateWorkFormProps {
@@ -92,7 +92,7 @@ export function CreateWorkForm({ journals, fundApplications = [], isLoggedIn = f
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 py-8">
+    <div className="space-y-6">
        <h1 className="text-3xl font-bold tracking-tight">{isConference ? "会议论文投稿" : "投稿新论文"}</h1>
        <Card>
          <CardHeader>
@@ -205,7 +205,7 @@ export function CreateWorkForm({ journals, fundApplications = [], isLoggedIn = f
                                 className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                             />
                             <label htmlFor={`fund-${app.id}`} className="text-sm cursor-pointer select-none">
-                                <span className="font-medium">[{app.serialNo || '无编号'}]</span> {app.title}
+                                <span className="font-medium">[{app.projectNo || '无编号'}]</span> {app.title}
                             </label>
                         </div>
                     ))}

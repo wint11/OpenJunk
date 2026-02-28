@@ -5,19 +5,52 @@ import { z } from "zod"
 
 const applySchema = z.object({
   fundId: z.string(),
+  departmentId: z.string().min(1, "请选择申报部门"),
   applicantName: z.string().min(2, "姓名至少2个字符"),
   title: z.string().min(5, "项目名称至少5个字符"),
   description: z.string().min(20, "项目简介至少20个字符"),
   achievements: z.string().optional(),
+  paperIds: z.string().optional(), // JSON string of paper IDs
 })
+
+export async function searchPapers(query: string) {
+  if (!query || query.length < 2) return []
+  
+  try {
+    const papers = await prisma.novel.findMany({
+      where: {
+        OR: [
+          { title: { contains: query } },
+          { author: { contains: query } }
+        ],
+        status: "PUBLISHED" // Only published papers
+      },
+      select: {
+        id: true,
+        title: true,
+        author: true,
+        journal: {
+            select: { name: true }
+        }
+      },
+      take: 10
+    })
+    return papers
+  } catch (error) {
+    console.error("Search papers error:", error)
+    return []
+  }
+}
 
 export async function submitApplication(prevState: any, formData: FormData) {
   const data = {
     fundId: formData.get("fundId") as string,
+    departmentId: formData.get("departmentId") as string,
     applicantName: formData.get("applicantName") as string,
     title: formData.get("title") as string,
     description: formData.get("description") as string,
     achievements: formData.get("achievements") as string,
+    paperIds: formData.get("paperIds") as string,
   }
 
   const validated = applySchema.safeParse(data)
@@ -43,22 +76,50 @@ export async function submitApplication(prevState: any, formData: FormData) {
     }
   }
 
-  // Generate Serial No: YEAR-CODE-RANDOM
+  // Check department
+  const department = await prisma.fundDepartment.findUnique({
+    where: { id: data.departmentId }
+  })
+
+  if (!department) {
+    return { success: false, message: "选择的部门不存在" }
+  }
+
+  if (department.categoryId !== fund.categoryId) {
+    return { success: false, message: "选择的部门不属于该基金大类" }
+  }
+
+  // Generate Serial No: YEAR-DEPTCODE-RANDOM
   const timestamp = Date.now().toString().slice(-6)
   const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0')
-  const code = fund.category.code || "FUND"
-  const serialNo = `${fund.year}-${code}-${timestamp}${random}`
+  const deptCode = department.code || "0"
+  const serialNo = `${fund.year}-${deptCode}-${timestamp}${random}`
+
+  let paperIds: string[] = []
+  try {
+    if (data.paperIds) {
+      paperIds = JSON.parse(data.paperIds)
+    }
+  } catch (e) {
+    console.error("Parse paperIds error", e)
+  }
 
   try {
     const application = await prisma.fundApplication.create({
       data: {
         fundId: data.fundId,
+        departmentId: department.id,
+        departmentName: department.name,
+        departmentCode: department.code,
         applicantName: data.applicantName,
         title: data.title,
         description: data.description,
         achievements: data.achievements,
         serialNo: serialNo,
-        status: "SUBMITTED"
+        status: "SUBMITTED",
+        novels: {
+            connect: paperIds.map((id) => ({ id }))
+        }
       }
     })
 

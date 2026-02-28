@@ -32,7 +32,6 @@ interface JournalDialogProps {
     description: string | null
     guidelines: string | null
     guidelinesUrl: string | null
-    customCssUrl?: string | null
     status: string
     coverUrl?: string | null
   }
@@ -52,15 +51,11 @@ export function JournalDialog({ mode, journal }: JournalDialogProps) {
         if (deleteAttachment) {
             formData.set("deleteGuidelinesFile", "true")
         }
-        if (deleteCustomCss) {
-            formData.set("deleteCustomCss", "true")
-        }
         await updateJournal(journal.id, formData)
         toast.success("期刊更新成功")
       }
       setOpen(false)
       setDeleteAttachment(false) // Reset state
-      setDeleteCustomCss(false)
     } catch (error) {
       toast.error("操作失败")
       console.error(error)

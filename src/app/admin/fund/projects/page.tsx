@@ -14,6 +14,7 @@ import { format } from "date-fns"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CreateFundDialog } from "./create-dialog"
 import { EditFundDialog } from "./edit-dialog"
+import { DeleteProjectButton } from "./delete-project-button"
 
 export default async function FundProjectsPage() {
   const session = await auth()
@@ -111,7 +112,10 @@ export default async function FundProjectsPage() {
                     </TableCell>
                     <TableCell>{format(fund.createdAt, 'yyyy-MM-dd HH:mm')}</TableCell>
                     <TableCell>
-                      <EditFundDialog fund={fund} />
+                      <div className="flex items-center gap-2">
+                        <EditFundDialog fund={fund} />
+                        <DeleteProjectButton id={fund.id} title={fund.title} />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))

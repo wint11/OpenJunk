@@ -63,13 +63,17 @@ export default async function NewWorkPage() {
   // Fetch active Fund Applications (Approved projects)
   const fundApplications = await prisma.fundApplication.findMany({
     where: { status: 'APPROVED' },
-    select: { id: true, title: true, serialNo: true },
+    select: { id: true, title: true, projectNo: true },
     orderBy: { createdAt: 'desc' }
   })
 
-  return <CreateWorkForm 
-            journals={journals} 
-            fundApplications={fundApplications} 
-            isLoggedIn={isLoggedIn}
-         />
+  return (
+    <div className="container max-w-4xl mx-auto py-8">
+      <CreateWorkForm 
+        journals={journals} 
+        fundApplications={fundApplications} 
+        isLoggedIn={isLoggedIn}
+      />
+    </div>
+  )
 }

@@ -24,7 +24,7 @@ export default async function FundPage() {
       <div className="flex flex-col items-center text-center mb-12">
         <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-4">基金申报</h1>
         <p className="text-lg text-muted-foreground max-w-2xl">
-          查看最新的科研基金申报指南，并在线提交申请。无需繁琐流程，助力您的学术研究。
+          查看最新的科研基金申报指南，并在线提交申请。
         </p>
       </div>
 

@@ -57,23 +57,12 @@ export async function createJournalAndAdmin(formData: FormData) {
     guidelinesUrl = `/uploads/guidelines/${fileName}`
   }
 
-  let customCssUrl = undefined
-  if (customCssFile && customCssFile.size > 0) {
-    const bytes = await customCssFile.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-    const uploadDir = join(process.cwd(), "public/uploads/css")
-    await mkdir(uploadDir, { recursive: true })
-    const fileName = `style-${Date.now()}-${customCssFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`
-    await writeFile(join(uploadDir, fileName), buffer)
-    customCssUrl = `/uploads/css/${fileName}`
-  }
-
   // Hash Password
   const hashedPassword = await bcrypt.hash(userPassword, 10)
 
   // Transaction: Create Journal + Create User (Admin)
   try {
-    await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       // 1. Create Journal
       const journal = await tx.journal.create({
         data: {
@@ -81,7 +70,6 @@ export async function createJournalAndAdmin(formData: FormData) {
           description,
           guidelines,
           guidelinesUrl,
-          customCssUrl,
           status: "ACTIVE", // Default to active for autonomy
           coverUrl,
         },
@@ -98,6 +86,8 @@ export async function createJournalAndAdmin(formData: FormData) {
           status: "ACTIVE",
         },
       })
+      
+      return journal
     })
 
     // Auto login
