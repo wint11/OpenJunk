@@ -15,7 +15,7 @@ export async function GET(
   }
 
   // Allowlist for folder types to prevent accessing arbitrary directories
-  const ALLOWED_TYPES = ['journals', 'css', 'guidelines', 'avatars', 'temp']
+  const ALLOWED_TYPES = ['journals', 'css', 'guidelines', 'avatars', 'temp', 'fund-org']
   
   if (!ALLOWED_TYPES.includes(type)) {
     return new NextResponse('Invalid file type', { status: 400 })
