@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence, useAnimation, PanInfo } from "framer-motion"
 import { Novel } from "@prisma/client"
 import { Trash2, FileText, ChevronRight, ChevronLeft, BookOpen, Download } from "lucide-react"
@@ -22,6 +22,7 @@ export function SplashTrashDeck({ papers }: SplashTrashDeckProps) {
   // Card Deck State
   const [currentIndex, setCurrentIndex] = useState(0)
   const [direction, setDirection] = useState(0)
+  const lastNavTime = useRef(0)
 
   // Trigger splash sequence on mount
   useEffect(() => {
@@ -42,6 +43,10 @@ export function SplashTrashDeck({ papers }: SplashTrashDeckProps) {
   }, [])
 
   const paginate = (newDirection: number) => {
+    const now = Date.now()
+    if (now - lastNavTime.current < 1000) return
+    lastNavTime.current = now
+
     setDirection(newDirection)
     setCurrentIndex((prev) => {
       let nextIndex = prev + newDirection
@@ -111,7 +116,7 @@ export function SplashTrashDeck({ papers }: SplashTrashDeckProps) {
       })
     } as any
   
-    // 3-Card Stack Carousel Variants (Coverflow style)
+    // Card Stack Carousel Variants (Coverflow style)
     const cardStackVariants = {
       enter: (direction: number) => ({
         x: direction > 0 ? '100%' : '-100%',
@@ -438,6 +443,10 @@ export function SplashTrashDeck({ papers }: SplashTrashDeckProps) {
                     <button 
                        key={idx} 
                        onClick={() => {
+                         const now = Date.now()
+                         if (now - lastNavTime.current < 1000) return
+                         lastNavTime.current = now
+
                          setDirection(idx > currentIndex ? 1 : -1)
                          setCurrentIndex(idx)
                        }}

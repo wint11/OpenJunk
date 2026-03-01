@@ -1,0 +1,116 @@
+import { auth } from "@/auth"
+import { prisma } from "@/lib/prisma"
+import { redirect } from "next/navigation"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
+import { Star } from "lucide-react"
+import { PaperActions } from "./paper-actions"
+
+export default async function ConferencePapersPage() {
+  const session = await auth()
+  const role = session?.user?.role ?? ""
+
+  if (!['ADMIN', 'SUPER_ADMIN'].includes(role)) {
+    redirect("/")
+  }
+
+  const currentUser = await prisma.user.findUnique({
+    where: { id: session?.user?.id },
+    select: { managedConferenceId: true }
+  })
+
+  const whereClause: any = { 
+    status: { in: ['PUBLISHED', 'TAKEDOWN'] },
+    conferenceId: { not: null }
+  }
+
+  // If ADMIN (and not SUPER_ADMIN), restrict to managed conference
+  if (role === 'ADMIN') {
+    if (currentUser?.managedConferenceId) {
+      whereClause.conferenceId = currentUser.managedConferenceId
+    } else {
+      whereClause.conferenceId = "NO_ACCESS"
+    }
+  }
+
+  const novels = await prisma.novel.findMany({
+    where: whereClause,
+    orderBy: { updatedAt: 'desc' },
+    include: { 
+      uploader: true,
+      conference: true
+    }
+  })
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold tracking-tight">已录用会议论文</h1>
+        <p className="text-muted-foreground">管理已录用的会议论文，支持撤稿和设为精选</p>
+      </div>
+      
+      <div className="rounded-md border bg-card">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>标题</TableHead>
+              <TableHead>所属会议</TableHead>
+              <TableHead>作者</TableHead>
+              <TableHead>状态</TableHead>
+              <TableHead>首页推荐</TableHead>
+              <TableHead>更新时间</TableHead>
+              <TableHead>操作</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {novels.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center py-10 text-muted-foreground">
+                  暂无已录用会议论文
+                </TableCell>
+              </TableRow>
+            ) : (
+              novels.map((novel) => (
+                <TableRow key={novel.id}>
+                  <TableCell className="font-medium">{novel.title}</TableCell>
+                  <TableCell>
+                    {novel.conference ? (
+                       <Badge variant="outline">{novel.conference.name}</Badge>
+                    ) : (
+                       <span className="text-muted-foreground text-sm">未知会议</span>
+                    )}
+                  </TableCell>
+                  <TableCell>{novel.author}</TableCell>
+                  <TableCell>
+                    <Badge variant={novel.status === 'PUBLISHED' ? 'default' : 'destructive'}>
+                      {novel.status === 'PUBLISHED' ? '已发布' : '已下架'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {novel.isRecommended ? (
+                      <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
+                        <Star className="w-3 h-3 mr-1 fill-yellow-500 text-yellow-500" /> 推荐中
+                      </Badge>
+                    ) : (
+                      <span className="text-muted-foreground text-sm">-</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(novel.updatedAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    <PaperActions 
+                      id={novel.id} 
+                      status={novel.status} 
+                      isRecommended={novel.isRecommended} 
+                    />
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  )
+}

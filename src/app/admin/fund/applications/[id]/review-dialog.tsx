@@ -50,7 +50,7 @@ export function ReviewDialog({ applicationId }: { applicationId: string }) {
         </Button>
       </div>
 
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={setOpen} modal={false}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>{actionType === 'APPROVE' ? '批准立项' : '驳回申请'}</DialogTitle>

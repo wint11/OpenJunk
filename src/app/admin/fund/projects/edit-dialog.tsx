@@ -43,7 +43,7 @@ export function EditFundDialog({ fund }: { fund: any }) {
   }, [state, setOpen])
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen} modal={false}>
       <DialogTrigger asChild>
         <Button variant="ghost" size="icon">
           <Pencil className="h-4 w-4" />

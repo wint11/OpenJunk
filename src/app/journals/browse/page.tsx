@@ -84,9 +84,9 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
 
   return (
     <div className="container mx-auto py-12 px-4">
-      <div className="flex flex-col md:flex-row gap-8 relative">
+      <div className="flex flex-col md:flex-row gap-8 relative items-start">
         {/* Sidebar Filters */}
-        <aside className="w-full md:w-64 space-y-8 flex-shrink-0 sticky top-24 h-[calc(100vh-8rem)] overflow-y-auto pr-2 custom-scrollbar">
+        <aside className="w-full md:w-64 space-y-8 flex-shrink-0 sticky top-24 h-fit max-h-[calc(100vh-8rem)] overflow-y-auto pr-2 custom-scrollbar">
           <div className="space-y-4">
             <h3 className="font-bold text-lg flex items-center gap-2">
               <Filter className="h-5 w-5" />
@@ -105,7 +105,7 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
                 {journals.map((j) => (
                   <Link 
                     key={j.id}
-                    href={`/browse?journal=${j.id}${category ? `&category=${category}` : ''}${sort ? `&sort=${sort}` : ''}${q ? `&q=${q}` : ''}`}
+                    href={`/journals/browse?journal=${j.id}${category ? `&category=${category}` : ''}${sort ? `&sort=${sort}` : ''}${q ? `&q=${q}` : ''}`}
                     className={`px-3 py-2 rounded-md text-sm transition-colors flex justify-between items-center ${journal === j.id ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-muted-foreground'}`}
                   >
                     <span>{j.name}</span>
@@ -118,7 +118,7 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
               <h4 className="text-sm font-medium text-muted-foreground">学科分类</h4>
               <div className="flex flex-col space-y-1">
                 <Link 
-                  href="/browse" 
+                  href="/journals/browse" 
                   className={`px-3 py-2 rounded-md text-sm transition-colors flex justify-between items-center ${!category ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-muted-foreground'}`}
                 >
                   <span>全部学科</span>
@@ -126,7 +126,7 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
                 {categories.map((c) => (
                   <Link 
                     key={c.category}
-                    href={`/browse?category=${c.category}${sort ? `&sort=${sort}` : ''}${q ? `&q=${q}` : ''}`}
+                    href={`/journals/browse?category=${c.category}${sort ? `&sort=${sort}` : ''}${q ? `&q=${q}` : ''}`}
                     className={`px-3 py-2 rounded-md text-sm transition-colors flex justify-between items-center ${category === c.category ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-muted-foreground'}`}
                   >
                     <span>{c.category}</span>
@@ -140,13 +140,13 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
               <h4 className="text-sm font-medium text-muted-foreground">排序</h4>
               <div className="flex flex-col space-y-1">
                 <Link 
-                  href={`/browse?sort=latest${category ? `&category=${category}` : ''}${q ? `&q=${q}` : ''}`}
+                  href={`/journals/browse?sort=latest${category ? `&category=${category}` : ''}${q ? `&q=${q}` : ''}`}
                   className={`px-3 py-2 rounded-md text-sm transition-colors ${!sort || sort === 'latest' ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-muted-foreground'}`}
                 >
                   最新发表
                 </Link>
                 <Link 
-                  href={`/browse?sort=popular${category ? `&category=${category}` : ''}${q ? `&q=${q}` : ''}`}
+                  href={`/journals/browse?sort=popular${category ? `&category=${category}` : ''}${q ? `&q=${q}` : ''}`}
                   className={`px-3 py-2 rounded-md text-sm transition-colors ${sort === 'popular' ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-muted-foreground'}`}
                 >
                   最多热度
@@ -169,7 +169,7 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
              </div>
              
              {/* Simple Search in Header */}
-             <form className="relative w-full sm:w-64" action="/browse">
+             <form className="relative w-full sm:w-64" action="/journals/browse">
                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                <Input 
                  type="search" 
@@ -199,7 +199,7 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
                 抱歉，没有找到符合条件的论文。请尝试切换分类或调整搜索关键词。
               </p>
               <Button asChild className="mt-6" variant="outline">
-                <Link href="/browse">
+                <Link href="/journals/browse">
                   查看全部论文
                 </Link>
               </Button>

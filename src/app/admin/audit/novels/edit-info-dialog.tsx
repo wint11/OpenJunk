@@ -64,7 +64,7 @@ export function EditInfoDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen} modal={false}>
       <DialogTrigger asChild>
         {trigger || (
           <Button variant="outline" size="sm">

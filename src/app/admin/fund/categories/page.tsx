@@ -14,17 +14,47 @@ import { Button } from "@/components/ui/button"
 import { CreateCategoryDialog } from "./create-category-dialog"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DeleteCategoryButton } from "./delete-category-button"
-import { EditCategoryDialog } from "./edit-category-dialog"
+import { EditFundDialog } from "./edit-fund-dialog"
 
 export default async function FundCategoriesPage() {
   const session = await auth()
   
   // Only SUPER_ADMIN can manage fund categories
-  if (session?.user?.role !== 'SUPER_ADMIN') {
+  // UPDATE: FUND_ADMIN should also be able to edit intro for their managed categories.
+  // But "Fund List" page logic currently lists ALL categories for SUPER_ADMIN to manage (Create/Delete).
+  
+  // If we merge "Organization Intro" here, we need to:
+  // 1. Allow FUND_ADMIN to access this page.
+  // 2. Filter categories if FUND_ADMIN.
+  // 3. Show "Create/Delete" only for SUPER_ADMIN.
+  // 4. Show "Edit Intro" for everyone with access.
+
+  const role = session?.user?.role
+  if (role !== 'SUPER_ADMIN' && role !== 'ADMIN') { // Assuming FUND_ADMIN is 'ADMIN' role in User table
     redirect("/admin")
   }
 
+  // Check if FUND_ADMIN (User with fundAdminCategories)
+  let managedCategoryIds: string[] = []
+  let isSuperAdmin = role === 'SUPER_ADMIN'
+
+  if (!isSuperAdmin) {
+      const user = await prisma.user.findUnique({
+          where: { id: session?.user?.id },
+          include: { fundAdminCategories: true }
+      })
+      if (user?.fundAdminCategories.length) {
+          managedCategoryIds = user.fundAdminCategories.map(c => c.id)
+      } else {
+          // Admin but not fund admin
+          redirect("/admin")
+      }
+  }
+
+  const whereClause = isSuperAdmin ? {} : { id: { in: managedCategoryIds } }
+
   const categories = await prisma.fundCategory.findMany({
+    where: whereClause,
     include: {
       admins: {
         select: {
@@ -44,15 +74,15 @@ export default async function FundCategoriesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">基金列表管理</h1>
-          <p className="text-muted-foreground">创建和管理基金大类（如：国家自然科学基金），并分配管理员。</p>
+          <h1 className="text-3xl font-bold tracking-tight">基金列表与介绍</h1>
+          <p className="text-muted-foreground">管理基金大类及其组织介绍信息。</p>
         </div>
-        <CreateCategoryDialog />
+        {isSuperAdmin && <CreateCategoryDialog />}
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>所有基金</CardTitle>
+          <CardTitle>基金组织列表</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -61,8 +91,8 @@ export default async function FundCategoriesPage() {
                 <TableHead>名称</TableHead>
                 <TableHead>代码</TableHead>
                 <TableHead>管理员</TableHead>
+                <TableHead>介绍预览</TableHead>
                 <TableHead>项目数</TableHead>
-                <TableHead>创建时间</TableHead>
                 <TableHead className="text-right">操作</TableHead>
               </TableRow>
             </TableHeader>
@@ -70,7 +100,7 @@ export default async function FundCategoriesPage() {
               {categories.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center h-24 text-muted-foreground">
-                    暂无基金大类，请点击右上角创建。
+                    暂无基金大类。
                   </TableCell>
                 </TableRow>
               ) : (
@@ -93,12 +123,18 @@ export default async function FundCategoriesPage() {
                         )}
                       </div>
                     </TableCell>
+                    <TableCell>
+                      <div className="max-w-[200px] truncate text-muted-foreground text-sm">
+                        {category.introContent || "暂无介绍"}
+                      </div>
+                    </TableCell>
                     <TableCell>{category._count.funds}</TableCell>
-                    <TableCell>{category.createdAt.toLocaleDateString()}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <EditCategoryDialog category={category} />
-                        <DeleteCategoryButton id={category.id} />
+                        <EditFundDialog category={category} isSuperAdmin={isSuperAdmin} />
+                        {isSuperAdmin && (
+                            <DeleteCategoryButton id={category.id} />
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>

@@ -47,7 +47,7 @@ export function CreateDepartmentDialog({ categories }: { categories: Category[] 
   }, [state, open])
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen} modal={false}>
       <DialogTrigger asChild>
         <Button>
           <Plus className="mr-2 h-4 w-4" /> 新建部门

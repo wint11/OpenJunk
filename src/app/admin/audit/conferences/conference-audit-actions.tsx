@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Download, X, Check, ArrowRight, Upload } from "lucide-react"
-import { publishNovel, rejectNovel } from "./actions"
+import { publishConferencePaper, rejectConferencePaper } from "./actions"
 import {
   Dialog,
   DialogContent,
@@ -26,7 +26,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Checkbox } from "@/components/ui/checkbox"
 
-interface NovelAuditActionsProps {
+interface ConferenceAuditActionsProps {
   novel: {
     id: string
     title: string
@@ -36,15 +36,15 @@ interface NovelAuditActionsProps {
     fundApplications: { id: string }[]
   }
   fundApplications: { id: string, title: string, serialNo: string | null }[]
-  availableJournals: { id: string, name: string }[]
+  availableConferences: { id: string, name: string }[]
 }
 
-export function NovelAuditActions({ novel, fundApplications, availableJournals }: NovelAuditActionsProps) {
+export function ConferenceAuditActions({ novel, fundApplications, availableConferences }: ConferenceAuditActionsProps) {
   const [publishDialogOpen, setPublishDialogOpen] = useState(false)
   
   // Form State
-  const [selectedJournalId, setSelectedJournalId] = useState<string>(
-    availableJournals.length === 1 ? availableJournals[0].id : ''
+  const [selectedConferenceId, setSelectedConferenceId] = useState<string>(
+    availableConferences.length === 1 ? availableConferences[0].id : ''
   )
   const [title, setTitle] = useState(novel.title)
   const [author, setAuthor] = useState(novel.author)
@@ -63,7 +63,6 @@ export function NovelAuditActions({ novel, fundApplications, availableJournals }
 
   return (
     <div className="flex items-center gap-2">
-      {/* ... (Download & Reject buttons remain same) ... */}
       {/* Download Button */}
       <Button variant="outline" size="sm" asChild>
         <a 
@@ -80,7 +79,7 @@ export function NovelAuditActions({ novel, fundApplications, availableJournals }
       </Button>
 
       {/* Reject Form */}
-      <form action={rejectNovel}>
+      <form action={rejectConferencePaper}>
         <input type="hidden" name="novelId" value={novel.id} />
         <input type="hidden" name="feedback" value="快速拒稿" />
         <Button 
@@ -107,39 +106,36 @@ export function NovelAuditActions({ novel, fundApplications, availableJournals }
         </DialogTrigger>
         <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>录用并发布稿件</DialogTitle>
+            <DialogTitle>录用并发布会议论文</DialogTitle>
             <DialogDescription>
-              请确认文章信息，选择发布期刊，并可上传最终版 PDF。
+              请确认文章信息，选择发布会议，并可上传最终版 PDF。
             </DialogDescription>
           </DialogHeader>
           
-          <form action={publishNovel} onSubmit={() => setPublishDialogOpen(false)} className="space-y-6 py-4">
+          <form action={publishConferencePaper} onSubmit={() => setPublishDialogOpen(false)} className="space-y-6 py-4">
              <input type="hidden" name="novelId" value={novel.id} />
-             <input type="hidden" name="feedback" value="录用发布" />
+             <input type="hidden" name="feedback" value="会议录用发布" />
              
-             {/* Journal Selection (Single-select) */}
+             {/* Conference Selection */}
              <div className="grid gap-2">
-                <Label htmlFor="journal">发布目标期刊 <span className="text-red-500">*</span></Label>
+                <Label htmlFor="conference">发布目标会议 <span className="text-red-500">*</span></Label>
                 <Select 
-                    name="targetJournalId"
-                    value={selectedJournalId} 
-                    onValueChange={setSelectedJournalId}
-                    disabled={availableJournals.length === 1} 
+                    name="targetConferenceId"
+                    value={selectedConferenceId} 
+                    onValueChange={setSelectedConferenceId}
+                    disabled={availableConferences.length === 1} 
                 >
                     <SelectTrigger>
-                        <SelectValue placeholder="请选择期刊" />
+                        <SelectValue placeholder="请选择会议" />
                     </SelectTrigger>
                     <SelectContent>
-                        {availableJournals.map((journal) => (
-                            <SelectItem key={journal.id} value={journal.id}>
-                                {journal.name}
+                        {availableConferences.map((conf) => (
+                            <SelectItem key={conf.id} value={conf.id}>
+                                {conf.name}
                             </SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
-                {availableJournals.length > 1 && (
-                    <p className="text-xs text-muted-foreground">您拥有多个期刊权限，请选择其中一个进行发布。</p>
-                )}
              </div>
 
              {/* Metadata Editing */}
@@ -192,7 +188,7 @@ export function NovelAuditActions({ novel, fundApplications, availableJournals }
                 </div>
              </div>
 
-             {/* PDF Upload (Mandatory) */}
+             {/* PDF Upload */}
              <div className="grid gap-2">
                 <Label htmlFor="pdfFile">上传最终版 PDF <span className="text-red-500">*</span></Label>
                 <div className="flex items-center gap-2">
@@ -203,8 +199,8 @@ export function NovelAuditActions({ novel, fundApplications, availableJournals }
 
              <DialogFooter>
                 <Button type="button" variant="outline" onClick={() => setPublishDialogOpen(false)}>取消</Button>
-                <Button type="submit" disabled={!selectedJournalId} className="bg-green-600 hover:bg-green-700">
-                    <Check className="mr-2 h-4 w-4" /> 确认发布
+                <Button type="submit" disabled={!selectedConferenceId} className="bg-green-600 hover:bg-green-700">
+                    <Check className="mr-2 h-4 w-4" /> 确认录用发布
                 </Button>
              </DialogFooter>
           </form>

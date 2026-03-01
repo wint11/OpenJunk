@@ -125,7 +125,7 @@ export function UserActions({ userId, name, email, currentRole, currentStatus, m
 
   return (
     <>
-    <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+    <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen} modal={false}>
         <DialogContent>
             <DialogHeader>
                 <DialogTitle>修改用户信息</DialogTitle>

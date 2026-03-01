@@ -3,6 +3,9 @@
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import { revalidatePath } from "next/cache"
+import { auth } from "@/auth"
+import { join } from "path"
+import { writeFile, mkdir } from "fs/promises"
 
 const categorySchema = z.object({
   name: z.string().min(2, "名称至少2个字符"),
@@ -98,9 +101,82 @@ export async function updateFundCategory(id: string, prevState: any, formData: F
     })
 
     revalidatePath("/admin/fund/categories")
-    return { success: true, message: "基金大类更新成功" }
+    return { success: true, message: "基本信息更新成功" }
   } catch (error) {
     console.error("Update category error:", error)
+    return { success: false, message: "更新失败，请稍后重试" }
+  }
+}
+
+export async function updateFundCategoryIntro(id: string, prevState: any, formData: FormData) {
+  const session = await auth()
+  if (!session?.user) {
+    return { success: false, message: '未登录' }
+  }
+
+  // Check permission
+  const isSuperAdmin = session.user.role === 'SUPER_ADMIN'
+  let hasPermission = isSuperAdmin
+
+  if (!hasPermission) {
+      const user = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        include: { fundAdminCategories: true }
+      })
+      hasPermission = user?.fundAdminCategories.some(c => c.id === id) || false
+  }
+
+  if (!hasPermission) {
+    return { success: false, message: '无权操作该基金大类' }
+  }
+
+  const introContent = formData.get("introContent") as string
+  const imageFile = formData.get("introImage") as File | null
+
+  try {
+    let introImages = undefined
+    
+    // Handle Image Upload
+    if (imageFile && imageFile.size > 0 && imageFile.name !== 'undefined') {
+      const bytes = await imageFile.arrayBuffer()
+      const buffer = Buffer.from(bytes)
+      const uploadDir = join(process.cwd(), "public/uploads/fund-org")
+      
+      // Ensure directory exists
+      try {
+          await mkdir(uploadDir, { recursive: true })
+      } catch (e) {
+          // ignore if exists
+      }
+      
+      // Generate unique filename
+      const ext = imageFile.name.split('.').pop() || 'jpg'
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`
+      const filePath = join(uploadDir, fileName)
+      
+      await writeFile(filePath, buffer)
+      introImages = `/uploads/fund-org/${fileName}`
+    }
+
+    const updateData: any = {
+      introContent
+    }
+    
+    if (introImages) {
+      updateData.introImages = introImages
+    }
+
+    await prisma.fundCategory.update({
+      where: { id },
+      data: updateData
+    })
+
+    revalidatePath("/admin/fund/categories")
+    revalidatePath("/fund/organization")
+    
+    return { success: true, message: "组织介绍更新成功" }
+  } catch (error) {
+    console.error("Update fund intro error:", error)
     return { success: false, message: "更新失败，请稍后重试" }
   }
 }

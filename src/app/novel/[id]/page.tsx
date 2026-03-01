@@ -32,6 +32,7 @@ export default async function NovelDetailPage({ params }: NovelDetailPageProps) 
     },
     include: {
         journal: true,
+        conference: true,
         fundApplications: {
             include: { fund: { include: { category: true } } }
         },
@@ -154,7 +155,17 @@ export default async function NovelDetailPage({ params }: NovelDetailPageProps) 
                    </p>
                 )}
                 <p className="text-sm text-muted-foreground pt-1">
-                  {novel.journal ? novel.journal.name : "OpenJunk"}
+                  {novel.journal ? (
+                    <Link href={`/journals/${novel.journal.id}`} className="hover:underline hover:text-primary">
+                        发表于期刊：{novel.journal.name}
+                    </Link>
+                  ) : novel.conference ? (
+                    <Link href={`/conferences/${novel.conference.id}`} className="hover:underline hover:text-primary">
+                        发表于会议：{novel.conference.name}
+                    </Link>
+                  ) : (
+                    "OpenJunk"
+                  )}
                 </p>
               </div>
 
@@ -184,7 +195,7 @@ export default async function NovelDetailPage({ params }: NovelDetailPageProps) 
                         title: novel.title, 
                         author: novel.author, 
                         createdAt: novel.createdAt,
-                        journalName: novel.journal?.name
+                        journalName: novel.journal?.name || novel.conference?.name
                     }} />
                     <AddToBookshelf novel={{ id: novel.id, title: novel.title, author: novel.author, coverUrl: novel.coverUrl }} />
                 </div>

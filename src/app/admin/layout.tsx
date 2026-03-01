@@ -17,12 +17,19 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   // Check user roles
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    include: { fundAdminCategories: true }
+    include: { 
+        fundAdminCategories: true,
+        managedConference: true // Check for conference admin
+    }
   })
   
   const isFundAdmin = user?.fundAdminCategories && user.fundAdminCategories.length > 0
   const isAwardAdmin = user?.managedAwardId !== null
-  const isJournalAdmin = role === 'ADMIN' && !isFundAdmin && !isAwardAdmin
+  const isConferenceAdmin = user?.managedConferenceId !== null
+  // If user manages a conference, they are Conference Admin.
+  // If user manages a journal, they are Journal Admin.
+  // A user could be both, or neither (generic admin).
+  const isJournalAdmin = role === 'ADMIN' && user?.managedJournalId !== null
 
   // Determine current user's effective roles
   const userRoles: AdminRole[] = []
@@ -30,6 +37,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (isFundAdmin) userRoles.push('FUND_ADMIN')
   if (isAwardAdmin) userRoles.push('AWARD_ADMIN')
   if (isJournalAdmin) userRoles.push('JOURNAL_ADMIN')
+  if (isConferenceAdmin) userRoles.push('CONFERENCE_ADMIN')
   if (role === 'REVIEWER') userRoles.push('REVIEWER')
 
   // Determine dashboard title
@@ -37,6 +45,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (role === 'SUPER_ADMIN') dashboardTitle = '系统后台'
   else if (isFundAdmin) dashboardTitle = '基金管理后台'
   else if (isAwardAdmin) dashboardTitle = '奖项管理后台'
+  else if (isConferenceAdmin) dashboardTitle = '会议管理后台'
 
   // Fetch unread notifications count
   const unreadCount = await prisma.notification.count({
@@ -52,15 +61,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)]">
+    <div className="flex h-[calc(100vh-4rem)] overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-64 border-r bg-muted/20 hidden md:block flex-shrink-0 h-screen sticky top-0 overflow-y-auto">
-        <div className="flex h-16 items-center border-b px-6 bg-background/50 backdrop-blur">
+      <aside className="w-64 border-r bg-muted/20 hidden md:flex flex-col flex-shrink-0 h-full">
+        <div className="flex-none h-16 flex items-center border-b px-6 bg-background/50 backdrop-blur">
           <Link href="/admin" className="font-bold text-lg">
             {dashboardTitle}
           </Link>
         </div>
-        <nav className="flex flex-col gap-1 p-4">
+        <nav className="flex-1 overflow-y-auto flex flex-col gap-1 p-4">
           {adminMenuConfig.map((group, index) => {
             // Filter items user has access to
             const visibleItems = group.items.filter(item => hasAccess(item.roles))
@@ -94,7 +103,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-8">
+      <main className="flex-1 h-full overflow-y-auto p-8">
         {children}
       </main>
     </div>

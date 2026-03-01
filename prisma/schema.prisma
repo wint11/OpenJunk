@@ -235,7 +235,10 @@ model Conference {
   guidelinesUrl String? // URL to downloadable guidelines file
   coverUrl    String?
   customCssUrl String? // URL to custom CSS file
-  status      String   @default("ACTIVE") // ACTIVE, ARCHIVED
+  location    String?
+  startDate   DateTime @default(now())
+  endDate     DateTime @default(now())
+  status      String   @default("ACTIVE") // ACTIVE, ARCHIVED, COMPLETED, CANCELLED
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

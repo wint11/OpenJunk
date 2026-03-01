@@ -42,7 +42,7 @@ export function ImportApplicationsDialog() {
   }, [state, setOpen])
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen} modal={false}>
       <DialogTrigger asChild>
         <Button>
           <Upload className="mr-2 h-4 w-4" /> 导入 Excel

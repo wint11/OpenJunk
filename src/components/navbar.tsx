@@ -93,7 +93,7 @@ export async function Navbar() {
           <nav className="flex items-center space-x-2">
             <ModeToggle />
             {session ? (
-              <DropdownMenu>
+              <DropdownMenu modal={false}>
                 <DropdownMenuTrigger asChild id="user-menu-trigger">
                   <Button variant="ghost" size="icon" className="rounded-full">
                     <Avatar className="h-8 w-8">

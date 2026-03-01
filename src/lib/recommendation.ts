@@ -23,13 +23,15 @@ export async function getRecommendedPapers(count = 12) {
   const candidates = await prisma.novel.findMany({
     where: {
       status: 'PUBLISHED',
-      journal: { status: 'ACTIVE' }
+      journal: {
+        status: 'ACTIVE'
+      }
     },
     select: {
       id: true,
       createdAt: true,
       isRecommended: true,
-      views: true
+      popularity: true // Using popularity instead of views if schema changed
     },
     orderBy: {
       createdAt: 'desc'
@@ -42,9 +44,10 @@ export async function getRecommendedPapers(count = 12) {
   // 2. 计算权重
   const weightedCandidates = candidates.map(paper => {
     let weight = 1 // 基础权重
+    const paperTime = new Date(paper.createdAt).getTime()
 
     // 时间加权
-    const diffDays = (now - paper.createdAt.getTime()) / ONE_DAY
+    const diffDays = (now - paperTime) / (1000 * 60 * 60 * 24)
     if (diffDays <= 7) {
       weight += 5
     } else if (diffDays <= 30) {
@@ -57,7 +60,7 @@ export async function getRecommendedPapers(count = 12) {
     }
 
     // 热度加权 (简单对数或者分段)
-    const viewBonus = Math.min(Math.floor(paper.views / 100), 5)
+    const viewBonus = Math.min(Math.floor((paper.popularity || 0) / 100), 5)
     weight += viewBonus
 
     return { id: paper.id, weight }

@@ -11,6 +11,10 @@ interface PaperCardProps {
       id: string
       name: string
     } | null
+    conference?: {
+      id: string
+      name: string
+    } | null
   }
 }
 
@@ -31,14 +35,21 @@ export function PaperCard({ paper }: PaperCardProps) {
             <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
               <span className="font-medium text-foreground">{paper.author}</span>
               <span>•</span>
-              {paper.journal && (
+              {paper.journal ? (
                 <>
-                  <Link href={`/browse?journal=${paper.journal.id}`} className="text-primary hover:underline">
+                  <Link href={`/journals/browse?journal=${paper.journal.id}`} className="text-primary hover:underline">
                     {paper.journal.name}
                   </Link>
                   <span>•</span>
                 </>
-              )}
+              ) : paper.conference ? (
+                <>
+                  <Link href={`/conferences/${paper.conference.id}`} className="text-primary hover:underline">
+                    {paper.conference.name}
+                  </Link>
+                  <span>•</span>
+                </>
+              ) : null}
               <span className="flex items-center gap-1">
                 <Calendar className="h-3 w-3" />
                 {paper.createdAt.toLocaleDateString('zh-CN')}

@@ -110,12 +110,12 @@ export default async function ConferencesPage() {
                 {/* Footer Actions */}
                 <div className="mt-5 pt-4 border-t border-muted/50 flex items-center justify-between">
                    <Button variant="ghost" size="sm" className="h-8 text-xs text-muted-foreground hover:text-primary px-0" asChild>
-                     <Link href={`/journals/${conference.id}`}>
+                     <Link href={`/conferences/${conference.id}`}>
                        查看详情 <ArrowRight className="ml-1 h-3 w-3" />
                      </Link>
                    </Button>
                    <Button variant="outline" size="sm" className="h-8 text-xs" asChild>
-                      <Link href={`/conferences/submission?journalId=${conference.id}`}>
+                      <Link href={`/conferences/submission?conferenceId=${conference.id}`}>
                         立即投稿
                       </Link>
                    </Button>

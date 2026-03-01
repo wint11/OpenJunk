@@ -1,7 +1,7 @@
 
 import { LayoutDashboard, FileText, Users, History, Layers, Mail, ClipboardList, Wallet, Landmark, Trophy, LucideIcon, BookOpen, Stamp } from "lucide-react"
 
-export type AdminRole = 'SUPER_ADMIN' | 'ADMIN' | 'REVIEWER' | 'FUND_ADMIN' | 'AWARD_ADMIN' | 'JOURNAL_ADMIN'
+export type AdminRole = 'SUPER_ADMIN' | 'ADMIN' | 'REVIEWER' | 'FUND_ADMIN' | 'AWARD_ADMIN' | 'JOURNAL_ADMIN' | 'CONFERENCE_ADMIN'
 
 export interface MenuItem {
   title: string
@@ -48,22 +48,22 @@ export const adminMenuConfig: MenuGroup[] = [
         roles: ['SUPER_ADMIN']
       },
       {
+        title: "会议列表",
+        href: "/admin/conferences/list",
+        icon: Layers,
+        roles: ['SUPER_ADMIN', 'CONFERENCE_ADMIN']
+      },
+      {
         title: "奖项列表",
         href: "/admin/awards",
         icon: Trophy,
         roles: ['SUPER_ADMIN']
       },
       {
-        title: "基金列表",
+        title: "基金组织",
         href: "/admin/fund/categories",
         icon: Landmark,
-        roles: ['SUPER_ADMIN']
-      },
-      {
-        title: "组织介绍",
-        href: "/admin/fund/organization",
-        icon: Landmark,
-        roles: ['FUND_ADMIN', 'SUPER_ADMIN']
+        roles: ['SUPER_ADMIN', 'FUND_ADMIN']
       },
       {
         title: "审计日志",
@@ -155,7 +155,7 @@ export const adminMenuConfig: MenuGroup[] = [
     ]
   },
   {
-    title: "稿件管理",
+    title: "期刊稿件",
     items: [
       {
         title: "稿件审阅",
@@ -174,6 +174,29 @@ export const adminMenuConfig: MenuGroup[] = [
         href: "/admin/novels",
         icon: BookOpen,
         roles: ['JOURNAL_ADMIN', 'SUPER_ADMIN']
+      }
+    ]
+  },
+  {
+    title: "会议稿件",
+    items: [
+      {
+        title: "会议审阅",
+        href: "/admin/audit/conferences",
+        icon: FileText,
+        roles: ['SUPER_ADMIN', 'REVIEWER', 'CONFERENCE_ADMIN']
+      },
+      {
+        title: "审稿记录",
+        href: "/admin/audit/conference-history",
+        icon: History,
+        roles: ['SUPER_ADMIN', 'REVIEWER', 'CONFERENCE_ADMIN']
+      },
+      {
+        title: "录用稿件",
+        href: "/admin/conferences/papers",
+        icon: BookOpen,
+        roles: ['SUPER_ADMIN', 'CONFERENCE_ADMIN']
       }
     ]
   }

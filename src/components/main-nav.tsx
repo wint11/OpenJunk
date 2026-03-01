@@ -73,6 +73,7 @@ export function MainNav({ role }: { role?: string }) {
         { name: "Gaggle Scholar", href: "http://47.100.93.220:5000", external: true },
         { name: "Web of Nothing", href: "https://webofnothing.org", external: true },
         { name: "Web of Absurd", href: "https://tctco.github.io/Web-of-Absurd/", external: true },
+        { name: "没用科学院", href: "https://caonu.labbricker.com/", external: true },
       ]
     }
   ]
@@ -82,8 +83,8 @@ export function MainNav({ role }: { role?: string }) {
       {navItems.map((item) => {
         if (item.children) {
           return (
-            <DropdownMenu key={item.name}>
-              <DropdownMenuTrigger className={cn(
+            <DropdownMenu key={item.name} modal={false}>
+              <DropdownMenuTrigger suppressHydrationWarning className={cn(
                 "flex items-center text-sm font-medium transition-colors hover:text-primary focus:outline-none",
                 pathname?.startsWith(item.href) && item.href !== "/" ? "text-foreground font-bold" : "text-muted-foreground"
               )}>

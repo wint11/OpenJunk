@@ -43,7 +43,7 @@ export function UploadPdfDialog({ novelId, trigger }: UploadPdfDialogProps) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen} modal={false}>
       <DialogTrigger asChild>
         {trigger || (
           <Button variant="outline" size="sm">

@@ -63,7 +63,7 @@ export function JournalDialog({ mode, journal }: JournalDialogProps) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen} modal={false}>
       <DialogTrigger asChild>
         <Button variant={mode === "create" ? "default" : "outline"} size={mode === "edit" ? "sm" : "default"}>
           {mode === "create" ? "创建期刊" : "编辑"}

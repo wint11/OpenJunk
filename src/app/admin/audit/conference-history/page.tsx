@@ -4,7 +4,7 @@ import { redirect } from "next/navigation"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 
-export default async function AuditHistoryPage() {
+export default async function ConferenceAuditHistoryPage() {
   const session = await auth()
   const role = session?.user?.role ?? ""
 
@@ -16,48 +16,39 @@ export default async function AuditHistoryPage() {
   const currentUser = await prisma.user.findUnique({
     where: { id: session?.user?.id },
     include: { 
-      managedJournal: true,
-      reviewerJournals: true
+      managedConference: true,
+      reviewerConferences: true
     }
   })
 
-  const whereClause: any = {}
-
-  // Permission check logic for audit history
-  if (role === 'SUPER_ADMIN') {
-    // 总编 (SUPER_ADMIN):
-    // 能够看到所有的期刊/会议/通用稿件的审核记录。
-    // 之前排除了 conferenceId: null，导致会议记录不可见。现在移除该限制。
-    whereClause.novel = {} // No filter on novel type
-  } else if (role === 'ADMIN') {
-    // 主编/会议主席 (ADMIN):
-    // 1. 看到自己操作过的所有记录。
-    // 2. 看到归属于自己所管理期刊 OR 会议的所有记录。
-    
-    const conditions: any[] = [
-        { reviewerId: session?.user?.id } // 自己操作的
-    ]
-
-    if (currentUser?.managedJournalId) {
-        conditions.push({ novel: { journalId: currentUser.managedJournalId } })
+  const whereClause: any = {
+    novel: {
+        conferenceId: { not: null }
     }
+  }
 
+  // Permission check
+  if (role === 'ADMIN') {
     if (currentUser?.managedConferenceId) {
-        conditions.push({ novel: { conferenceId: currentUser.managedConferenceId } })
+      // Admin can only see logs for papers in their managed conference
+      whereClause.novel = {
+        conferenceId: currentUser.managedConferenceId
+      }
+    } else {
+      // Admin with no conference sees nothing
+      whereClause.id = "NO_ACCESS"
     }
-
-    whereClause.OR = conditions
   } else if (role === 'REVIEWER') {
-    // 审稿人/编辑 (REVIEWER):
-    // 只能看到自己操作过的记录。
+    // Reviewer can only see their own logs
     whereClause.reviewerId = session?.user?.id
   }
+  // SUPER_ADMIN sees all
 
   const logs = await prisma.reviewLog.findMany({
     where: whereClause,
     orderBy: { createdAt: 'desc' },
     include: {
-      novel: { select: { title: true } },
+      novel: { select: { title: true, conference: { select: { name: true } } } },
       reviewer: { select: { name: true } }
     },
     take: 50
@@ -66,7 +57,7 @@ export default async function AuditHistoryPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">审核历史记录</h1>
+        <h1 className="text-3xl font-bold tracking-tight">会议审核历史记录</h1>
       </div>
       
       <div className="rounded-md border bg-card">
@@ -74,6 +65,7 @@ export default async function AuditHistoryPage() {
           <TableHeader>
             <TableRow>
               <TableHead>论文</TableHead>
+              <TableHead>所属会议</TableHead>
               <TableHead>审核人</TableHead>
               <TableHead>动作</TableHead>
               <TableHead>反馈/备注</TableHead>
@@ -83,7 +75,7 @@ export default async function AuditHistoryPage() {
           <TableBody>
             {logs.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
+                <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
                   暂无审核记录
                 </TableCell>
               </TableRow>
@@ -91,6 +83,13 @@ export default async function AuditHistoryPage() {
               logs.map((log) => (
                 <TableRow key={log.id}>
                   <TableCell className="font-medium">{log.novel.title}</TableCell>
+                  <TableCell>
+                    {log.novel.conference ? (
+                       <Badge variant="outline">{log.novel.conference.name}</Badge>
+                    ) : (
+                       <span className="text-muted-foreground text-sm">-</span>
+                    )}
+                  </TableCell>
                   <TableCell>
                     <div className="flex flex-col">
                         <span>{log.reviewer.name}</span>

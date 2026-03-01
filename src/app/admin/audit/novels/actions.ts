@@ -155,6 +155,8 @@ export async function publishNovel(formData: FormData) {
 
   // 3. Database Transaction
   await prisma.$transaction(async (tx) => {
+    // 1. Update Novel Status & Assign Journal
+    // This "locks" the novel to this journal.
     await tx.novel.update({
       where: { id: novelId },
       data: { 
@@ -164,7 +166,13 @@ export async function publishNovel(formData: FormData) {
         status: 'PUBLISHED',
         lastApprovedAt: new Date(),
         journalId: targetJournalId, 
-        submissionTargets: { set: [] }, // Clear pool
+        // submissionTargets: { set: [] }, // DO NOT CLEAR TARGETS YET! We might need to know where it came from for history?
+        // Actually, if it's published to one, it shouldn't be pending for others.
+        // But for audit history visibility, we rely on `journalId` being set on the novel.
+        // Which we are setting above.
+        
+        submissionTargets: { set: [] }, 
+        
         fundApplications: {
             set: [], 
             connect: fundApplicationIds.map(id => ({ id })) 
@@ -174,10 +182,11 @@ export async function publishNovel(formData: FormData) {
       }
     })
 
+    // 2. Log Review
     await tx.reviewLog.create({
       data: {
         novelId,
-        reviewerId: session!.user!.id!,
+        reviewerId: session!.user!.id!, // Ensure session.user.id is string
         action: 'APPROVE',
         feedback: feedback || "录用并发布"
       }
@@ -325,6 +334,16 @@ export async function rejectNovel(formData: FormData) {
               data: { status: 'REJECTED' }
           })
       }
+
+      // Log Review (THIS WAS MISSING BEFORE)
+      await prisma.reviewLog.create({
+        data: {
+          novelId,
+          reviewerId: session!.user!.id!,
+          action: 'REJECT',
+          feedback: feedback || "期刊拒绝录用"
+        }
+      })
   } else {
       // If SUPER_ADMIN or no journal, hard reject?
       await prisma.$transaction(async (tx) => {

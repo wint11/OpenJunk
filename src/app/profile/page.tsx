@@ -7,10 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { LogOut, User, Settings, Shield, Award } from "lucide-react"
-import { ReaderSettingsCard } from "@/app/profile/reader-settings"
+import { LogOut, User, Shield, Award } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ProfileForm } from "./profile-form"
 import { PasswordForm } from "./password-form"
 
 export default async function ProfilePage() {
@@ -82,17 +80,9 @@ export default async function ProfilePage() {
               <User className="mr-2 h-4 w-4" />
               基本资料
            </TabsTrigger>
-           <TabsTrigger value="settings" className="w-full justify-start px-3 py-2 h-auto data-[state=active]:bg-background">
-              <Settings className="mr-2 h-4 w-4" />
-              阅读设置
-           </TabsTrigger>
            <TabsTrigger value="security" className="w-full justify-start px-3 py-2 h-auto data-[state=active]:bg-background">
               <Shield className="mr-2 h-4 w-4" />
               账号安全
-           </TabsTrigger>
-           <TabsTrigger value="honors" className="w-full justify-start px-3 py-2 h-auto data-[state=active]:bg-background">
-              <Award className="mr-2 h-4 w-4" />
-              我的荣誉
            </TabsTrigger>
 
            <div className="mt-auto pt-4 border-t w-full">
@@ -112,33 +102,51 @@ export default async function ProfilePage() {
               <Card className="h-full flex flex-col">
                 <CardHeader>
                   <CardTitle>基本资料</CardTitle>
-                  <CardDescription>查看和管理您的个人信息</CardDescription>
+                  <CardDescription>查看您的个人信息和荣誉记录</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6 flex-1 overflow-y-auto">
-                  <div className="flex items-center space-x-6">
+                <CardContent className="space-y-8 flex-1 overflow-y-auto">
+                  {/* User Info Section */}
+                  <div className="flex items-start space-x-6 pb-6 border-b">
                     <Avatar className="h-24 w-24 border-2 border-muted">
                       <AvatarImage src={session.user.image || ""} />
                       <AvatarFallback className="text-2xl">{session.user.name?.[0]?.toUpperCase()}</AvatarFallback>
                     </Avatar>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                         <h3 className="text-2xl font-semibold">{session.user.name}</h3>
-                         <Badge variant="secondary">{roleTitle}</Badge>
+                    <div className="space-y-4 flex-1">
+                      <div className="grid gap-4 max-w-xl">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                           <Label className="text-right text-muted-foreground">昵称</Label>
+                           <div className="col-span-3 font-medium">{session.user.name}</div>
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                           <Label className="text-right text-muted-foreground">角色</Label>
+                           <div className="col-span-3"><Badge variant="secondary">{roleTitle}</Badge></div>
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                           <Label className="text-right text-muted-foreground">邮箱</Label>
+                           <div className="col-span-3 font-mono text-sm">{session.user.email}</div>
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                           <Label className="text-right text-muted-foreground">用户 ID</Label>
+                           <div className="col-span-3 font-mono text-sm text-muted-foreground">{session.user.id}</div>
+                        </div>
                       </div>
-                      <p className="text-muted-foreground">{session.user.email}</p>
-                      <Button variant="outline" size="sm" className="mt-2" disabled>更换头像 (开发中)</Button>
                     </div>
                   </div>
 
-                  <ProfileForm user={session.user} />
+                  {/* Honors Section */}
+                  <div className="space-y-4">
+                     <div className="flex items-center gap-2">
+                        <Award className="h-5 w-5 text-primary" />
+                        <h3 className="text-lg font-semibold">我的荣誉</h3>
+                     </div>
+                     <div className="bg-muted/30 rounded-lg p-8 flex flex-col items-center justify-center text-muted-foreground border border-dashed">
+                        <Award className="h-12 w-12 mb-3 opacity-20" />
+                        <p>暂无荣誉记录</p>
+                        <p className="text-sm mt-1">当您获得奖项时，将在此处展示。</p>
+                     </div>
+                  </div>
                 </CardContent>
               </Card>
-           </TabsContent>
-
-           <TabsContent value="settings" className="mt-0 h-full">
-              <div className="h-full">
-                <ReaderSettingsCard />
-              </div>
            </TabsContent>
 
            <TabsContent value="security" className="mt-0 h-full">
@@ -160,20 +168,6 @@ export default async function ProfilePage() {
                           </div>
                           <Button variant="outline" disabled>暂未开放</Button>
                       </div>
-                  </CardContent>
-              </Card>
-           </TabsContent>
-
-           <TabsContent value="honors" className="mt-0 h-full">
-              <Card className="h-full flex flex-col">
-                  <CardHeader>
-                      <CardTitle>我的荣誉</CardTitle>
-                      <CardDescription>查看您获得的证书和成就</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6 flex-1 overflow-y-auto flex flex-col items-center justify-center text-muted-foreground">
-                      <Award className="h-16 w-16 mb-4 opacity-20" />
-                      <p>暂无荣誉记录</p>
-                      <p className="text-sm">当您获得奖项时，将在此处展示。</p>
                   </CardContent>
               </Card>
            </TabsContent>
