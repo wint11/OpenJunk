@@ -36,8 +36,15 @@ export const adminMenuConfig: MenuGroup[] = [
     title: "平台管理",
     items: [
       {
-        title: "预印本审核",
-        href: "/admin/preprints",
+        title: "公开评审审核",
+        href: "/admin/preprints", // Keep admin route same for now or rename if needed. The user asked to rename the public facing route.
+        // Wait, if I renamed src/app/preprints to src/app/public-review, that's the public route.
+        // The admin route is src/app/admin/preprints. I should probably rename that too for consistency, but the user didn't explicitly ask for admin route rename.
+        // However, "preprints" terminology is being replaced.
+        // Let's stick to renaming the LABEL first. The underlying admin route can stay or be moved later.
+        // Actually, if I want to be thorough, I should rename admin route too. But let's focus on user request "I want to change it to Public Review Platform".
+        // The admin route is e:\项目文件\OpenJunk\src\app\admin\preprints\page.tsx.
+        // I will keep the admin route as is for now to avoid breaking too many things, just change the label.
         icon: FileText,
         roles: ['SUPER_ADMIN']
       },

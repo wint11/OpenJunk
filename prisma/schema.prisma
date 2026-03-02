@@ -42,6 +42,7 @@ model User {
   sentNotifications Notification[] @relation("SenderNotifications")
   
   comments       Comment[]
+  novelReviewComments NovelReviewComment[]
   commentLikes   CommentLike[]
 
   // Fund System Relations
@@ -135,6 +136,31 @@ model Novel {
   readingHistory ReadingHistory[]
   reviewLogs  ReviewLog[]
   comments    Comment[]
+  novelReviewComments NovelReviewComment[]
+}
+
+model NovelReviewComment {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  guestName String?
+  guestIp   String?
+  
+  novelId   String
+  novel     Novel    @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  
+  // Optional: Track if this comment is part of an official review action
+  action    String?  // REJECT, MINOR_REVISION, MAJOR_REVISION, COMMENT, etc.
+  
+  // Optional parent comment for replies
+  parentId  String?
+  parent    NovelReviewComment? @relation("NovelReviewCommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   NovelReviewComment[] @relation("NovelReviewCommentReplies")
 }
 
 model ReviewLog {

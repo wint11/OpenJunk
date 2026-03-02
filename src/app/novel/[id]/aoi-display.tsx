@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
+import { Badge } from "@/components/ui/badge"
 import { voteAoi, triggerAoiCalculation } from "./actions"
 import { Activity, Zap, ThumbsUp, ThumbsDown, Loader2, CheckCircle2, AlertTriangle, XCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -27,7 +28,19 @@ export function AoiDisplay({ novelId, aoiScore, aiScores, userVote, isDuplicate 
   const [isCalculating, setIsCalculating] = useState(false)
 
   // Check if AI analysis has run (scores are not all 0)
-  const hasAiRun = Object.values(aiScores).some(s => s > 0)
+  // New logic: if aiRigor is -1, it means failed. if > 0, it means success.
+  // if aiRigor is 0, it means not run yet.
+  const hasAiRun = aiScores.rigor !== 0
+  const isAiFailed = aiScores.rigor === -1
+
+  // Determine what to display for AOI score
+  // If not run (0) OR failed (-1), show "--"
+  // But wait, user said "刚开始的时候...显示为--"
+  // Also "如果是失败了，就显示--"
+  // So basically if aoiScore is 0 (initial), show --.
+  // Unless it's a valid 0 score? (Unlikely).
+  // Let's use `!hasAiRun` to determine initial state.
+  const showPlaceholder = !hasAiRun || isAiFailed
 
   const handleVote = (type: 'OVERREACH' | 'MISCONDUCT') => {
     startTransition(async () => {
@@ -44,11 +57,14 @@ export function AoiDisplay({ novelId, aoiScore, aiScores, userVote, isDuplicate 
 
   const handleCalculate = async () => {
     setIsCalculating(true)
-    try {
-      await triggerAoiCalculation(novelId)
-    } finally {
+    startTransition(async () => {
+      const res = await triggerAoiCalculation(novelId)
       setIsCalculating(false)
-    }
+      if (!res.success) {
+        // Show toast or error logic here if needed
+        console.error(res.error)
+      }
+    })
   }
 
   // Dimension labels
@@ -71,11 +87,14 @@ export function AoiDisplay({ novelId, aoiScore, aiScores, userVote, isDuplicate 
             variant="outline" 
             size="sm" 
             onClick={handleCalculate} 
-            disabled={isCalculating}
+            disabled={isCalculating || isPending}
           >
             {isCalculating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4 mr-1" />}
             {isCalculating ? "计算中..." : "AI 评分"}
           </Button>
+        )}
+        {isAiFailed && (
+            <Badge variant="destructive" className="ml-2">分析失败</Badge>
         )}
       </div>
 
@@ -84,20 +103,21 @@ export function AoiDisplay({ novelId, aoiScore, aiScores, userVote, isDuplicate 
         <div className="flex items-end gap-2">
           <span className={cn(
             "text-6xl font-black tracking-tighter transition-colors",
-            aoiScore > 5000 ? "text-red-500" : (aoiScore > 1000 ? "text-yellow-500" : "text-primary")
+            // If failed or initial, use neutral color, otherwise color based on score
+            showPlaceholder ? "text-muted-foreground" : (aoiScore > 5000 ? "text-red-500" : (aoiScore > 1000 ? "text-yellow-500" : "text-primary"))
           )}>
-            {aoiScore.toFixed(2)}
+            {showPlaceholder ? "--" : aoiScore.toFixed(2)}
           </span>
           <span className="text-sm text-muted-foreground mb-2">AOI</span>
         </div>
         
         {isDuplicate ? (
-           <div className="bg-green-500/10 text-green-600 dark:text-green-400 text-sm font-semibold px-3 py-1.5 rounded-md flex items-center gap-2">
+           <div className="bg-green-500/10 text-green-600 dark:text-green-400 text-sm font-semibold px-3 py-1.5 rounded-md flex items-center gap-2 w-fit">
              <CheckCircle2 className="h-4 w-4" />
              检测到一稿多投 (AOI 系数 x0.5)
            </div>
         ) : (
-           <div className="bg-destructive/10 text-destructive text-sm font-semibold px-3 py-1.5 rounded-md flex items-center gap-2">
+           <div className="bg-destructive/10 text-destructive text-sm font-semibold px-3 py-1.5 rounded-md flex items-center gap-2 w-fit">
              <XCircle className="h-4 w-4" />
              未检测到一稿多投
            </div>
@@ -110,7 +130,7 @@ export function AoiDisplay({ novelId, aoiScore, aiScores, userVote, isDuplicate 
       </div>
 
       {/* AI Dimensions (Only show if calculated) */}
-      {hasAiRun && (
+      {hasAiRun && !isAiFailed && (
         <div className="space-y-3 bg-muted/20 p-4 rounded-lg">
            <h4 className="text-sm font-semibold mb-2">AI 维度评分 (0-10)</h4>
            {dimensions.map((dim) => (
@@ -122,6 +142,13 @@ export function AoiDisplay({ novelId, aoiScore, aiScores, userVote, isDuplicate 
                <Progress value={dim.value * 10} className="h-1.5" />
              </div>
            ))}
+        </div>
+      )}
+      
+      {isAiFailed && (
+        <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20 text-sm text-destructive flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4" />
+            AI 分析过程出现异常，无法获取维度评分。请稍后重试或联系管理员。
         </div>
       )}
 

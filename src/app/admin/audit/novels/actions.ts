@@ -273,97 +273,91 @@ export async function approveNovel(formData: FormData) {
   redirect('/admin/audit/novels')
 }
 
-export async function rejectNovel(formData: FormData) {
+export async function reviewNovel(formData: FormData) {
   const session = await auth()
   const user = session?.user
   if (!['ADMIN', 'SUPER_ADMIN', 'REVIEWER'].includes(user?.role ?? "")) return
 
   const novelId = formData.get('novelId') as string
+  const action = formData.get('action') as string
   const feedback = formData.get('feedback') as string
 
-  if (!novelId) return
+  if (!novelId || !action) return
 
-  // Requirement: "如果点击了返回，那么就回到几个期刊的池子里面去"
-  // "Clicking return/reject goes back to the pool"
-  // This implies if an admin rejects it, it might just mean "My journal doesn't want it", 
-  // but others might?
-  // Or does it mean "Return to pool" = "Undo acceptance"?
-  // But here we are in the Audit phase (DRAFT/PENDING).
-  // If I reject a DRAFT, it usually means "Changes requested" or "Hard reject".
-  
-  // If "Return" means "Return to pool" in the context of "I accidentally grabbed it but don't want it",
-  // that applies if we had a "Locking" mechanism. We don't have locking yet.
-  // Everyone sees it until someone approves it.
-  
-  // So "Reject" here probably means "Reject submission entirely" OR "Reject from MY journal".
-  // If I reject from MY journal, I should remove my journal from `submissionTargets`.
-  // If `submissionTargets` becomes empty, then maybe hard reject?
-  
-  // Let's implement: Remove current journal from submissionTargets.
-  
-  const currentUser = await prisma.user.findUnique({
-      where: { id: user?.id },
-      include: { managedJournal: true }
+  // Log to reviewLog table
+  await prisma.reviewLog.create({
+    data: {
+      novelId,
+      reviewerId: session!.user!.id!,
+      action: action as any, // REJECT, MINOR_REVISION, MAJOR_REVISION, COMMENT
+      feedback: feedback || "评审操作"
+    }
   })
-  
-  const currentJournalId = currentUser?.managedJournalId
 
-  if (currentJournalId) {
-      // Remove this journal from targets
-      await prisma.novel.update({
-          where: { id: novelId },
+  // Also post to the public comment thread for visibility in "Public Review" page
+  // Localize action label
+  const actionLabel = {
+      'REJECT': '拒稿',
+      'MINOR_REVISION': '要求小修',
+      'MAJOR_REVISION': '要求大修',
+      'COMMENT': '评审意见',
+      'APPROVE': '录用'
+  }[action] || action
+
+  if (feedback) {
+      await prisma.novelReviewComment.create({
           data: {
-              submissionTargets: {
-                  disconnect: { id: currentJournalId }
-              }
+              content: feedback, // Clean feedback without prefix
+              novelId,
+              userId: session!.user!.id!,
+              action: action as string
           }
       })
-      
-      // Check if any targets left?
-      const novel = await prisma.novel.findUnique({
-          where: { id: novelId },
-          include: { submissionTargets: true }
+  }
+
+  // Handle specific status changes
+  if (action === 'REJECT') {
+      // Logic for rejection (same as rejectNovel logic)
+      const currentUser = await prisma.user.findUnique({
+          where: { id: user?.id },
+          include: { managedJournal: true }
       })
-      
-      if (novel && novel.submissionTargets.length === 0) {
-          // No targets left, so fully reject?
-          // Or just leave it as DRAFT/PENDING with no targets (orphan)?
-          // Let's mark as REJECTED if no one wants it.
+      const currentJournalId = currentUser?.managedJournalId
+
+      if (currentJournalId) {
+          // Remove this journal from targets
+          await prisma.novel.update({
+              where: { id: novelId },
+              data: {
+                  submissionTargets: { disconnect: { id: currentJournalId } }
+              }
+          })
+          
+          // Check if any targets left
+          const novel = await prisma.novel.findUnique({
+              where: { id: novelId },
+              include: { submissionTargets: true }
+          })
+          
+          if (novel && novel.submissionTargets.length === 0) {
+              await prisma.novel.update({
+                  where: { id: novelId },
+                  data: { status: 'REJECTED' }
+              })
+          }
+      } else {
+          // Hard reject
           await prisma.novel.update({
               where: { id: novelId },
               data: { status: 'REJECTED' }
           })
       }
-
-      // Log Review (THIS WAS MISSING BEFORE)
-      await prisma.reviewLog.create({
-        data: {
-          novelId,
-          reviewerId: session!.user!.id!,
-          action: 'REJECT',
-          feedback: feedback || "期刊拒绝录用"
-        }
-      })
-  } else {
-      // If SUPER_ADMIN or no journal, hard reject?
-      await prisma.$transaction(async (tx) => {
-        await tx.novel.update({
-          where: { id: novelId },
-          data: { status: 'REJECTED' }
-        })
-
-        await tx.reviewLog.create({
-          data: {
-            novelId,
-            reviewerId: session!.user!.id!,
-            action: 'REJECT',
-            feedback
-          }
-        })
-      })
-  }
+  } 
+  // For Revisions or Comments, status might not change, or could change to "REVISION_REQUESTED"?
+  // Schema currently supports: DRAFT, PENDING, PUBLISHED, REJECTED, TAKEDOWN.
+  // Maybe keep as DRAFT/PENDING but notify user.
+  // For now, no status change for revision requests, just feedback.
 
   revalidatePath('/admin/audit/novels')
-  revalidatePath(`/admin/audit/novels/${novelId}`)
-  redirect('/admin/audit/novels')
+  revalidatePath(`/public-review/journals/${novelId}`)
 }

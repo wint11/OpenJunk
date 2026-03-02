@@ -2,8 +2,17 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Download, X, Check, ArrowRight, Upload } from "lucide-react"
-import { publishNovel, rejectNovel } from "./actions"
+import { Download, X, Check, ArrowRight, Upload, MoreHorizontal, MessageSquare, AlertCircle, Edit, ExternalLink } from "lucide-react"
+import { publishNovel, reviewNovel } from "./actions"
+import Link from "next/link"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   Dialog,
   DialogContent,
@@ -11,7 +20,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import {
   Select,
@@ -41,6 +49,11 @@ interface NovelAuditActionsProps {
 
 export function NovelAuditActions({ novel, fundApplications, availableJournals }: NovelAuditActionsProps) {
   const [publishDialogOpen, setPublishDialogOpen] = useState(false)
+  const [reviewDialogOpen, setReviewDialogOpen] = useState(false)
+  
+  // Review State
+  const [reviewAction, setReviewAction] = useState<'REJECT' | 'MINOR_REVISION' | 'MAJOR_REVISION' | 'COMMENT'>('REJECT')
+  const [reviewFeedback, setReviewFeedback] = useState("")
   
   // Form State
   const [selectedJournalId, setSelectedJournalId] = useState<string>(
@@ -61,50 +74,108 @@ export function NovelAuditActions({ novel, fundApplications, availableJournals }
     )
   }
 
+  const handleOpenReview = (action: typeof reviewAction) => {
+    setReviewAction(action)
+    // Allow dropdown to close completely before opening dialog
+    setTimeout(() => {
+        setReviewDialogOpen(true)
+    }, 150)
+  }
+
+  const handleOpenPublish = () => {
+      // Allow dropdown to close completely before opening dialog
+      setTimeout(() => {
+          setPublishDialogOpen(true)
+      }, 150)
+  }
+
+  const getActionLabel = (action: string) => {
+    switch (action) {
+      case 'REJECT': return '拒稿'
+      case 'MINOR_REVISION': return '小修'
+      case 'MAJOR_REVISION': return '大修'
+      case 'COMMENT': return '评审意见'
+      default: return ''
+    }
+  }
+
   return (
     <div className="flex items-center gap-2">
-      {/* ... (Download & Reject buttons remain same) ... */}
-      {/* Download Button */}
-      <Button variant="outline" size="sm" asChild>
-        <a 
-          href={novel.pdfUrl || '#'} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          download 
-          className={!novel.pdfUrl ? "pointer-events-none opacity-50" : ""}
-          title="下载稿件"
-        >
-          <Download className="h-4 w-4" />
-          <span className="sr-only">下载</span>
-        </a>
-      </Button>
-
-      {/* Reject Form */}
-      <form action={rejectNovel}>
-        <input type="hidden" name="novelId" value={novel.id} />
-        <input type="hidden" name="feedback" value="快速拒稿" />
-        <Button 
-          variant="destructive" 
-          size="sm" 
-          type="submit"
-          title="拒稿"
-        >
-          <X className="h-4 w-4" />
-          <span className="sr-only">拒稿</span>
-        </Button>
-      </form>
-
-      {/* Publish Dialog Trigger */}
-      <Dialog open={publishDialogOpen} onOpenChange={setPublishDialogOpen} modal={false}>
-        <DialogTrigger asChild>
-          <Button 
-            size="sm" 
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            <ArrowRight className="mr-2 h-4 w-4" />
-            录用...
+      {/* Action Dropdown */}
+      <DropdownMenu modal={false}>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+            <span className="sr-only">打开菜单</span>
+            <MoreHorizontal className="h-4 w-4" />
           </Button>
-        </DialogTrigger>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem asChild>
+            <Link href={`/public-review/journals/${novel.id}`} target="_blank" className="cursor-pointer">
+                <MessageSquare className="mr-2 h-4 w-4" /> 查看反馈
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <a href={novel.pdfUrl || '#'} target="_blank" rel="noopener noreferrer" download className="cursor-pointer">
+                <Download className="mr-2 h-4 w-4" /> 下载稿件
+            </a>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuLabel>评审操作</DropdownMenuLabel>
+          <DropdownMenuItem onSelect={handleOpenPublish} className="text-green-600">
+            <Check className="mr-2 h-4 w-4" /> 录用并发布
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onSelect={() => handleOpenReview('MINOR_REVISION')}>
+            <Edit className="mr-2 h-4 w-4" /> 要求小修
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => handleOpenReview('MAJOR_REVISION')}>
+            <AlertCircle className="mr-2 h-4 w-4" /> 要求大修
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => handleOpenReview('COMMENT')}>
+            <MessageSquare className="mr-2 h-4 w-4" /> 发布评审意见
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onSelect={() => handleOpenReview('REJECT')} className="text-destructive">
+            <X className="mr-2 h-4 w-4" /> 拒稿
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {/* Review Dialog */}
+      <Dialog open={reviewDialogOpen} onOpenChange={setReviewDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{getActionLabel(reviewAction)}</DialogTitle>
+            <DialogDescription>
+              请输入具体的{getActionLabel(reviewAction)}意见，内容将发布到评审讨论区。
+            </DialogDescription>
+          </DialogHeader>
+          <form action={reviewNovel} onSubmit={() => setReviewDialogOpen(false)}>
+            <input type="hidden" name="novelId" value={novel.id} />
+            <input type="hidden" name="action" value={reviewAction} />
+            <div className="grid gap-4 py-4">
+              <Textarea 
+                name="feedback" 
+                placeholder="请输入反馈意见..." 
+                value={reviewFeedback}
+                onChange={(e) => setReviewFeedback(e.target.value)}
+                className="min-h-[150px]"
+                required
+              />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setReviewDialogOpen(false)}>取消</Button>
+              <Button type="submit" variant={reviewAction === 'REJECT' ? "destructive" : "default"}>
+                确认提交
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Publish Dialog Trigger (Kept from before) */}
+      <Dialog open={publishDialogOpen} onOpenChange={setPublishDialogOpen} modal={false}>
         <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>录用并发布稿件</DialogTitle>

@@ -125,7 +125,7 @@ export function UserActions({ userId, name, email, currentRole, currentStatus, m
 
   return (
     <>
-    <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen} modal={false}>
+    <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
             <DialogHeader>
                 <DialogTitle>修改用户信息</DialogTitle>
@@ -159,7 +159,7 @@ export function UserActions({ userId, name, email, currentRole, currentStatus, m
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>用户操作</DropdownMenuLabel>
-        <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)} disabled={isMasked}>
+        <DropdownMenuItem onSelect={(e) => { e.preventDefault(); setIsEditDialogOpen(true); }} disabled={isMasked}>
           <Edit className="mr-2 h-4 w-4" /> 修改信息
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleResetPassword}>

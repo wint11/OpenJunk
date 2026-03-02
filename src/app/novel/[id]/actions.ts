@@ -59,6 +59,25 @@ export async function voteAoi(novelId: string, voteType: 'OVERREACH' | 'MISCONDU
  * Trigger AI Calculation manually (e.g. if it failed or wasn't run)
  */
 export async function triggerAoiCalculation(novelId: string) {
+  const session = await auth()
+  if (!session?.user) {
+    return { success: false, error: "Unauthorized" }
+  }
+
+  // Check if already calculated or processing
+  const novel = await prisma.novel.findUnique({
+    where: { id: novelId },
+    select: { aiRigor: true }
+  })
+
+  if (!novel) return { success: false, error: "Novel not found" }
+
+  // If aiRigor is not 0 (meaning it's either >0 for success, or -1 for failed/processing)
+  // we strictly prevent re-triggering.
+  if (novel.aiRigor !== 0) {
+    return { success: false, error: "AI 评分已执行，无法重复触发" }
+  }
+
   try {
     await calculateAoi(novelId)
     revalidatePath(`/novel/${novelId}`)

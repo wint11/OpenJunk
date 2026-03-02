@@ -28,7 +28,7 @@ export default async function ArticlesReviewPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>标题</TableHead>
+              <TableHead className="w-[300px]">标题</TableHead>
               <TableHead>作者</TableHead>
               <TableHead>上传者</TableHead>
               <TableHead>类型</TableHead>
@@ -40,7 +40,11 @@ export default async function ArticlesReviewPage() {
           <TableBody>
             {articles.map((article) => (
               <TableRow key={article.id}>
-                <TableCell className="font-medium">{article.title}</TableCell>
+                <TableCell className="font-medium">
+                  <div className="max-w-[300px] truncate" title={article.title}>
+                    {article.title}
+                  </div>
+                </TableCell>
                 <TableCell>{article.author}</TableCell>
                 <TableCell>{article.uploader?.name || "未知"}</TableCell>
                 <TableCell>

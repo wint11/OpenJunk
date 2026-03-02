@@ -39,7 +39,8 @@ export async function calculateAoi(novelId: string): Promise<AoiResult | null> {
   if (!novel) return null
 
   // 1. Get AI Dimensions (If not already calculated or force recalculate)
-  // For now, we only calculate if all are 0 (initial state)
+  // For now, we only calculate if aiRigor is 0 (initial state)
+  // If aiRigor is -1 (failed) or > 0 (success), we skip AI calculation
   let dimensions: AoiDimensions = {
     rigor: novel.aiRigor || 0,
     reproducibility: novel.aiReproducibility || 0,
@@ -48,9 +49,16 @@ export async function calculateAoi(novelId: string): Promise<AoiResult | null> {
     objectivity: novel.aiObjectivity || 0
   }
 
-  const isAiCalculated = Object.values(dimensions).some(v => v > 0)
+  // Check if AI calculation has been attempted (0 = not attempted, -1 = failed, >0 = success)
+  const isAiCalculated = (novel.aiRigor !== 0 && novel.aiRigor !== null)
   
   if (!isAiCalculated && DEEPSEEK_API_KEY) {
+    // Lock the record immediately to prevent concurrent calculations
+    await prisma.novel.update({
+      where: { id: novelId },
+      data: { aiRigor: -1 } // Mark as processing/failed
+    })
+
     try {
       const text = await extractTextFromNovel(novel)
       if (text) {
@@ -68,11 +76,39 @@ export async function calculateAoi(novelId: string): Promise<AoiResult | null> {
               aiObjectivity: dimensions.objectivity
             }
           })
+        } else {
+            // AI returned null (failed), ensure it stays -1 or set explicitly
+             dimensions.rigor = -1
+             // Other dimensions remain 0, but rigor=-1 signals failure
         }
+      } else {
+          // Text extraction failed
+          dimensions.rigor = -1
       }
     } catch (error) {
       console.error("Failed to calculate AI score:", error)
+      // Ensure it stays -1
+      dimensions.rigor = -1
     }
+  }
+
+  // If calculation failed (-1), we return early or handle it gracefully
+  if (dimensions.rigor === -1) {
+      // Return a special result indicating failure
+      // We still return a result object but with -1 scores so UI can handle it
+      return {
+          dimensions: {
+              rigor: -1,
+              reproducibility: -1,
+              standardization: -1,
+              professionalism: -1,
+              objectivity: -1
+          },
+          baseScore: 0,
+          duplicateFactor: 1,
+          voteFactor: 1,
+          totalScore: 0
+      }
   }
 
   // 2. Base Score Calculation
@@ -159,17 +195,105 @@ async function analyzeWithDeepSeek(text: string): Promise<AoiDimensions | null> 
     baseURL: DEEPSEEK_BASE_URL
   })
 
-  // DeepSeek Chat usually supports 32k tokens. 
-  // 50k chars is roughly 10k-15k tokens (depending on language), which is safe.
+  // 1. Sanitize input content
+  // Remove potential prompt injection attempts or XML tags that might confuse the parser
+  const sanitizedText = text
+    .replace(/<[^>]*>/g, ' ') // Remove XML/HTML tags
+    .replace(/```/g, '')      // Remove code blocks
+    .slice(0, 30000);         // Truncate
+
+  // Injection Detection
+  const injectionKeywords = [
+    // --- English Injection Keywords ---
+    "ignore previous instructions",
+    "ignore all instructions",
+    "disregard previous instructions",
+    "disregard all instructions",
+    "forget all instructions",
+    "system prompt",
+    "reveal system prompt",
+    "what is your system prompt",
+    "you are not",
+    "you are now",
+    "act as",
+    "roleplay",
+    "simulate",
+    "give me a score",
+    "score it 10",
+    "perfect score",
+    "give a 10",
+    "score 10",
+    "system override",
+    "override system",
+    "admin mode",
+    "developer mode",
+    "debug mode",
+    "jailbreak",
+    "unrestricted",
+    "unfiltered",
+    "repeat the following",
+    "repeat after me",
+    "do not follow",
+    "bypass",
+    "hack",
+    "dan mode",
+    "dude mode",
+    "mongo tom",
+    "hypothetical response",
+    
+    // --- Chinese Injection Keywords ---
+    "忽略之前的指令",
+    "忽略所有指令",
+    "忽略指令",
+    "忽略限制",
+    "无视之前的指令",
+    "无视所有指令",
+    "忘记所有指令",
+    "系统指令",
+    "系统提示词",
+    "查看系统指令",
+    "你的指令是什么",
+    "评分改为",
+    "打满分",
+    "给个满分",
+    "强制评分",
+    "你现在是",
+    "模拟",
+    "越狱",
+    "解除限制",
+    "开发者模式",
+    "调试模式",
+    "管理员模式",
+    "新的指令",
+    "新指令",
+    "接下来的指令",
+    "不要遵守",
+    "绕过",
+    
+    // --- Context Specific ---
+    "AOI",
+    "aoi",
+    "academic overreach index"
+  ];
+
+  const lowerText = sanitizedText.toLowerCase();
+  const hasInjection = injectionKeywords.some(keyword => lowerText.includes(keyword.toLowerCase()));
+
+  if (hasInjection) {
+    console.warn("Potential prompt injection detected.");
+    return null; // Fail immediately
+  }
+
+  // 2. Optimized Prompt with strict instructions and XML enclosure
   const prompt = `
-    Please analyze the following academic paper content and score it from 0 to 10 on these 5 dimensions:
+    Please analyze the content inside <paper_content> tags and score it from 0 to 10 on these 5 dimensions:
     1. Rigor (严谨性)
     2. Reproducibility (可复现性)
     3. Standardization (规范性)
     4. Professionalism (专业性)
     5. Objectivity (客观性)
 
-    Return ONLY a JSON object with integer scores. Format:
+    Return ONLY a JSON object with integer scores (0-10). Format:
     {
       "rigor": number,
       "reproducibility": number,
@@ -178,8 +302,9 @@ async function analyzeWithDeepSeek(text: string): Promise<AoiDimensions | null> 
       "objectivity": number
     }
 
-    Content:
-    ${text.slice(0, 30000)}... (truncated if too long)
+    <paper_content>
+    ${sanitizedText}
+    </paper_content>
   `
 
   try {
@@ -193,12 +318,20 @@ async function analyzeWithDeepSeek(text: string): Promise<AoiDimensions | null> 
     if (!content) return null
 
     const result = JSON.parse(content)
+    
+    // 3. Validate Output
+    const validateScore = (score: any) => {
+      const num = Number(score)
+      if (Number.isNaN(num)) return 0
+      return Math.max(0, Math.min(10, Math.round(num)))
+    }
+
     return {
-      rigor: Number(result.rigor) || 0,
-      reproducibility: Number(result.reproducibility) || 0,
-      standardization: Number(result.standardization) || 0,
-      professionalism: Number(result.professionalism) || 0,
-      objectivity: Number(result.objectivity) || 0
+      rigor: validateScore(result.rigor),
+      reproducibility: validateScore(result.reproducibility),
+      standardization: validateScore(result.standardization),
+      professionalism: validateScore(result.professionalism),
+      objectivity: validateScore(result.objectivity)
     }
   } catch (e) {
     console.error("DeepSeek API error:", e)

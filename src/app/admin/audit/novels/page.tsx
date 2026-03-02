@@ -4,6 +4,7 @@ import { redirect } from "next/navigation"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { NovelAuditActions } from "./novel-audit-actions"
+import { RefreshCw } from "lucide-react"
 
 export default async function NovelAuditPage() {
   const session = await auth()
@@ -124,12 +125,12 @@ export default async function NovelAuditPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>标题</TableHead>
-              <TableHead>所属期刊</TableHead>
-              <TableHead>作者</TableHead>
-              <TableHead>上传者</TableHead>
-              <TableHead>分类</TableHead>
-              <TableHead>提交IP</TableHead>
+              <TableHead className="w-[300px]">标题</TableHead>
+              <TableHead className="w-[150px]">所属期刊</TableHead>
+              <TableHead className="w-[100px]">作者</TableHead>
+              <TableHead className="w-[100px]">上传者</TableHead>
+              <TableHead className="w-[100px]">分类</TableHead>
+              <TableHead className="w-[120px]">提交IP</TableHead>
               <TableHead>操作</TableHead>
             </TableRow>
           </TableHeader>
@@ -143,15 +144,28 @@ export default async function NovelAuditPage() {
             ) : (
               novels.map((novel) => (
                 <TableRow key={novel.id}>
-                  <TableCell className="font-medium">{novel.title}</TableCell>
+                  <TableCell className="font-medium">
+                    <div className="flex items-center gap-2 max-w-[300px]">
+                        <div className="truncate" title={novel.title}>
+                            {novel.title}
+                        </div>
+                        {/* New Version Badge */}
+                        {novel.lastSubmittedAt && novel.lastSubmittedAt > novel.createdAt && (
+                            <Badge variant="secondary" className="text-[10px] h-5 px-1 bg-blue-100 text-blue-700 hover:bg-blue-100 border-blue-200" title="作者已提交新版本">
+                                <RefreshCw className="w-3 h-3 mr-1" />
+                                新版本
+                            </Badge>
+                        )}
+                    </div>
+                  </TableCell>
                   <TableCell>
                     {novel.journal ? (
-                       <Badge variant="outline">{novel.journal.name}</Badge>
+                       <Badge variant="outline" className="max-w-[150px] truncate" title={novel.journal.name}>{novel.journal.name}</Badge>
                     ) : (
-                       <div className="flex flex-wrap gap-1">
+                       <div className="flex flex-wrap gap-1 max-w-[150px] overflow-hidden" title={novel.submissionTargets.map(t => t.name).join(", ")}>
                          {novel.submissionTargets.length > 0 ? (
                            novel.submissionTargets.map(t => (
-                             <Badge key={t.id} variant="secondary" className="text-xs">{t.name}</Badge>
+                             <Badge key={t.id} variant="secondary" className="text-xs truncate max-w-[140px]">{t.name}</Badge>
                            ))
                          ) : (
                            <span className="text-muted-foreground text-sm">无期刊</span>
@@ -162,13 +176,23 @@ export default async function NovelAuditPage() {
                         <span className="ml-2 text-xs text-orange-500 font-bold border border-orange-200 bg-orange-50 px-1 rounded">一稿多投</span>
                     )}
                   </TableCell>
-                  <TableCell>{novel.author}</TableCell>
-                  <TableCell>{novel.uploader?.name || "匿名"}</TableCell>
                   <TableCell>
-                    <Badge variant="outline">{novel.category}</Badge>
+                      <div className="max-w-[100px] truncate" title={novel.author}>
+                          {novel.author}
+                      </div>
                   </TableCell>
                   <TableCell>
-                    {novel.uploaderIp || '未知'}
+                      <div className="max-w-[100px] truncate" title={novel.uploader?.name || "匿名"}>
+                          {novel.uploader?.name || "匿名"}
+                      </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className="max-w-[100px] truncate" title={novel.category}>{novel.category}</Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="max-w-[120px] truncate" title={novel.uploaderIp || '未知'}>
+                        {novel.uploaderIp || '未知'}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <NovelAuditActions 

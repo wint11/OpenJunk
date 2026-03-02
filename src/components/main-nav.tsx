@@ -16,7 +16,6 @@ export function MainNav({ role }: { role?: string }) {
   const pathname = usePathname()
 
   const navItems = [
-    { name: "首页", href: "/" },
     {
       name: "期刊",
       href: "/journals",
@@ -58,10 +57,19 @@ export function MainNav({ role }: { role?: string }) {
       ]
     },
     {
+      name: "评审",
+      href: "/public-review",
+      children: [
+        { name: "期刊评审", href: "/public-review/journals" },
+        { name: "会议评审", href: "/public-review/conferences" },
+        { name: "基金评审", href: "/public-review/fund" },
+        { name: "奖项评审", href: "/public-review/awards" },
+      ]
+    },
+    {
       name: "发现",
       href: "/discovery",
       children: [
-        { name: "预印本", href: "/preprints" },
         { name: "Junk宇宙", href: "/universe" },
         { name: "关于我们", href: "/about" },
       ]
@@ -76,7 +84,7 @@ export function MainNav({ role }: { role?: string }) {
         { name: "没用科学院", href: "https://caonu.labbricker.com/", external: true },
       ]
     }
-  ]
+  ] as const
 
   return (
     <nav className="flex items-center space-x-4 lg:space-x-6">
@@ -86,7 +94,7 @@ export function MainNav({ role }: { role?: string }) {
             <DropdownMenu key={item.name} modal={false}>
               <DropdownMenuTrigger suppressHydrationWarning className={cn(
                 "flex items-center text-sm font-medium transition-colors hover:text-primary focus:outline-none",
-                pathname?.startsWith(item.href) && item.href !== "/" ? "text-foreground font-bold" : "text-muted-foreground"
+                pathname?.startsWith(item.href) ? "text-foreground font-bold" : "text-muted-foreground"
               )}>
                 {item.name} <ChevronDown className="ml-1 h-3 w-3" />
               </DropdownMenuTrigger>
@@ -95,10 +103,9 @@ export function MainNav({ role }: { role?: string }) {
                   <DropdownMenuItem key={child.name} asChild>
                     <Link 
                       href={child.href} 
-                      target={'external' in child && child.external ? "_blank" : undefined} 
-                      rel={'external' in child && child.external ? "noopener noreferrer" : undefined}
+                      target={'external' in child && child.external ? "_blank" : undefined}
                     >
-                        {child.name}
+                      {child.name}
                     </Link>
                   </DropdownMenuItem>
                 ))}
@@ -106,13 +113,14 @@ export function MainNav({ role }: { role?: string }) {
             </DropdownMenu>
           )
         }
+        
         return (
           <Link
             key={item.name}
             href={item.href}
             className={cn(
               "text-sm font-medium transition-colors hover:text-primary",
-              pathname === item.href ? "text-foreground font-bold" : "text-muted-foreground"
+              pathname?.startsWith(item.href) ? "text-foreground font-bold" : "text-muted-foreground"
             )}
           >
             {item.name}
