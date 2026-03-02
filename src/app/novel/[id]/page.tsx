@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { BookOpen, Calendar, Eye, FileText, Download, Quote, Wallet } from "lucide-react"
+import { BookOpen, Calendar, Eye, FileText, Download, Quote, Wallet, Activity } from "lucide-react"
 import { AddToBookshelf } from "@/components/add-to-bookshelf"
 import { CitationDialog } from "@/components/citation-dialog"
 
@@ -12,6 +12,7 @@ import { CommentSection } from "../comment-section"
 import { incrementPopularity } from "@/lib/popularity"
 import { Flame } from "lucide-react"
 import { auth } from "@/auth"
+import { AoiDisplay } from "./aoi-display"
 
 interface NovelDetailPageProps {
   params: Promise<{
@@ -81,6 +82,16 @@ export default async function NovelDetailPage({ params }: NovelDetailPageProps) 
   const headersList = await headers()
   const currentIp = headersList.get('x-forwarded-for') || '127.0.0.1'
 
+  // Fetch user vote for AOI
+  const userVoteRecord = await prisma.aoiVote.findUnique({
+    where: {
+      novelId_ip: {
+        novelId: id,
+        ip: currentIp
+      }
+    }
+  })
+
   // Parse extra authors safely
   let extraAuthors: { name: string; unit: string; roles: string[] }[] = []
   try {
@@ -90,6 +101,14 @@ export default async function NovelDetailPage({ params }: NovelDetailPageProps) 
   } catch (e) {
     console.error("Failed to parse extra authors", e)
   }
+
+  // Check for duplicate submissions
+  const isDuplicate = novel.pdfHash ? (await prisma.novel.count({
+    where: {
+      pdfHash: novel.pdfHash,
+      id: { not: id }
+    }
+  }) > 0) : false
 
   return (
     <div className="bg-background pb-12">
@@ -253,7 +272,19 @@ export default async function NovelDetailPage({ params }: NovelDetailPageProps) 
 
         {/* Sidebar: Metadata & Tools */}
         <div className="space-y-8">
-            {/* Sidebar content removed or can be replaced with relevant info */}
+            <AoiDisplay 
+              novelId={novel.id}
+              aoiScore={novel.aoiScore || 0}
+              aiScores={{
+                rigor: novel.aiRigor || 0,
+                reproducibility: novel.aiReproducibility || 0,
+                standardization: novel.aiStandardization || 0,
+                professionalism: novel.aiProfessionalism || 0,
+                objectivity: novel.aiObjectivity || 0
+              }}
+              userVote={userVoteRecord?.voteType as 'OVERREACH' | 'MISCONDUCT' | null}
+              isDuplicate={isDuplicate}
+            />
         </div>
       </div>
     </div>

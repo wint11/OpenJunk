@@ -99,6 +99,17 @@ model Novel {
   views       Int      @default(0)
   popularity  Float    @default(0) // Dynamic heat/popularity score
   rating      Float    @default(0)
+
+  // AOI System (Academic Overreach Index)
+  aoiScore          Float?   @default(0) // Final calculated AOI
+  aiRigor           Float?   @default(0) // 严谨性 (0-10)
+  aiReproducibility Float?   @default(0) // 可复现性 (0-10)
+  aiStandardization Float?   @default(0) // 规范性 (0-10)
+  aiProfessionalism Float?   @default(0) // 专业性 (0-10)
+  aiObjectivity     Float?   @default(0) // 客观性 (0-10)
+  
+  aoiVotes          AoiVote[]
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -556,4 +567,20 @@ model JournalTemplate {
   isDefault   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model AoiVote {
+  id        String   @id @default(cuid())
+  novelId   String
+  novel     Novel    @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  
+  ip        String   // Voter IP
+  userId    String?  // Optional: Linked User
+  
+  voteType  String   // OVERREACH (学术过端), MISCONDUCT (学术不端)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([novelId, ip]) // One vote per IP per novel
 }
