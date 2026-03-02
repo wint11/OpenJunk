@@ -7,6 +7,39 @@ import type { NextRequest, NextFetchEvent } from 'next/server'
 // const MAX_REQUESTS = 100; // 100 requests per minute
 
 export function proxy(request: NextRequest, event: NextFetchEvent) {
+  // Maintenance Configuration
+  // Adjust these dates as needed
+  const MAINTENANCE_START = new Date('2026-03-03T18:00:00')
+  const MAINTENANCE_END = new Date('2026-03-06T00:00:00')
+  const MAINTENANCE_PATH = '/maintenance'
+  
+  const now = new Date()
+  const isMaintenanceMode = now >= MAINTENANCE_START && now <= MAINTENANCE_END
+  const { pathname } = request.nextUrl
+
+  // Check maintenance mode first
+  // Allow static files, api routes (maybe?), and images
+  const isStaticOrApi = 
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/static') ||
+    pathname.startsWith('/api/auth') || 
+    pathname.includes('.')
+
+  if (!isStaticOrApi) {
+    // If in maintenance mode
+    if (isMaintenanceMode) {
+      // If not already on maintenance page, redirect
+      if (pathname !== MAINTENANCE_PATH) {
+        return NextResponse.redirect(new URL(MAINTENANCE_PATH, request.url))
+      }
+    } else {
+      // If NOT in maintenance mode but user tries to access maintenance page
+      if (pathname === MAINTENANCE_PATH) {
+        return NextResponse.redirect(new URL('/', request.url))
+      }
+    }
+  }
+
   const ip = request.headers.get('x-forwarded-for') || 'unknown';
   const path = request.nextUrl.pathname;
   const search = request.nextUrl.search;
