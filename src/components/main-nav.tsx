@@ -71,6 +71,7 @@ export function MainNav({ role }: { role?: string }) {
       href: "/discovery",
       children: [
         { name: "Junk宇宙", href: "/universe" },
+        { name: "排版工具", href: "/discovery/typesetting" },
         { name: "关于我们", href: "/about" },
       ]
     },
