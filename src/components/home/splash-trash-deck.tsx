@@ -47,6 +47,8 @@ export function SplashTrashDeck({ papers }: SplashTrashDeckProps) {
     if (now - lastNavTime.current < 1000) return
     lastNavTime.current = now
 
+    if (papers.length === 0) return
+
     setDirection(newDirection)
     setCurrentIndex((prev) => {
       let nextIndex = prev + newDirection
@@ -63,7 +65,7 @@ export function SplashTrashDeck({ papers }: SplashTrashDeckProps) {
     if (url.startsWith('http') || url.startsWith('/')) return url
     return `/uploads/pdfs/${url}`
   }
-  const pdfUrl = getPdfUrl(currentPaper?.pdfUrl)
+  const pdfUrl = currentPaper ? getPdfUrl(currentPaper.pdfUrl) : null
 
     // ------------------------------------------------------------------
     // Animation Variants
@@ -177,6 +179,7 @@ export function SplashTrashDeck({ papers }: SplashTrashDeckProps) {
 
   // Helper to get card at relative index
   const getCardIndex = (offset: number) => {
+    if (papers.length === 0) return 0
     let index = currentIndex + offset
     if (index < 0) index = papers.length + index
     if (index >= papers.length) index = index % papers.length
@@ -259,7 +262,7 @@ export function SplashTrashDeck({ papers }: SplashTrashDeckProps) {
       </AnimatePresence>
 
       {/* ------------------- MAIN DECK PHASE ------------------- */}
-      {!showSplash && (
+      {!showSplash && papers.length > 0 && (
         <motion.div 
           className="relative z-10 w-full h-full flex flex-col items-center justify-center overflow-hidden pb-12"
           initial={{ opacity: 0 }}
@@ -358,8 +361,9 @@ export function SplashTrashDeck({ papers }: SplashTrashDeckProps) {
 
                 {/* Center Card (Interactive) */}
                 <AnimatePresence initial={false} custom={direction} mode="popLayout">
+                  {currentPaper && (
                   <motion.div
-                    key={currentIndex}
+                    key={currentPaper.id}
                     custom={direction}
                     variants={cardStackVariants}
                     initial="enter"
@@ -416,6 +420,7 @@ export function SplashTrashDeck({ papers }: SplashTrashDeckProps) {
                        </div>
                     </div>
                   </motion.div>
+                  )}
                 </AnimatePresence>
              </div>
 

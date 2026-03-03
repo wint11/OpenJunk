@@ -10,6 +10,7 @@
     "db:switch:local": "node scripts/switch-db.js sqlite",
     "db:switch:prod": "node scripts/switch-db.js postgres",
     "sync:blob": "node scripts/sync-blob.js",
+    "migrate:files": "tsx scripts/migrate-files-to-blob.ts",
     "postinstall": "node scripts/switch-db.js auto && prisma generate",
     "vercel-build": "prisma db push && next build"
   },
