@@ -2,10 +2,9 @@
 
 import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
-import { join } from "path"
-import { writeFile, mkdir } from "fs/promises"
 import bcrypt from "bcryptjs"
 import { signIn } from "@/auth"
+import { storage } from "@/lib/storage"
 
 export async function createAwardAndAdmin(formData: FormData) {
   // Award Data
@@ -37,11 +36,8 @@ export async function createAwardAndAdmin(formData: FormData) {
   if (coverFile && coverFile.size > 0) {
     const bytes = await coverFile.arrayBuffer()
     const buffer = Buffer.from(bytes)
-    const uploadDir = join(process.cwd(), "public/uploads/awards")
-    await mkdir(uploadDir, { recursive: true })
     const fileName = `${Date.now()}-${coverFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`
-    await writeFile(join(uploadDir, fileName), buffer)
-    coverUrl = `/uploads/awards/${fileName}`
+    coverUrl = await storage.upload(buffer, fileName, 'uploads/awards')
   }
 
   // Hash Password
