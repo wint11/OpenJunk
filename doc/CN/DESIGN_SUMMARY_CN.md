@@ -16,7 +16,7 @@
 *   **UI 组件库**: shadcn/ui (基于 Radix UI), Lucide React (图标)
 *   **后端运行时**: Node.js (Next.js Server Actions & API Routes)
 *   **数据库 ORM**: Prisma
-*   **数据库**: SQLite (开发环境) / PostgreSQL (生产环境)
+*   **数据库**: SQLite
 *   **身份认证**: NextAuth.js v5 (Credentials Provider)
 *   **数据验证**: Zod
 *   **移动端**: UniApp (Vue.js)

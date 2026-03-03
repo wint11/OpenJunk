@@ -134,7 +134,7 @@ export async function getRecommendedJournals(aiJournalName?: string): Promise<Jo
   })
   
   // Extract unique Journal IDs
-  const historyJournalIds = Array.from(new Set(recentWorks.map(w => w.journalId)))
+  const historyJournalIds = Array.from(new Set(recentWorks.map(w => w.journalId))).filter((id): id is string => id !== null)
   
   if (historyJournalIds.length > 0) {
     const historyJournals = await prisma.journal.findMany({

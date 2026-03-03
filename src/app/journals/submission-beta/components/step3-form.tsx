@@ -92,7 +92,7 @@ export function Step3Metadata({ file, metadata, journal, onBack }: Step3Props) {
     
     if (!result.success) {
       const formattedErrors: Record<string, string> = {}
-      result.error.errors.forEach(err => {
+      result.error.issues.forEach(err => {
         // Map path to field name. For array items, it might be "authors.0.name"
         const path = err.path.join('.')
         formattedErrors[path] = err.message
