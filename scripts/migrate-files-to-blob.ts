@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
-import { glob } from 'glob';
+// import { glob } from 'glob'; // Remove unused glob import
 
 // Initialize Prisma
 // Force local SQLite connection even if DATABASE_URL is set to Postgres
