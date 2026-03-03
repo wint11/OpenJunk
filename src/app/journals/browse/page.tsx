@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma"
 import { PaperCard } from "@/components/paper-card"
 import { Metadata } from "next"
 import { Novel, Prisma } from "@prisma/client"
-import { BookX, Filter, SortAsc, Search } from "lucide-react"
+import { BookX, Filter, SortAsc, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -17,12 +17,16 @@ interface BrowsePageProps {
     category?: string
     journal?: string
     q?: string
+    page?: string
   }>
 }
 
 export default async function BrowsePage({ searchParams }: BrowsePageProps) {
-  const { sort, category, journal, q } = await searchParams
+  const { sort, category, journal, q, page } = await searchParams
   
+  const pageNumber = Number(page) || 1
+  const pageSize = 20
+
   const orderBy: Prisma.NovelOrderByWithRelationInput = sort === 'popular' 
     ? { popularity: 'desc' } 
     : { createdAt: 'desc' }
@@ -41,19 +45,36 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
     } : {})
   }
 
-  const novels = await prisma.novel.findMany({
-    where,
-    orderBy,
-    take: 50,
-    include: {
-      journal: {
-        select: {
-          id: true,
-          name: true
+  const [novels, totalCount] = await Promise.all([
+    prisma.novel.findMany({
+      where,
+      orderBy,
+      take: pageSize,
+      skip: (pageNumber - 1) * pageSize,
+      include: {
+        journal: {
+          select: {
+            id: true,
+            name: true
+          }
         }
       }
-    }
-  })
+    }),
+    prisma.novel.count({ where })
+  ])
+  
+  const totalPages = Math.ceil(totalCount / pageSize)
+
+  // Helper to generate pagination links
+  const getPageLink = (p: number) => {
+      const params = new URLSearchParams()
+      if (q) params.set('q', q)
+      if (sort) params.set('sort', sort)
+      if (category) params.set('category', category)
+      if (journal) params.set('journal', journal)
+      params.set('page', p.toString())
+      return `/journals/browse?${params.toString()}`
+  }
 
   // Get all categories for sidebar
   const categories = await prisma.novel.groupBy({
@@ -164,7 +185,7 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
                   {q ? `搜索结果: "${q}"` : (category || "全部论文")}
                 </h1>
                 <span className="text-muted-foreground text-sm font-normal ml-2">
-                  (共 {novels.length} 篇)
+                  (共 {totalCount} 篇)
                 </span>
              </div>
              
@@ -184,10 +205,90 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
           </div>
 
           {novels.length > 0 ? (
-            <div className="grid gap-4">
-              {novels.map((novel) => (
-                <PaperCard key={novel.id} paper={novel} />
-              ))}
+            <div className="space-y-6">
+                <div className="grid gap-4">
+                  {novels.map((novel) => (
+                    <PaperCard key={novel.id} paper={novel} />
+                  ))}
+                </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-2 pt-8">
+                        {/* First Page */}
+                        <Button 
+                            variant="outline" 
+                            size="icon" 
+                            disabled={pageNumber <= 1}
+                            asChild={pageNumber > 1}
+                            title="首页"
+                        >
+                            {pageNumber > 1 ? (
+                                <Link href={getPageLink(1)}>
+                                    <ChevronsLeft className="h-4 w-4" />
+                                </Link>
+                            ) : (
+                                <span><ChevronsLeft className="h-4 w-4" /></span>
+                            )}
+                        </Button>
+
+                        {/* Previous Page */}
+                        <Button 
+                            variant="outline" 
+                            size="icon" 
+                            disabled={pageNumber <= 1}
+                            asChild={pageNumber > 1}
+                            title="上一页"
+                        >
+                            {pageNumber > 1 ? (
+                                <Link href={getPageLink(pageNumber - 1)}>
+                                    <ChevronLeft className="h-4 w-4" />
+                                </Link>
+                            ) : (
+                                <span><ChevronLeft className="h-4 w-4" /></span>
+                            )}
+                        </Button>
+                        
+                        <div className="flex items-center gap-1 mx-2">
+                            <span className="text-sm font-medium">第 {pageNumber} 页</span>
+                            <span className="text-sm text-muted-foreground">/ 共 {totalPages} 页</span>
+                        </div>
+
+                        {/* Next Page */}
+                        <Button 
+                            variant="outline" 
+                            size="icon" 
+                            disabled={pageNumber >= totalPages}
+                            asChild={pageNumber < totalPages}
+                            title="下一页"
+                        >
+                            {pageNumber < totalPages ? (
+                                <Link href={getPageLink(pageNumber + 1)}>
+                                    <ChevronRight className="h-4 w-4" />
+                                </Link>
+                            ) : (
+                                <span><ChevronRight className="h-4 w-4" /></span>
+                            )}
+                        </Button>
+
+                        {/* Last Page */}
+                        <Button 
+                            variant="outline" 
+                            size="icon" 
+                            disabled={pageNumber >= totalPages}
+                            asChild={pageNumber < totalPages}
+                            title="尾页"
+                        >
+                            {pageNumber < totalPages ? (
+                                <Link href={getPageLink(totalPages)}>
+                                    <ChevronsRight className="h-4 w-4" />
+                                </Link>
+                            ) : (
+                                <span><ChevronsRight className="h-4 w-4" /></span>
+                            )}
+                        </Button>
+                    </div>
+                )}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-20 text-center text-muted-foreground border rounded-lg bg-muted/10">

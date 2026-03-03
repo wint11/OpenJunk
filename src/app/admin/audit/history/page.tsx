@@ -73,11 +73,11 @@ export default async function AuditHistoryPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>论文</TableHead>
-              <TableHead>审核人</TableHead>
-              <TableHead>动作</TableHead>
-              <TableHead>反馈/备注</TableHead>
-              <TableHead>时间</TableHead>
+              <TableHead className="w-[300px]">标题</TableHead>
+              <TableHead className="w-[100px]">审核人</TableHead>
+              <TableHead className="w-[80px]">动作</TableHead>
+              <TableHead className="w-[300px]">反馈/备注</TableHead>
+              <TableHead className="w-[150px]">时间</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -90,10 +90,14 @@ export default async function AuditHistoryPage() {
             ) : (
               logs.map((log) => (
                 <TableRow key={log.id}>
-                  <TableCell className="font-medium">{log.novel.title}</TableCell>
+                  <TableCell className="font-medium">
+                    <div className="max-w-[300px] truncate" title={log.novel.title}>
+                        {log.novel.title}
+                    </div>
+                  </TableCell>
                   <TableCell>
-                    <div className="flex flex-col">
-                        <span>{log.reviewer.name}</span>
+                    <div className="flex flex-col max-w-[100px] truncate" title={log.reviewer?.name || '未知'}>
+                        <span>{log.reviewer?.name || '未知'}</span>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -101,11 +105,15 @@ export default async function AuditHistoryPage() {
                       {log.action === 'APPROVE' ? '通过' : '拒绝'}
                     </Badge>
                   </TableCell>
-                  <TableCell className="max-w-[300px] truncate" title={log.feedback || ''}>
-                    {log.feedback || '-'}
+                  <TableCell>
+                    <div className="max-w-[300px] truncate" title={log.feedback || ''}>
+                        {log.feedback || '-'}
+                    </div>
                   </TableCell>
                   <TableCell>
-                    {new Date(log.createdAt).toLocaleString()}
+                    <div className="max-w-[150px] truncate" title={new Date(log.createdAt).toLocaleString()}>
+                        {new Date(log.createdAt).toLocaleString()}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

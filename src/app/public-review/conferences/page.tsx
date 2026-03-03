@@ -6,99 +6,63 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 
-export default async function PreprintsPage() {
-  // Fetch all preprints from the dedicated Preprint table
-  const preprints = await prisma.preprint.findMany({
-    orderBy: { createdAt: 'desc' },
-    include: {
-      uploader: { select: { name: true } }
-    }
-  })
-
-  // Fetch all novels (Journals/Conferences) with status DRAFT or PUBLISHED
+export default async function ConferenceReviewPage() {
   const novels = await prisma.novel.findMany({
     where: {
-      status: { in: ['DRAFT', 'PUBLISHED', 'PENDING'] }
+      status: { in: ['DRAFT', 'PUBLISHED', 'PENDING'] },
+      conferenceId: { not: null }
     },
     orderBy: { createdAt: 'desc' },
     include: {
       uploader: { select: { name: true } },
-      journal: { select: { name: true } },
       conference: { select: { name: true } }
     }
   })
-
-  // Combine and sort
-  const allPapers = [
-    ...preprints.map(p => ({
-      id: p.id,
-      title: p.title,
-      authors: p.authors,
-      createdAt: p.createdAt,
-      uploaderName: p.uploader?.name,
-      source: '预印本',
-      type: 'PREPRINT'
-    })),
-    ...novels.map(n => ({
-      id: n.id,
-      title: n.title,
-      authors: n.author,
-      createdAt: n.createdAt,
-      uploaderName: n.uploader?.name,
-      source: n.journal?.name || n.conference?.name || '其他来源',
-      type: 'NOVEL'
-    }))
-  ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 
   return (
     <div className="container mx-auto py-12 px-4">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">预印本</h1>
+          <h1 className="text-3xl font-bold tracking-tight">会议评审</h1>
           <p className="text-muted-foreground mt-2">
-            发现最新的研究成果，包括所有已投稿和已发布的论文。
+            浏览并评审各类会议论文。
           </p>
         </div>
-        <Button asChild>
-          <Link href="/preprints/submit">
-            <Plus className="mr-2 h-4 w-4" /> 发布预印本
-          </Link>
-        </Button>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {allPapers.map((paper) => (
+        {novels.map((paper) => (
           <Card key={paper.id} className="flex flex-col h-full hover:shadow-md transition-shadow">
             <CardHeader>
               <div className="flex justify-between items-start gap-2 mb-2">
                 <Badge variant="secondary">
-                  预印本
+                  会议论文
                 </Badge>
                 <span className="text-xs text-muted-foreground">
                   {paper.createdAt.toLocaleDateString()}
                 </span>
               </div>
               <CardTitle className="line-clamp-2 leading-tight">
-                <Link href={`/preprints/${paper.id}`} className="hover:underline">
+                <Link href={`/novel/${paper.id}`} className="hover:underline">
                   {paper.title}
                 </Link>
               </CardTitle>
               <CardDescription className="line-clamp-1">
-                {paper.authors}
+                {paper.author}
               </CardDescription>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col justify-end">
               <div className="space-y-2 text-sm text-muted-foreground">
                 <div className="flex items-center justify-between">
-                  <span>来源:</span>
-                  <span className="font-medium truncate max-w-[150px]" title={paper.source}>
-                    {paper.source}
+                  <span>会议:</span>
+                  <span className="font-medium truncate max-w-[150px]" title={paper.conference?.name}>
+                    {paper.conference?.name}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>上传者:</span>
                   <span className="font-medium truncate max-w-[150px]">
-                    {paper.uploaderName || "匿名用户"}
+                    {paper.uploader?.name || "匿名用户"}
                   </span>
                 </div>
               </div>
@@ -106,9 +70,9 @@ export default async function PreprintsPage() {
           </Card>
         ))}
 
-        {allPapers.length === 0 && (
+        {novels.length === 0 && (
           <div className="col-span-full text-center py-12 text-muted-foreground">
-            暂无预印本数据
+            暂无会议评审数据
           </div>
         )}
       </div>
