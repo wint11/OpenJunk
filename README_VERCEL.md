@@ -53,14 +53,31 @@ npx prisma db push
 
 ## Build Command on Vercel
 
-In your Vercel Project Settings > Build & Development Settings:
-- **Build Command**: `next build` (default)
-- **Install Command**: `npm install` (default)
+**CRITICAL STEP**: To ensure the database schema is created on Vercel (especially if local migration failed), you must update the Build Command.
 
-The `postinstall` script in `package.json` will automatically run `prisma generate`.
+1. Go to your Vercel Project Dashboard.
+2. Navigate to **Settings** > **Build & Development**.
+3. Under **Build Command**, toggle "Override" and enter:
+   ```bash
+   npm run vercel-build
+   ```
+   *(This runs `prisma db push && next build`)*
 
-If you are using **Method B (db push)**, you might want to add a command to update the schema during deployment, but be careful as this can result in data loss if schema changes are destructive.
-A safer way is to manually run `npx prisma db push` from your local machine (if possible) or a CI/CD pipeline whenever you change the schema.
+**Why?**
+- `prisma db push`: Connects to your remote database and creates the necessary tables (which solves the "Table not found" error).
+- `next build`: Builds your Next.js application.
+
+### Initial Data Seeding (Optional but Recommended for first run)
+
+If your database is empty, the application might look broken. To populate it with initial data:
+
+1. Temporarily set the **Build Command** to:
+   ```bash
+   npx prisma db push && npx prisma db seed && next build
+   ```
+2. Redeploy the project.
+3. **IMPORTANT**: After the deployment succeeds, change the Build Command back to `npm run vercel-build`.
+   *(The seed script deletes existing data, so you don't want it running on every deployment!)*
 
 ## Notes
 
