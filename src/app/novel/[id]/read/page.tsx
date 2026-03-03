@@ -3,6 +3,8 @@ import { notFound } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ArrowLeft, Download } from "lucide-react"
+import { existsSync } from "fs"
+import { join } from "path"
 
 interface PdfReaderPageProps {
   params: Promise<{
@@ -27,9 +29,30 @@ export default async function PdfReaderPage({ params }: PdfReaderPageProps) {
   }
 
   // Ensure pdfUrl is a proper URL path
-  // If pdfUrl already starts with 'http' (external link) or '/' (absolute path), use it as is.
-  // Otherwise, assume it's a filename in '/uploads/pdfs/' (legacy behavior)
   let pdfUrl = novel.pdfUrl
+
+  // For local development optimization:
+  // If we have a Vercel Blob URL, check if the corresponding file exists locally.
+  // If it does, use the local path.
+  if (process.env.NODE_ENV === 'development') {
+     let localCandidatePath = null;
+     
+     if (pdfUrl.includes('/uploads/pdfs/')) {
+        const match = pdfUrl.match(/uploads\/pdfs\/.+$/);
+        if (match) {
+           localCandidatePath = match[0]; // e.g. "uploads/pdfs/abc.pdf"
+        }
+     }
+
+     if (localCandidatePath) {
+        // Check if file physically exists in public folder
+        const absolutePath = join(process.cwd(), 'public', localCandidatePath);
+        if (existsSync(absolutePath)) {
+           pdfUrl = `/${localCandidatePath}`;
+        }
+     }
+  }
+
   if (!pdfUrl.startsWith('http') && !pdfUrl.startsWith('/')) {
     pdfUrl = `/uploads/pdfs/${pdfUrl}`
   }

@@ -11,6 +11,7 @@
     "db:switch:prod": "node scripts/switch-db.js postgres",
     "sync:blob": "node scripts/sync-blob.js",
     "migrate:files": "tsx scripts/migrate-files-to-blob.ts",
+    "migrate:db": "tsx scripts/migrate-db-sqlite-to-pg.ts",
     "postinstall": "node scripts/switch-db.js auto && prisma generate",
     "vercel-build": "prisma db push && next build"
   },
@@ -34,6 +35,7 @@
     "@react-pdf/renderer": "^4.3.2",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
+    "@types/pg": "^8.18.0",
     "@types/three": "^0.183.1",
     "@vercel/blob": "^2.3.0",
     "bcryptjs": "^3.0.3",
@@ -54,6 +56,7 @@
     "openai": "^6.25.0",
     "pdf-parse": "^2.4.5",
     "pdf-parse-fork": "^1.2.0",
+    "pg": "^8.19.0",
     "pizzip": "^3.2.0",
     "prisma": "^5.22.0",
     "radix-ui": "^1.4.3",

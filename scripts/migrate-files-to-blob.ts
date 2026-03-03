@@ -6,7 +6,15 @@ import { existsSync } from 'fs';
 import { glob } from 'glob';
 
 // Initialize Prisma
-const prisma = new PrismaClient();
+// Force local SQLite connection even if DATABASE_URL is set to Postgres
+const sqlitePath = join(process.cwd(), 'prisma', 'dev.db');
+const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: `file:${sqlitePath}`
+    }
+  }
+});
 
 async function main() {
   const token = process.env.BLOB_READ_WRITE_TOKEN;

@@ -62,6 +62,18 @@ export function SplashTrashDeck({ papers }: SplashTrashDeckProps) {
   
   const getPdfUrl = (url: string | null) => {
     if (!url) return null
+    // If running in development (localhost), try to use local path if it matches the pattern
+    // The pattern from Vercel Blob is like: https://<id>.public.blob.vercel-storage.com/uploads/pdfs/<filename>
+    // We want to extract "/uploads/pdfs/<filename>"
+    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname.includes('192.168'))) {
+       if (url.includes('/uploads/pdfs/')) {
+          const match = url.match(/uploads\/pdfs\/.+$/);
+          if (match) {
+             return `/${match[0]}`;
+          }
+       }
+    }
+    
     if (url.startsWith('http') || url.startsWith('/')) return url
     return `/uploads/pdfs/${url}`
   }
