@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "http://121.41.230.120:3000",
+      "permanent": false
+    }
+  ]
+}

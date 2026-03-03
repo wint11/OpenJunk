@@ -37,10 +37,24 @@ async function migrateData() {
 
   const pool = new Pool({
     connectionString: pgUrl,
-    ssl: { rejectUnauthorized: false } // Vercel/Neon usually requires SSL
+    ssl: { rejectUnauthorized: false }, // Vercel/Neon usually requires SSL
+    connectionTimeoutMillis: 20000,
+    idleTimeoutMillis: 30000,
+    keepAlive: true,
+    max: 1 // Limit to 1 connection to avoid overwhelming Vercel/Neon
   });
 
+  // Use pool.connect() for each query or use a single client but handle errors carefully?
+  // Using single client is faster for transaction-like batch, but if it drops, we die.
+  // Let's use pool.query directly? No, we need transaction for disable triggers.
+  
   const client = await pool.connect();
+  
+  // Add error handler to client to prevent crash
+  client.on('error', (err) => {
+    console.error('Unexpected error on idle client', err);
+    // Don't throw
+  });
 
   try {
     // We define explicit order for dependency resolution
