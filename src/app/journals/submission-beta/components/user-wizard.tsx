@@ -114,7 +114,7 @@ export function UserSubmissionWizard({ availableJournals }: UserWizardProps) {
     
     if (!result.success) {
       const formattedErrors: Record<string, string> = {}
-      result.error.errors.forEach(err => {
+      result.error.issues.forEach(err => {
         const path = err.path.join('.')
         formattedErrors[path] = err.message
       })
