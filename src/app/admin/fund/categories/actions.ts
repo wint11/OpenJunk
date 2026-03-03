@@ -4,8 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import { revalidatePath } from "next/cache"
 import { auth } from "@/auth"
-import { join } from "path"
-import { writeFile, mkdir } from "fs/promises"
+import { storage } from "@/lib/storage"
 
 const categorySchema = z.object({
   name: z.string().min(2, "名称至少2个字符"),
@@ -140,22 +139,12 @@ export async function updateFundCategoryIntro(id: string, prevState: any, formDa
     if (imageFile && imageFile.size > 0 && imageFile.name !== 'undefined') {
       const bytes = await imageFile.arrayBuffer()
       const buffer = Buffer.from(bytes)
-      const uploadDir = join(process.cwd(), "public/uploads/fund-org")
-      
-      // Ensure directory exists
-      try {
-          await mkdir(uploadDir, { recursive: true })
-      } catch (e) {
-          // ignore if exists
-      }
       
       // Generate unique filename
       const ext = imageFile.name.split('.').pop() || 'jpg'
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`
-      const filePath = join(uploadDir, fileName)
       
-      await writeFile(filePath, buffer)
-      introImages = `/uploads/fund-org/${fileName}`
+      introImages = await storage.upload(buffer, fileName, 'uploads/fund-org')
     }
 
     const updateData: any = {

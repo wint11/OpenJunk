@@ -2,10 +2,9 @@
 
 import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
-import { join } from "path"
-import { writeFile, mkdir } from "fs/promises"
 import bcrypt from "bcryptjs"
 import { signIn } from "@/auth"
+import { storage } from "@/lib/storage"
 
 export async function createConferenceAndAdmin(formData: FormData) {
   // Conference Data
@@ -39,33 +38,24 @@ export async function createConferenceAndAdmin(formData: FormData) {
   if (coverFile && coverFile.size > 0) {
     const bytes = await coverFile.arrayBuffer()
     const buffer = Buffer.from(bytes)
-    const uploadDir = join(process.cwd(), "public/uploads/conferences")
-    await mkdir(uploadDir, { recursive: true })
     const fileName = `${Date.now()}-${coverFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`
-    await writeFile(join(uploadDir, fileName), buffer)
-    coverUrl = `/uploads/conferences/${fileName}`
+    coverUrl = await storage.upload(buffer, fileName, 'uploads/conferences')
   }
 
   let guidelinesUrl = undefined
   if (guidelinesFile && guidelinesFile.size > 0) {
     const bytes = await guidelinesFile.arrayBuffer()
     const buffer = Buffer.from(bytes)
-    const uploadDir = join(process.cwd(), "public/uploads/guidelines")
-    await mkdir(uploadDir, { recursive: true })
     const fileName = `${Date.now()}-${guidelinesFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`
-    await writeFile(join(uploadDir, fileName), buffer)
-    guidelinesUrl = `/uploads/guidelines/${fileName}`
+    guidelinesUrl = await storage.upload(buffer, fileName, 'uploads/guidelines')
   }
 
   let customCssUrl = undefined
   if (customCssFile && customCssFile.size > 0) {
     const bytes = await customCssFile.arrayBuffer()
     const buffer = Buffer.from(bytes)
-    const uploadDir = join(process.cwd(), "public/uploads/css")
-    await mkdir(uploadDir, { recursive: true })
     const fileName = `style-${Date.now()}-${customCssFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`
-    await writeFile(join(uploadDir, fileName), buffer)
-    customCssUrl = `/uploads/css/${fileName}`
+    customCssUrl = await storage.upload(buffer, fileName, 'uploads/css')
   }
 
   // Hash Password

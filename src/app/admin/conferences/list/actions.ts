@@ -3,8 +3,7 @@
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
-import { join } from "path"
-import { writeFile, mkdir } from "fs/promises"
+import { storage } from "@/lib/storage"
 
 export async function createConference(formData: FormData) {
   const session = await auth()
@@ -28,16 +27,8 @@ export async function createConference(formData: FormData) {
     const bytes = await coverFile.arrayBuffer()
     const buffer = Buffer.from(bytes)
     
-    // Ensure directory exists
-    const uploadDir = join(process.cwd(), "public/uploads/conferences")
-    try {
-        await mkdir(uploadDir, { recursive: true })
-    } catch (e) {}
-    
     const fileName = `${Date.now()}-${coverFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`
-    const filePath = join(uploadDir, fileName)
-    await writeFile(filePath, buffer)
-    coverUrl = `/uploads/conferences/${fileName}`
+    coverUrl = await storage.upload(buffer, fileName, 'uploads/conferences')
   }
 
   await prisma.conference.create({
@@ -80,16 +71,8 @@ export async function updateConference(id: string, formData: FormData) {
     const bytes = await coverFile.arrayBuffer()
     const buffer = Buffer.from(bytes)
     
-    // Ensure directory exists
-    const uploadDir = join(process.cwd(), "public/uploads/conferences")
-    try {
-        await mkdir(uploadDir, { recursive: true })
-    } catch (e) {}
-    
     const fileName = `${Date.now()}-${coverFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`
-    const filePath = join(uploadDir, fileName)
-    await writeFile(filePath, buffer)
-    coverUrl = `/uploads/conferences/${fileName}`
+    coverUrl = await storage.upload(buffer, fileName, 'uploads/conferences')
   }
 
   await prisma.conference.update({

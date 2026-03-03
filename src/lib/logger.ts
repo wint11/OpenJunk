@@ -12,6 +12,14 @@ export interface LogEntry {
 }
 
 export async function writeLog(entry: LogEntry) {
+  // If running on Vercel or production, just use console.log
+  // Vercel captures stdout/stderr automatically
+  if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+    const logLine = `[${entry.timestamp}] [Status:${entry.status || 'N/A'}] ${entry.method} ${entry.url} - IP:${entry.ip} - UA:${entry.userAgent}${entry.duration ? ` - ${entry.duration}ms` : ''}`;
+    console.log(logLine);
+    return;
+  }
+
   const logDir = path.join(process.cwd(), 'logs');
   
   // Ensure logs directory exists
