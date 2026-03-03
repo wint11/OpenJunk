@@ -63,11 +63,11 @@ export function SearchPanel({ initialIpMatches }: SearchPanelProps) {
         // Add to results or redirect?
         // Let's add to results so user can see it
         setResults(prev => [
-            ...prev.filter(p => p.id !== res.novel!.id), // Deduplicate
+            ...prev.filter(p => p && p.id !== res.novel!.id), // Deduplicate
             {
                 id: currentVerifyId,
-                title: res.novel!.title,
-                author: res.novel!.author,
+                title: res.novel!.title || "未知标题",
+                author: res.novel!.author || "未知作者",
                 createdAt: new Date(), // Mock or fetch real
                 verified: true
             }
@@ -103,7 +103,7 @@ export function SearchPanel({ initialIpMatches }: SearchPanelProps) {
       {hasSearched && (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {results.length > 0 ? (
-            results.map((paper) => (
+            results.filter(paper => paper && paper.id).map((paper) => (
               <Card key={paper.id} className="flex flex-col h-full hover:shadow-md transition-shadow">
                 <CardHeader>
                   <div className="flex justify-between items-start gap-2 mb-2">
@@ -116,11 +116,11 @@ export function SearchPanel({ initialIpMatches }: SearchPanelProps) {
                   </div>
                   <CardTitle className="line-clamp-2 leading-tight">
                     <Link href={`/public-review/journals/${paper.id}`} className="hover:underline">
-                      {paper.title}
+                      {paper.title || "无标题"}
                     </Link>
                   </CardTitle>
                   <CardDescription className="line-clamp-1">
-                    {paper.author}
+                    {paper.author || "佚名"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col justify-end">
