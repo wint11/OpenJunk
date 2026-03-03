@@ -9,7 +9,7 @@ import type { NextRequest, NextFetchEvent } from 'next/server'
 export function proxy(request: NextRequest, event: NextFetchEvent) {
   // Maintenance Configuration
   // Adjust these dates as needed
-  const MAINTENANCE_START = new Date('2026-03-03T18:00:00')
+  const MAINTENANCE_START = new Date('2026-03-03T00:00:00')
   const MAINTENANCE_END = new Date('2026-03-06T00:00:00')
   const MAINTENANCE_PATH = '/maintenance'
   
