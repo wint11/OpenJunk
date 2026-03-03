@@ -70,20 +70,14 @@ export async function updatePreprint(preprintId: string, prevState: FormState, f
       const bytes = await file.arrayBuffer()
       const buffer = Buffer.from(bytes)
 
-      const { mkdir, writeFile } = await import("fs/promises")
-      const { join } = await import("path")
       const { v4: uuidv4 } = await import("uuid")
-
-      const uploadDir = join(process.cwd(), "public/uploads/pdfs")
-      await mkdir(uploadDir, { recursive: true })
+      const { storage } = await import("@/lib/storage")
 
       const originalName = file.name
       const ext = originalName.substring(originalName.lastIndexOf('.'))
       const fileName = `${uuidv4()}${ext}`
-      const filePath = join(uploadDir, fileName)
       
-      await writeFile(filePath, buffer)
-      pendingPdfUrl = `/uploads/pdfs/${fileName}`
+      pendingPdfUrl = await storage.upload(buffer, fileName, 'uploads/pdfs')
     } catch (error) {
       console.error("File upload failed:", error)
       return { error: "文件上传失败" }

@@ -4,9 +4,7 @@ import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
-
-import { join } from "path"
-import { writeFile, mkdir } from "fs/promises"
+import { storage } from "@/lib/storage"
 
 export async function createJournal(formData: FormData) {
   const session = await auth()
@@ -26,13 +24,8 @@ export async function createJournal(formData: FormData) {
     const bytes = await coverFile.arrayBuffer()
     const buffer = Buffer.from(bytes)
     
-    // Ensure directory exists
-    const uploadDir = join(process.cwd(), "public/uploads/journals")
-    await mkdir(uploadDir, { recursive: true })
-    
     const fileName = `${Date.now()}-${coverFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`
-    await writeFile(join(uploadDir, fileName), buffer)
-    coverUrl = `/uploads/journals/${fileName}`
+    coverUrl = await storage.upload(buffer, fileName, 'uploads/journals')
   }
 
   let guidelinesUrl = undefined
@@ -40,13 +33,8 @@ export async function createJournal(formData: FormData) {
     const bytes = await guidelinesFile.arrayBuffer()
     const buffer = Buffer.from(bytes)
     
-    // Ensure directory exists
-    const uploadDir = join(process.cwd(), "public/uploads/guidelines")
-    await mkdir(uploadDir, { recursive: true })
-    
     const fileName = `${Date.now()}-${guidelinesFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`
-    await writeFile(join(uploadDir, fileName), buffer)
-    guidelinesUrl = `/uploads/guidelines/${fileName}`
+    guidelinesUrl = await storage.upload(buffer, fileName, 'uploads/guidelines')
   }
 
   await prisma.journal.create({
@@ -99,13 +87,8 @@ export async function updateJournal(id: string, formData: FormData) {
     const bytes = await coverFile.arrayBuffer()
     const buffer = Buffer.from(bytes)
     
-    // Ensure directory exists
-    const uploadDir = join(process.cwd(), "public/uploads/journals")
-    await mkdir(uploadDir, { recursive: true })
-    
     const fileName = `${Date.now()}-${coverFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`
-    await writeFile(join(uploadDir, fileName), buffer)
-    coverUrl = `/uploads/journals/${fileName}`
+    coverUrl = await storage.upload(buffer, fileName, 'uploads/journals')
   }
 
   let guidelinesUrl: string | null | undefined = undefined
@@ -113,13 +96,8 @@ export async function updateJournal(id: string, formData: FormData) {
     const bytes = await guidelinesFile.arrayBuffer()
     const buffer = Buffer.from(bytes)
     
-    // Ensure directory exists
-    const uploadDir = join(process.cwd(), "public/uploads/guidelines")
-    await mkdir(uploadDir, { recursive: true })
-    
     const fileName = `${Date.now()}-${guidelinesFile.name.replace(/[^a-zA-Z0-9.-]/g, '')}`
-    await writeFile(join(uploadDir, fileName), buffer)
-    guidelinesUrl = `/uploads/guidelines/${fileName}`
+    guidelinesUrl = await storage.upload(buffer, fileName, 'uploads/guidelines')
   } else if (deleteGuidelinesFile) {
     guidelinesUrl = null
   }

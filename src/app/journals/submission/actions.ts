@@ -5,10 +5,8 @@ import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { redirect } from 'next/navigation'
 import { logAudit } from '@/lib/audit'
-import { writeFile, mkdir } from 'fs/promises'
-import { existsSync } from 'fs'
-import { join } from 'path'
 import { v4 as uuidv4 } from 'uuid'
+import { storage } from '@/lib/storage'
 
 const workSchema = z.object({
   title: z.string().min(1, "标题不能为空").max(500, "标题过长"),
@@ -192,20 +190,13 @@ export async function createWork(prevState: FormState, formData: FormData): Prom
 
       if (!pdfUrl) {
           // New file
-          const uploadDir = join(process.cwd(), 'public', 'uploads', 'pdfs')
-          if (!existsSync(uploadDir)) {
-              await mkdir(uploadDir, { recursive: true })
-          }
-          
           const uniqueId = uuidv4()
           // Preserve extension
           const originalName = pdfFile.name
           const ext = originalName.substring(originalName.lastIndexOf('.'))
           const filename = `${uniqueId}${ext}`
-          const filepath = join(uploadDir, filename)
           
-          await writeFile(filepath, new Uint8Array(buffer))
-          pdfUrl = `/uploads/pdfs/${filename}`
+          pdfUrl = await storage.upload(buffer, filename, 'uploads/pdfs')
       }
   } catch (error) {
       console.error("Upload error:", error)

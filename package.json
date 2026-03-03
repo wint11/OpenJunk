@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "prisma generate",
+    "db:switch:local": "node scripts/switch-db.js sqlite",
+    "db:switch:prod": "node scripts/switch-db.js postgres",
+    "sync:blob": "node scripts/sync-blob.js",
+    "postinstall": "node scripts/switch-db.js auto && prisma generate",
     "vercel-build": "prisma db push && next build"
   },
   "prisma": {
@@ -31,6 +34,7 @@
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
     "@types/three": "^0.183.1",
+    "@vercel/blob": "^2.3.0",
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

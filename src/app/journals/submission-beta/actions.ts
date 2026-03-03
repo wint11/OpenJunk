@@ -4,13 +4,12 @@
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
-import { writeFile, mkdir, rename } from 'fs/promises'
-import { existsSync } from 'fs'
-import { join, extname } from 'path'
+import { extname } from 'path'
 import { v4 as uuidv4 } from 'uuid'
 import { extractTextFromDocx } from '@/lib/docx-extractor'
 import { analyzeTextWithAI, ExtractedMetadata } from '@/lib/ai-analysis'
 import { SmartSubmissionSchema, SmartSubmissionData } from './schema'
+import { storage } from '@/lib/storage'
 
 // --- Types ---
 export type AnalyzeResult = {
@@ -50,15 +49,11 @@ export async function uploadAndAnalyze(formData: FormData): Promise<AnalyzeResul
     
     // 2. Save File Temporarily
     const buffer = Buffer.from(await file.arrayBuffer())
-    const tempDir = join(process.cwd(), 'public', 'uploads', 'temp')
-    if (!existsSync(tempDir)) {
-      await mkdir(tempDir, { recursive: true })
-    }
     const tempFileId = uuidv4()
     const tempFileName = `${tempFileId}-${file.name}`
-    const tempFilePath = join(tempDir, tempFileName)
     
-    await writeFile(tempFilePath, buffer)
+    // Upload to temp folder using storage abstraction
+    const tempFilePath = await storage.upload(buffer, tempFileName, 'uploads/temp')
 
     // 3. Extract Text & Analyze (Only for DOCX)
     let metadata: ExtractedMetadata = {}
@@ -84,7 +79,7 @@ export async function uploadAndAnalyze(formData: FormData): Promise<AnalyzeResul
       success: true,
       metadata,
       tempFileId,
-      tempFilePath: `/uploads/temp/${tempFileName}` // Public URL path
+      tempFilePath // This is now a URL (relative or absolute)
     }
 
   } catch (error) {
@@ -181,26 +176,22 @@ export async function submitSmartWork(data: SmartSubmissionData): Promise<SmartS
     const session = await auth()
     const user = session?.user
 
-    // 1. Validate File Existence
-    const tempFilePath = join(process.cwd(), 'public', data.tempFilePath)
-    if (!existsSync(tempFilePath)) {
+    // 1. Read File from Storage
+    let buffer: Buffer
+    try {
+      buffer = await storage.read(data.tempFilePath)
+    } catch (e) {
       return { success: false, error: "临时文件已过期或不存在，请重新上传" }
     }
 
     // 2. Move File to Final Location
-    // We store files in 'uploads/pdfs' for historical reasons, but now it supports docx too.
-    const uploadDir = join(process.cwd(), 'public', 'uploads', 'pdfs')
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true })
-    }
-
-    // Preserve original extension
-    const fileExt = extname(tempFilePath) 
+    const fileExt = extname(data.tempFilePath) 
     const newFileName = `${uuidv4()}${fileExt}`
-    const newFilePath = join(uploadDir, newFileName)
-    const finalUrl = `/uploads/pdfs/${newFileName}`
+    
+    const finalUrl = await storage.upload(buffer, newFileName, 'uploads/pdfs')
 
-    await rename(tempFilePath, newFilePath)
+    // Delete temp file
+    await storage.delete(data.tempFilePath)
 
     // 3. Get IP
     const { headers } = await import('next/headers')

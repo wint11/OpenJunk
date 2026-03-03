@@ -4,10 +4,8 @@ import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
-import { join } from 'path'
-import { writeFile, mkdir } from 'fs/promises'
-import { existsSync } from 'fs'
 import { v4 as uuidv4 } from 'uuid'
+import { storage } from "@/lib/storage"
 
 export async function updateNovelInfo(formData: FormData) {
   const session = await auth()
@@ -60,14 +58,9 @@ export async function uploadFinalPdf(formData: FormData) {
 
   // Save file
   const fileName = `${uuidv4()}.pdf`
-  const uploadDir = join(process.cwd(), 'public', 'uploads', 'pdfs')
   
   try {
-    await mkdir(uploadDir, { recursive: true })
-    const filePath = join(uploadDir, fileName)
-    await writeFile(filePath, buffer)
-    
-    const pdfUrl = `/uploads/pdfs/${fileName}`
+    const pdfUrl = await storage.upload(buffer, fileName, 'uploads/pdfs')
 
     await prisma.novel.update({
         where: { id: novelId },
@@ -140,13 +133,9 @@ export async function publishNovel(formData: FormData) {
       pdfHash = createHash('sha256').update(buffer).digest('hex')
 
       const fileName = `${uuidv4()}.pdf`
-      const uploadDir = join(process.cwd(), 'public', 'uploads', 'pdfs')
       
       try {
-        await mkdir(uploadDir, { recursive: true })
-        const filePath = join(uploadDir, fileName)
-        await writeFile(filePath, buffer)
-        pdfUrl = `/uploads/pdfs/${fileName}`
+        pdfUrl = await storage.upload(buffer, fileName, 'uploads/pdfs')
       } catch (err) {
         console.error("File upload error:", err)
         throw new Error("Failed to save PDF file")

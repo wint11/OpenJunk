@@ -3,12 +3,9 @@
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/auth"
 import { revalidatePath } from "next/cache"
-
-import { join } from 'path'
-import { writeFile, mkdir } from 'fs/promises'
 import { v4 as uuidv4 } from 'uuid'
-
 import { extname } from 'path'
+import { storage } from "@/lib/storage"
 
 export async function uploadRevisedNovel(formData: FormData) {
   const session = await auth()
@@ -45,13 +42,9 @@ export async function uploadRevisedNovel(formData: FormData) {
   const pdfHash = createHash('sha256').update(buffer).digest('hex')
 
   const fileName = `${uuidv4()}${newExt}`
-  const uploadDir = join(process.cwd(), 'public', 'uploads', 'pdfs')
   
   try {
-    await mkdir(uploadDir, { recursive: true })
-    const filePath = join(uploadDir, fileName)
-    await writeFile(filePath, buffer)
-    const pdfUrl = `/uploads/pdfs/${fileName}`
+    const pdfUrl = await storage.upload(buffer, fileName, 'uploads/pdfs')
 
     await prisma.novel.update({
         where: { id: novelId },

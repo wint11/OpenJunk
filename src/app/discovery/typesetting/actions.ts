@@ -4,12 +4,13 @@
 import { prisma } from "@/lib/prisma"
 import PizZip from "pizzip"
 import Docxtemplater from "docxtemplater"
-import { readFile, writeFile, mkdir } from "fs/promises"
+import { readFile } from "fs/promises"
 import { join } from "path"
 import { existsSync } from "fs"
 import { extractTextFromDocx } from "@/lib/docx-extractor"
 import OpenAI from "openai"
 import { v4 as uuidv4 } from "uuid"
+import { storage } from "@/lib/storage"
 
 // --- Types ---
 export type ManuscriptData = {
@@ -145,24 +146,18 @@ export async function generateFormattedDocx(journalId: string, data: ManuscriptD
     doc.render(renderData)
 
     // 4. Save
-    const outputDir = join(process.cwd(), 'public', 'generated-manuscripts')
-    if (!existsSync(outputDir)) {
-        await mkdir(outputDir, { recursive: true })
-    }
-
     const outputFileName = `formatted-${uuidv4()}.docx`
-    const outputPath = join(outputDir, outputFileName)
     
     const buffer = doc.getZip().generate({
         type: "nodebuffer",
         compression: "DEFLATE",
     })
 
-    await writeFile(outputPath, buffer)
+    const url = await storage.upload(buffer, outputFileName, 'generated-manuscripts')
 
     return {
         success: true,
-        url: `/generated-manuscripts/${outputFileName}`
+        url
     }
 
   } catch (error) {

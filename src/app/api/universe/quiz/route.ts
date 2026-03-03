@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import OpenAI from "openai"
-import fs from "fs"
-import path from "path"
 import { auth } from "@/auth"
+import { storage } from "@/lib/storage"
 
 // Switch to pdf-parse-fork which handles node environment better or stick to pdf-parse but careful
 // Actually, let's try a different strategy: Using `pdfjs-dist/legacy/build/pdf.js` if available or just raw text extraction if possible.
@@ -136,22 +135,13 @@ export async function GET(request: Request) {
     }
 
     // 2. Read PDF content
-    // Assuming pdfUrl is a local path like "/uploads/pdfs/sample.pdf"
-    // Remove leading slash to get relative path from project root
-    const relativePath = randomPaper.pdfUrl.startsWith('/') 
-      ? randomPaper.pdfUrl.slice(1) 
-      : randomPaper.pdfUrl
-    
-    const absolutePath = path.join(process.cwd(), 'public', relativePath)
-
     let textContent = ""
     
-    if (fs.existsSync(absolutePath)) {
-      try {
-        const dataBuffer = fs.readFileSync(absolutePath)
-        const pdfData = await pdf(dataBuffer).catch(() => null)
+    try {
+      const dataBuffer = await storage.read(randomPaper.pdfUrl)
+      const pdfData = await pdf(dataBuffer).catch(() => null)
         
-        if (pdfData && pdfData.text) {
+      if (pdfData && pdfData.text) {
           const fullText = pdfData.text
           const totalLength = fullText.length
           
@@ -167,17 +157,15 @@ export async function GET(request: Request) {
           textContent = fullText.slice(start, start + 3000)
           
           console.log(`[Quiz] Selected paper: "${randomPaper.title}" (Pool size: ${paperCount}). Extracted text from index ${start} to ${start + 3000} (Total: ${totalLength})`)
-        }
-      } catch (err) {
-        console.error("PDF parse failed:", err)
       }
-    } else {
-      console.warn(`PDF file not found at: ${absolutePath}, using description instead.`)
+    } catch (err) {
+      console.error("PDF read/parse failed:", err)
     }
 
     // Fallback if PDF text extraction failed
     if (!textContent || textContent.length < 50) {
       textContent = randomPaper.description || "暂无详细内容，请根据标题进行推断。"
+      console.warn(`PDF file not read, using description instead for paper: ${randomPaper.title}`)
     }
 
     // 3. Generate quiz using DeepSeek
