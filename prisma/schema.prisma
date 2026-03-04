@@ -306,6 +306,51 @@ model Award {
   updatedAt   DateTime @updatedAt
 }
 
+// ==========================================
+// PPT Contest System
+// ==========================================
+
+model PPTSubmission {
+  id          String   @id @default(cuid())
+  title       String?  // Optional title
+  
+  // Vercel Blob (Optional if local only)
+  fileUrl     String?   
+  previewUrl  String?  
+  
+  // Local Storage (Prioritized)
+  localFileUrl    String?
+  localPreviewUrl String?
+
+  fileHash    String?  // For deduplication
+  
+  uploaderIp  String
+  
+  interpretations PPTInterpretation[]
+  
+  createdAt   DateTime @default(now())
+}
+
+model PPTInterpretation {
+  id            String   @id @default(cuid())
+  
+  submissionId  String
+  submission    PPTSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  
+  audioUrl      String   // Recorded speech URL
+  duration      Int?     // Duration in seconds
+  
+  timestamps    String?  // JSON string: [{"page": 1, "time": 0}, {"page": 2, "time": 15.5}]
+  
+  speakerIp     String
+  
+  votes         Int      @default(0)
+  
+  createdAt     DateTime @default(now())
+  
+  @@index([votes(sort: Desc)])
+}
+
 model AwardApplication {
   id          String   @id @default(cuid())
   awardId     String
@@ -613,4 +658,24 @@ model AoiVote {
   updatedAt DateTime @updatedAt
 
   @@unique([novelId, ip]) // One vote per IP per novel
+}
+
+model SearchLog {
+  id          String   @id @default(cuid())
+  query       String
+  userId      String?
+  ip          String?
+  resultCount Int      @default(0)
+  type        String?  // ALL, NOVEL, JOURNAL, etc.
+  createdAt   DateTime @default(now())
+}
+
+model TrendingTopic {
+  id          String   @id @default(cuid())
+  keyword     String   @unique
+  score       Int      @default(0)
+  type        String   @default("AUTO") // AUTO, MANUAL
+  url         String?  // Optional redirect URL
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

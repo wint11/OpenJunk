@@ -8,7 +8,7 @@ export function MainWrapper({ children }: { children: React.ReactNode }) {
   // /hidden_directory should not have top padding as it has its own full screen layout
   // /novel/ pages also have no navbar, so no top padding needed
   // /universe needs full screen
-  const isFullScreen = pathname?.startsWith("/hidden_directory") || pathname?.startsWith("/novel/") || pathname === "/universe"
+  const isFullScreen = pathname?.startsWith("/hidden_directory") || pathname?.startsWith("/novel/") || pathname === "/universe" || pathname?.startsWith("/ppt-contest-1/stage")
   
   return (
     <main className={cn("flex-1 flex flex-col min-h-0", !isFullScreen && "pt-16")}>

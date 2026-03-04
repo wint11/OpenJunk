@@ -64,3 +64,9 @@ mobile-app/.hbuilderx/
 
 # Generated Manuscripts
 public/generated-manuscripts/
+
+
+
+# backend
+venv
+.venv
