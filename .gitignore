@@ -61,3 +61,6 @@ public/csv/
 # Mobile App (uni-app/HBuilderX)
 mobile-app/unpackage/
 mobile-app/.hbuilderx/
+
+# Generated Manuscripts
+public/generated-manuscripts/
