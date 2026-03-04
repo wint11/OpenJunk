@@ -1,9 +1,9 @@
 
-# SmartReview 移动端 APP 设计文档
+# SmartRead (OpenJunk) 移动端 APP 设计文档
 
 ## 1. 概述
 
-SmartReview 移动端 APP 是为了满足用户随时随地阅读期刊论文的需求而设计的。基于 UniApp 开发，支持 Android 和 iOS 平台（优先 Android）。APP 采用“无登录”模式，最大化降低用户使用门槛，专注于内容的消费与发现。
+SmartRead (OpenJunk) 移动端 APP 用于满足用户随时随地阅读期刊论文的需求。基于 UniApp 开发，支持 Android 和 iOS 平台（优先 Android）。APP 采用“无登录”模式，最大化降低用户使用门槛，专注于内容的消费与发现。
 
 ## 2. 核心功能
 
@@ -22,7 +22,7 @@ SmartReview 移动端 APP 是为了满足用户随时随地阅读期刊论文的
 - **深色模式**: 适配系统深色模式，保护视力。
 
 ### 2.4 APP 获取
-- **网页引流**: 在 SmartReview 移动端网页 (Web) 底部悬浮提示框，引导用户下载 APK。
+- **网页引流**: 在 SmartRead (OpenJunk) 移动端网页 (Web) 底部悬浮提示框，引导用户下载 APK。
 - **本地部署**: APK 文件直接托管在服务器，无需经过应用商店审核。
 
 ## 3. 技术架构
@@ -35,8 +35,8 @@ SmartReview 移动端 APP 是为了满足用户随时随地阅读期刊论文的
 
 ### 3.2 后端 (Server)
 - **框架**: Next.js 16 (现有项目)
-- **API 风格**: RESTful API
-- **路径**: `/api/v1/*`
+- **Web 数据变更**: 以 Server Actions 为主，辅以部分 API Routes
+- **APP 对接 API**: 提供 RESTful API（`/api/v1/*`），用于移动端独立运行
 
 ## 4. API 接口设计
 
@@ -57,10 +57,10 @@ SmartReview 移动端 APP 是为了满足用户随时随地阅读期刊论文的
 
 ## 6. 项目结构建议
 
-建议将 UniApp 项目直接放置在 SmartReview 仓库的根目录下，形成 Monorepo 结构：
+建议将 UniApp 项目直接放置在 SmartRead (OpenJunk) 仓库的根目录下，形成 Monorepo 结构：
 
 ```text
-SmartReview/
+OpenJunk/
 ├── src/                # Next.js 源码 (Web & API)
 ├── public/             # 静态资源
 │   └── app/            # 存放 APK 文件

@@ -16,17 +16,23 @@ Additionally, the project includes a mobile application (UniApp) that provides a
 *   **UI Component Library**: shadcn/ui (based on Radix UI), Lucide React (Icons)
 *   **Backend Runtime**: Node.js (Next.js Server Actions & API Routes)
 *   **Database ORM**: Prisma
-*   **Database**: SQLite (Development) / PostgreSQL (Production)
+*   **Database**: SQLite (local) / PostgreSQL (production) via multi-schema switching
 *   **Authentication**: NextAuth.js v5 (Credentials Provider)
 *   **Data Validation**: Zod
+*   **File Storage**: Local files / Vercel Blob (via a single abstraction layer)
 *   **Mobile App**: UniApp (Vue.js)
 *   **Other**: Three.js (3D Universe), PDF.js (PDF Reading)
 
 ### 2.2 Directory Structure
 
 *   `src/app`: Next.js App Router route definitions, including page logic and Server Actions.
-    *   `admin`: Management dashboard (Journals, Papers, Users, Funds, etc.).
-    *   `api`: Backend API routes (Auth, Cron, Uploads).
+    *   `admin`: Management dashboard (Journals, Conferences, Awards, Funds, Audit, Users).
+    *   `public-review`: Public review platform and controlled metadata update flow.
+    *   `fund` / `conferences` / `awards`: Fund, conference, and award workflows.
+    *   `discovery/typesetting`: Typesetting assistant entry.
+    *   `universe`: 3D universe and quiz system.
+    *   `maintenance`: Maintenance notice page.
+    *   `api`: Backend API routes (Auth, Cron, Proxy, etc.).
     *   `browse`, `trends`, `journals`: Public browsing pages.
     *   `submission`: Submission workflow.
     *   `novel`, `paper`: Content detail pages.
@@ -89,11 +95,11 @@ Supports management of various content types:
 
 Located in the `mobile-app` directory, developed based on UniApp, providing a mobile browsing and reading experience.
 *   **Features**: Home recommendations, journal browsing, paper reading, personal center.
-*   **Tech**: Vue.js, uView UI (speculated), Cross-platform compilation (iOS/Android/H5).
+*   **Tech**: Vue.js, cross-platform compilation (iOS/Android/H5).
 
 ## 4. Database Design (Prisma)
 
-Core Data Models (`schema.prisma`):
+Core Data Models (source of truth is `schema.sqlite.prisma` / `schema.postgres.prisma`, while `schema.prisma` is generated):
 
 *   **User**: User accounts, including roles and associated management permissions for journals/conferences/awards.
 *   **Journal/Conference/Award**: Organizational entities, containing associated papers and administrators.
@@ -101,17 +107,21 @@ Core Data Models (`schema.prisma`):
 *   **Chapter**: Chapter content (for non-PDF content).
 *   **Comment**: Comment data.
 *   **ReviewLog**: Review records.
-*   **FundApplication/FundProject**: Fund-related entities.
+*   **FundApplication/Fund/FundCategory/FundDepartment**: Fund-related entities.
 *   **ReadingHistory**: User reading history.
 *   **AuditLog**: System operation audit logs.
 
 ## 5. Deployment & Operations
 
-*   **Environment Dependencies**: Node.js 18+, SQLite (Default) or PostgreSQL.
+*   **Environment Dependencies**: Node.js 18+, SQLite for local dev / PostgreSQL for production.
 *   **Initialization**:
     1.  `npm install`: Install dependencies.
     2.  `npx prisma migrate dev`: Database migration.
     3.  `npx tsx prisma/seed.ts`: Seed data population (default admin accounts).
 *   **Start**: `npm run dev` (Development) / `npm run build && npm start` (Production).
+*   **Migration & Sync**:
+    *   `npm run migrate:db`: migrate SQLite data into PostgreSQL.
+    *   `npm run migrate:files`: move local files to Vercel Blob and update DB URLs.
+    *   `npm run sync:blob`: download blobs into local `public/` for debugging.
 *   **Data Export**: Supports exporting database tables to CSV (`prisma/export_to_csv.ts`).
 *   **Logging**: File-level request logging.

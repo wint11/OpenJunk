@@ -1,7 +1,13 @@
 # 数据库设计
 
 ## 概述
-数据库通过 **Prisma ORM** 进行管理。Schema 定义在 `prisma/schema.prisma` 中。我们目前使用 SQLite 以便由开发和移植，但它完全兼容 PostgreSQL。
+数据库通过 **Prisma ORM** 进行管理。项目采用多 Schema 机制：
+
+- `prisma/schema.sqlite.prisma`：本地开发默认使用（SQLite）
+- `prisma/schema.postgres.prisma`：生产/部署默认使用（PostgreSQL）
+- `prisma/schema.prisma`：由脚本自动生成的当前生效 Schema，请勿直接编辑
+
+切换方式参考 `package.json` 的 `db:switch:*` 脚本。本地数据迁移到 PostgreSQL 可使用 `npm run migrate:db`。
 
 ## 数据生命周期与流向
 
@@ -49,6 +55,8 @@ erDiagram
 ```
 
 ## 数据模型
+
+除阅读/投稿主链路外，Schema 还包含会议（Conference）、奖项（Award）、公开评审（Preprint/Public Review）、基金（Fund*）、宇宙系统（Universe*）等模块。本文仅列出最核心、最常用的数据模型与字段约定，完整字段以 Prisma Schema 为准。
 
 ### 1. User (用户)
 代表所有系统用户（读者、作者、审稿人、管理员）。
@@ -113,3 +121,10 @@ erDiagram
 全系统的安全日志。
 - **字段**: `action`, `resource`, `ipAddress`, `userId`。
 - **用途**: 追踪关键操作（如封禁用户、删除论文）。
+
+## 附：文件存储与 URL 约定
+
+- `coverUrl` / `pdfUrl` 等字段可能为两种形态：
+  - 以 `/` 开头的相对路径：开发环境常见（文件位于 `public/` 下）
+  - `https://...` 的公网 URL：生产环境常见（如 Vercel Blob）
+- 读取与写入统一通过 `src/lib/storage.ts` 抽象层处理，避免业务代码直接绑定具体存储实现。

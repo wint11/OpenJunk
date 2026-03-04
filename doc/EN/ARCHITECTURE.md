@@ -17,9 +17,10 @@ SmartRead is a full-stack Web application built on the **Next.js 16 (App Router)
 ### Backend
 - **Runtime**: Node.js (via Next.js Server Actions & API Routes)
 - **ORM**: Prisma
-- **Database**: SQLite (Development) / PostgreSQL (Production Ready)
+- **Database**: multi-schema setup (SQLite by default locally, PostgreSQL by default in production)
 - **Authentication**: Auth.js (NextAuth v5) - Credentials Provider
 - **Validation**: Zod & React Hook Form
+- **File Storage**: Storage abstraction (Local files / Vercel Blob)
 
 ## Core Implementation Mechanisms
 
@@ -51,6 +52,11 @@ Located in `src/lib/ai-pre-review.ts`.
 The application uses Next.js App Router for file-system based routing.
 - `(public)`: Home, Browse, Reader, Search.
 - `admin`: Protected routes for system management, including journals, papers, users, and audits.
+- `public-review`: Public Review platform and controlled metadata updates.
+- `conferences` / `awards` / `fund`: Conference, award, and fund workflows.
+- `discovery/typesetting`: Typesetting assistant and editor tooling.
+- `universe`: 3D universe and quiz-based engagement.
+- `maintenance`: Maintenance notice page (paired with proxy maintenance mode).
 - `author`: Protected routes for content creators, supporting submission and management.
 - `profile`: User center and settings.
 - `journals`: Journal browsing and detail pages.
@@ -67,13 +73,21 @@ Mainly used for:
 - External integrations.
 - NextAuth authentication endpoints (`/api/auth`).
 - Logging (`/api/log`).
+- Proxy/integration routes (e.g. `/api/proxy`).
 
 ## Directory Structure
 
 ```text
 src/
 ├── app/                 # Next.js App Router
-│   ├── admin/           # Admin Dashboard (Journal/Paper/User Management)
+│   ├── admin/           # Admin Dashboard
+│   ├── public-review/   # Public Review platform
+│   ├── conferences/     # Conferences
+│   ├── awards/          # Awards
+│   ├── fund/            # Fund workflows
+│   ├── discovery/       # Typesetting and editor tooling
+│   ├── universe/        # 3D universe and quiz
+│   ├── maintenance/     # Maintenance page
 │   ├── author/          # Author Workbench
 │   ├── journals/        # Public Journal Pages
 │   ├── paper/           # Paper Reading Pages
@@ -86,6 +100,7 @@ src/
 ├── lib/                 # Shared Logic
 │   ├── ai-pre-review.ts # AI Review Logic
 │   ├── prisma.ts        # Database Client
+│   ├── storage.ts       # Storage abstraction (Local / Blob)
 │   └── utils.ts         # Utility Functions
 └── prisma/              # Database Schema & Migrations
 ```

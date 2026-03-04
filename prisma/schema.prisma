@@ -1,3 +1,7 @@
+// *** GENERATED FILE - DO NOT EDIT DIRECTLY ***
+// Edit schema.sqlite.prisma or schema.postgres.prisma instead.
+// Run "npm run db:switch:local" or "npm run db:switch:prod" to update.
+
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")

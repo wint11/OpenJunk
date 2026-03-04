@@ -1,7 +1,13 @@
 # Database Design
 
 ## Overview
-The database is managed via **Prisma ORM**. The Schema is defined in `prisma/schema.prisma`. We currently use SQLite for development and portability, but it is fully compatible with PostgreSQL.
+The database is managed via **Prisma ORM**. The project uses a multi-schema setup:
+
+- `prisma/schema.sqlite.prisma`: SQLite source schema (default for local development)
+- `prisma/schema.postgres.prisma`: PostgreSQL source schema (default for production/deployment)
+- `prisma/schema.prisma`: generated active schema, do not edit directly
+
+Use `db:switch:*` scripts in `package.json` to switch schema. To migrate local SQLite data into PostgreSQL, use `npm run migrate:db`.
 
 ## Data Lifecycle & Flow
 
@@ -43,6 +49,8 @@ erDiagram
 ```
 
 ## Data Models
+
+In addition to the core reading/submission chain, the schema also includes modules for Conferences, Awards, Public Review (Preprints), Fund workflows, and the Universe/Quiz system. This document focuses on the most commonly used models; treat Prisma schema as the source of truth for the full field list.
 
 ### 1. User
 Represents all system users (Readers, Authors, Reviewers, Admins).
@@ -91,3 +99,10 @@ Records history of manual or AI reviews.
 System-wide security log.
 - **Fields**: `action`, `resource`, `ipAddress`, `userId`.
 - **Usage**: Tracks critical operations (e.g., banning users, deleting papers).
+
+## Appendix: Storage & URL Conventions
+
+- File fields like `coverUrl` / `pdfUrl` may be:
+  - a relative path starting with `/` (common in local development, files under `public/`)
+  - a public `https://...` URL (common in production, e.g. Vercel Blob)
+- Use `src/lib/storage.ts` as the single abstraction layer to avoid coupling business logic to a specific storage backend.

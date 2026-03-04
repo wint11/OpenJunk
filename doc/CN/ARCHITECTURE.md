@@ -17,10 +17,11 @@ SmartRead (OpenJunk) 是一个基于 **Next.js 16 (App Router)** 框架构建的
 ### 后端 (Backend)
 - **运行时**: Node.js (通过 Next.js Server Actions & API Routes)
 - **ORM**: Prisma
-- **数据库**: SQLite (开发环境) / PostgreSQL (生产环境就绪)
+- **数据库**: 多 Schema 机制（本地默认 SQLite，生产默认 PostgreSQL）
 - **认证**: Auth.js (NextAuth v5) - Credentials Provider
 - **验证**: Zod
 - **任务调度**: Cron Jobs (用于热度衰减)
+- **文件存储**: Storage 抽象层（本地文件 / Vercel Blob）
 
 ## 核心实现机制
 
@@ -56,8 +57,13 @@ SmartRead (OpenJunk) 是一个基于 **Next.js 16 (App Router)** 框架构建的
 
 ### 4. PDF 文件处理
 *   **上传**: 支持 PDF 文件上传，计算 SHA-256 哈希以实现文件去重。
-*   **存储**: 文件存储于 `public/uploads/pdfs`，支持直接静态访问。
-*   **路由**: 通过 `src/app/uploads/pdfs/[filename]/route.ts` 处理文件请求，提供正确的 Content-Type 和错误处理（如 404）。
+*   **存储**:
+    *   开发环境：默认写入 `public/` 下的相对路径（便于本地加载与联调）。
+    *   生产环境：默认写入 Vercel Blob 的公网 URL（适配无持久磁盘的部署环境）。
+    *   统一入口：`src/lib/storage.ts`（按 `STORAGE_PROVIDER`/`VERCEL` 自动选择实现）。
+*   **迁移**:
+    *   数据库迁移（SQLite -> PostgreSQL）：`npm run migrate:db`
+    *   文件迁移（本地 -> Blob，并回写数据库 URL）：`npm run migrate:files`
 
 ## 系统模块
 
@@ -65,6 +71,11 @@ SmartRead (OpenJunk) 是一个基于 **Next.js 16 (App Router)** 框架构建的
 应用使用 Next.js App Router 进行基于文件系统的路由管理。
 - `(public)`: 首页、论文库 (`/browse`)、趋势榜 (`/trends`)、期刊矩阵 (`/journals`)。
 - `admin`: 系统管理的受保护路由，包含期刊、论文、用户及审计管理。
+- `public-review`: 公开评审平台（面向公众的浏览与信息更新流程）。
+- `conferences` / `awards` / `fund`: 会议、奖项与基金相关页面与流程。
+- `discovery/typesetting`: 智能排版与编辑相关能力入口。
+- `universe`: 宇宙视图与答题战力系统。
+- `maintenance`: 维护公告页面（配合代理层维护模式）。
 - `submission`: 投稿流程。
 - `profile`: 用户个人中心与设置。
 - `novel`: 论文详情页与评论区。
@@ -80,6 +91,7 @@ SmartRead (OpenJunk) 是一个基于 **Next.js 16 (App Router)** 框架构建的
 - 定时任务 (`/api/cron/*`)。
 - NextAuth 认证端点 (`/api/auth`)。
 - 日志记录 (`/api/log`)。
+- 代理与集成（如 `/api/proxy`）。
 
 ## 目录结构
 
@@ -90,6 +102,13 @@ src/
 │   ├── browse/          # 论文库
 │   ├── trends/          # 趋势榜
 │   ├── journals/        # 期刊矩阵
+│   ├── public-review/   # 公开评审平台
+│   ├── conferences/     # 会议相关页面
+│   ├── awards/          # 奖项相关页面
+│   ├── fund/            # 基金相关页面
+│   ├── discovery/       # 发现与编辑工具（智能排版等）
+│   ├── universe/        # 宇宙视图与答题系统
+│   ├── maintenance/     # 维护公告
 │   ├── novel/           # 论文详情页
 │   ├── submission/      # 投稿页面
 │   ├── uploads/         # 文件服务路由
@@ -101,6 +120,7 @@ src/
 ├── lib/                 # 共享逻辑
 │   ├── popularity.ts    # 热度计算逻辑
 │   ├── prisma.ts        # 数据库客户端
+│   ├── storage.ts       # 文件存储抽象层（本地/Blob）
 │   └── utils.ts         # 工具函数
 └── prisma/              # 数据库 Schema 与迁移
 ```

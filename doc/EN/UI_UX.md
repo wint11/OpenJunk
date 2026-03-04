@@ -39,12 +39,26 @@ For platform governance.
 *   **Dashboard**: Overview metrics (Total Users, Daily Active Users).
 *   **Audit Queue**: Split-screen interface for reviewing chapters pending publication, highlighting AI suggestions.
 *   **Journal Management**: Create/Edit journals, assign admins and reviewers.
+*   **Conference/Award**: Manage conferences, awards, and applications.
+*   **Fund System**: Fund categories, guidelines/projects, applications, reviews and approvals.
 *   **User Audit**: View user behavior logs and login records.
 
 ### 4. Journal & Paper Browsing (`/journals`, `/browse`)
 *   **Journal Display**: Card layout displaying journal covers and descriptions.
 *   **Paper List**: Supports filtering papers and novels by journal and category.
 *   **Search**: Global search functionality supporting title and author retrieval.
+
+### 5. Public Review & Metadata Updates (`/public-review`)
+*   **Public Review Platform**: Public-facing pages for content and review context.
+*   **Controlled Updates**: Auth/permission-bound update forms for metadata (title/abstract/authors).
+
+### 6. Typesetting & Editor Tooling (`/discovery/typesetting`)
+*   **Editor**: Entry point for typesetting/template-based editing workflows.
+*   **Preview**: Visual preview to reduce iteration cost on templates/styles.
+
+### 7. Universe (`/universe`)
+*   **3D Scene**: Interactive visualization as an engagement entry.
+*   **Quiz System**: Quiz-driven progression (power/season stats) for retention.
 
 ## Responsive Strategy
 *   **Mobile First**: All layouts are built prioritizing mobile screens, then extended for tablets and desktops.

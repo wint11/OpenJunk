@@ -1,14 +1,15 @@
-# SmartReview 项目代码库概览
+# SmartRead (OpenJunk) 项目代码库概览
 
-本文档旨在全面解析 SmartReview 项目的代码结构、文件作用及核心模块设计。该项目是一个基于 Next.js App Router 构建的综合性学术评审与基金管理系统。
+本文档旨在概览 SmartRead (OpenJunk) 的代码结构、核心模块与工程约定。该项目基于 Next.js App Router，覆盖期刊平台、公开评审、会议/奖项、基金系统、智能排版与“宇宙”互动等模块。
 
 ## 1. 技术栈概览
 
 - **框架**: Next.js 16.1.1 (App Router)
 - **UI 库**: React 19, TailwindCSS, Shadcn UI (Radix UI)
-- **数据库 ORM**: Prisma (SQLite/MySQL)
+- **数据库 ORM**: Prisma 5（本地 SQLite / 生产 PostgreSQL，多 Schema 切换）
 - **认证**: NextAuth.js v5 (Beta)
-- **工具库**: `date-fns` (日期处理), `zod` (验证), `xlsx` (Excel 处理), `react-pdf` (PDF 生成)
+- **存储**: `@vercel/blob`（生产）+ 本地文件（开发），统一抽象在 `src/lib/storage.ts`
+- **工具库**: `date-fns` (日期处理), `zod` (验证), `xlsx` (Excel 处理), `@react-pdf/renderer` (PDF 生成), `openai` (AI，可选)
 
 ## 2. 核心目录结构 (src/)
 
@@ -30,8 +31,11 @@
   - **reviews/**: 评审记录列表。
   - **admins/**: 基金管理员账号管理（仅超级管理员可见）。
 - **journals/**: 期刊管理。
+- **conferences/**: 会议管理。
+- **awards/**: 奖项管理。
 - **users/**: 用户管理。
 - **audit/**: 稿件审核（小说/论文）。
+- **preprints/**: 公开评审相关管理入口（部分命名沿用历史路径）。
 
 #### 基金前台业务 (src/app/fund)
 面向公众和申请人的页面。
@@ -48,11 +52,16 @@
 #### 阅读与浏览
 - **novel/[id]**, **paper/[id]**: 作品阅读页。
 - **browse/**, **search/**: 浏览和搜索页。
+- **public-review/**: 公开评审平台入口与内容更新。
+- **discovery/typesetting/**: 智能排版助手与编辑能力入口。
+- **universe/**: 宇宙视图与答题系统。
+- **maintenance/**: 维护公告页（配合代理层维护模式）。
 
 #### API 路由 (src/app/api)
 - **auth/[...nextauth]**: NextAuth 认证处理。
 - **uploads/**: 文件上传处理。
 - **cron/**: 定时任务（如热度衰减）。
+- **proxy/**: 代理转发与网页内容适配（用于集成/兼容场景）。
 
 ### 2.2 组件库 (src/components)
 
@@ -69,6 +78,8 @@
 - **auth.ts**: (位于 src 根目录) NextAuth 配置文件，定义 Providers (Credentials), Callbacks (JWT, Session), User Role 逻辑。
 - **ai-pre-review.ts**: AI 预审逻辑模拟。
 - **audit.ts**: 审计日志记录函数。
+- **storage.ts**: 文件存储抽象层（本地 / Vercel Blob）。
+- **logger.ts**: 请求日志写入（`logs/` 目录）。
 
 ## 3. 数据库模型 (prisma/schema.prisma)
 
@@ -79,15 +90,23 @@
 - **期刊系统**: `Journal` (期刊实体)。
 - **基金系统** (新增):
   - `FundCategory`: 基金大类（如“自燃科学鸡精”）。
+  - `FundDepartment`: 学部/部门。
   - `Fund`: 具体年度项目（如“2026年度面上项目”）。
   - `FundApplication`: 申报记录（包含申请人信息、状态）。
   - `FundExpertProfile`: 专家档案。
   - `FundReview`: 评审记录。
+- **会议/奖项**:
+  - `Conference`, `Award`, `AwardApplication` 等。
+- **公开评审/预印本**:
+  - `Preprint` 等。
+- **宇宙系统**:
+  - `UniverseSeason`, `Quiz`, `UserQuizAttempt` 等。
 
 ## 4. 关键配置文件
 
 - **package.json**: 定义项目依赖和 `dev`, `build`, `start` 脚本。
 - **next.config.ts**: Next.js 配置文件。
+- **vercel.json**: Vercel 跳转/部署相关配置。
 - **tsconfig.json**: TypeScript 编译选项。
 - **.env**: 环境变量（数据库连接串、Auth Secret 等）。
 - **.gitignore**: Git 忽略规则，防止提交敏感文件和构建产物。
@@ -104,4 +123,4 @@
 - **EN/**: 英文文档。
 
 ---
-*文档生成时间: 2026-02-25*
+*文档更新：2026-03-04*

@@ -19,6 +19,17 @@ Welcome to the comprehensive documentation for SmartRead. This documentation is 
 *   Key page layouts (Reader, Dashboard, Journal Pages).
 *   Responsive design strategy.
 
+### 4. [Code Overview](./CODE_OVERVIEW.md)
+*   Next.js project structure and main modules.
+*   Key directories and configuration files.
+
+### 5. [Project Spec](./PROJECT_SPEC.md)
+*   Local workflow, env vars, and directory conventions.
+*   Storage/database switching and recommended quality gates.
+
+### 6. [Design Summary](./DESIGN_SUMMARY_EN.md)
+*   System-level overview of modules and operations.
+
 ---
 
 ## Quick Start

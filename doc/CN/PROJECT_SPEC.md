@@ -37,6 +37,12 @@ npm run dev
 - `npm run build`：Next.js 构建
 - `npm run start`：生产模式启动
 - `npm run lint`：ESLint（Next.js core-web-vitals + TypeScript 规则）
+- `npm run db:switch:local`：切换 Prisma Schema 到 SQLite（本地开发）
+- `npm run db:switch:prod`：切换 Prisma Schema 到 PostgreSQL（生产/部署）
+- `npm run migrate:db`：将本地 SQLite 数据迁移到 PostgreSQL（脚本迁移）
+- `npm run migrate:files`：将本地 `public/` 下文件迁移到 Vercel Blob，并回写数据库 URL
+- `npm run sync:blob`：从 Vercel Blob 拉取文件到本地 `public/`（用于本地联调/回放数据）
+- `npm run vercel-build`：Vercel 构建用（`prisma db push && next build`）
 
 ## 4. 环境变量规范
 
@@ -44,7 +50,7 @@ npm run dev
 
 ### 4.1 必需
 
-- `DATABASE_URL`：Prisma 数据库连接串（当前 `schema.prisma` 使用 `postgresql` provider）
+- `DATABASE_URL`：数据库连接串（本地 SQLite 或生产 PostgreSQL，取决于当前启用的 Schema）
 
 ### 4.2 认证相关
 
@@ -61,6 +67,14 @@ npm run dev
 - 预审 HTTP Endpoint（用于 `runAiPreReview`）
   - `AI_REVIEW_ENDPOINT` 或 `AI_REVIEW_BASE_URL`：预审服务地址（未配置则走启发式预审）
   - `AI_REVIEW_API_KEY`：预审服务 Bearer Token（可选）
+
+### 4.4 存储相关（可选）
+
+- `STORAGE_PROVIDER`：文件存储后端选择
+  - `vercel-blob`：启用 Vercel Blob（生产推荐）
+  - 未设置：默认本地文件存储（开发环境默认）
+- `BLOB_READ_WRITE_TOKEN`：Vercel Blob 读写 Token（用于文件迁移/同步脚本）
+- `VERCEL`：Vercel 运行时自动注入（用于自动判断生产环境）
 
 ## 5. 目录与命名约定
 
@@ -79,7 +93,10 @@ npm run dev
 
 ### 5.2 数据库（prisma/）
 
-- `prisma/schema.prisma`：唯一可信的模型定义来源
+- `prisma/schema.prisma`：自动生成的当前生效 Schema，请勿直接编辑
+- `prisma/schema.sqlite.prisma`：SQLite Schema 源文件（本地开发）
+- `prisma/schema.postgres.prisma`：PostgreSQL Schema 源文件（生产/部署）
+- Schema 切换：通过 `scripts/switch-db.js` 与 `npm run db:switch:*` 完成
 - 迁移：使用 Prisma 官方命令生成；禁止手工改写已应用到线上环境的迁移
 - `prisma/migrations_sqlite_backup/`：迁移备份目录，不作为运行时迁移输入
 

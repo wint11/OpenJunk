@@ -16,17 +16,23 @@
 *   **UI 组件库**: shadcn/ui (基于 Radix UI), Lucide React (图标)
 *   **后端运行时**: Node.js (Next.js Server Actions & API Routes)
 *   **数据库 ORM**: Prisma
-*   **数据库**: SQLite
+*   **数据库**: SQLite（本地）/ PostgreSQL（生产），通过多 Schema 切换
 *   **身份认证**: NextAuth.js v5 (Credentials Provider)
 *   **数据验证**: Zod
+*   **文件存储**: 本地文件 / Vercel Blob（统一抽象层）
 *   **移动端**: UniApp (Vue.js)
 *   **其他**: Three.js (3D Universe), PDF.js (PDF 阅读)
 
 ### 2.2 目录结构
 
 *   `src/app`: Next.js App Router 路由定义，包含页面逻辑和 Server Actions。
-    *   `admin`: 管理后台 (期刊、论文、用户、基金等管理)。
-    *   `api`: 后端 API 路由 (Auth, Cron, Uploads)。
+    *   `admin`: 管理后台（期刊、会议、奖项、基金、审核、用户等）。
+    *   `public-review`: 公开评审平台入口与信息更新流程。
+    *   `fund` / `conferences` / `awards`: 基金、会议、奖项相关页面与流程。
+    *   `discovery/typesetting`: 智能排版助手入口。
+    *   `universe`: 3D 宇宙与答题系统。
+    *   `maintenance`: 维护公告页。
+    *   `api`: 后端 API 路由（Auth、Cron、Proxy 等）。
     *   `browse`, `trends`, `journals`: 公共浏览页面。
     *   `submission`: 投稿流程。
     *   `novel`, `paper`: 内容详情页。
@@ -89,11 +95,11 @@
 
 位于 `mobile-app` 目录，基于 UniApp 开发，提供移动端的浏览和阅读体验。
 *   **功能**: 首页推荐、期刊浏览、论文阅读、个人中心。
-*   **技术**: Vue.js, uView UI (推测), 跨平台编译 (iOS/Android/H5)。
+*   **技术**: Vue.js，跨平台编译（iOS/Android/H5）。
 
 ## 4. 数据库设计 (Prisma)
 
-核心数据模型 (`schema.prisma`):
+核心数据模型（以 `schema.sqlite.prisma` / `schema.postgres.prisma` 为准，`schema.prisma` 为自动生成文件）：
 
 *   **User**: 用户账户，包含角色、关联的期刊/会议/奖项管理权限。
 *   **Journal/Conference/Award**: 组织实体，包含关联的论文和管理员。
@@ -101,17 +107,21 @@
 *   **Chapter**: 章节内容 (用于非 PDF 内容)。
 *   **Comment**: 评论数据。
 *   **ReviewLog**: 评审记录。
-*   **FundApplication/FundProject**: 基金相关实体。
+*   **FundApplication/Fund/FundCategory/FundDepartment**: 基金相关实体。
 *   **ReadingHistory**: 用户阅读历史。
 *   **AuditLog**: 系统操作审计日志。
 
 ## 5. 部署与运维
 
-*   **环境依赖**: Node.js 18+, SQLite (默认) 或 PostgreSQL。
+*   **环境依赖**: Node.js 18+，本地 SQLite / 生产 PostgreSQL。
 *   **初始化**:
     1.  `npm install`: 安装依赖。
     2.  `npx prisma migrate dev`: 数据库迁移。
     3.  `npx tsx prisma/seed.ts`: 种子数据填充 (默认管理员账户)。
 *   **启动**: `npm run dev` (开发) / `npm run build && npm start` (生产)。
+*   **迁移与同步**:
+    *   `npm run migrate:db`: SQLite 数据迁移到 PostgreSQL。
+    *   `npm run migrate:files`: 本地文件迁移到 Vercel Blob 并回写数据库 URL。
+    *   `npm run sync:blob`: 从 Vercel Blob 拉取文件到本地 `public/`。
 *   **数据导出**: 支持将数据库表导出为 CSV (`prisma/export_to_csv.ts`)。
 *   **日志**: 文件级请求日志记录。
