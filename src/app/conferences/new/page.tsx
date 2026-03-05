@@ -80,8 +80,8 @@ export default function CreateConferencePage() {
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="cover">会议封面/Logo</Label>
-                <Input id="cover" name="cover" type="file" accept="image/*" />
+                <Label htmlFor="cover">会议封面/Logo <span className="text-red-500">*</span></Label>
+                <Input id="cover" name="cover" type="file" accept="image/*" required />
                 <p className="text-xs text-muted-foreground">建议尺寸: 800x600, 支持 JPG, PNG 格式</p>
               </div>
 

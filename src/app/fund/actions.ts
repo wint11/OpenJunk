@@ -89,11 +89,9 @@ export async function submitApplication(prevState: any, formData: FormData) {
     return { success: false, message: "选择的部门不属于该基金大类" }
   }
 
-  // Generate Serial No: YEAR-DEPTCODE-RANDOM
-  const timestamp = Date.now().toString().slice(-6)
-  const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0')
-  const deptCode = department.code || "0"
-  const serialNo = `${fund.year}-${deptCode}-${timestamp}${random}`
+  // Generate Serial No using shared utility
+  const { generateFundSerialNo } = await import("@/lib/fund-utils")
+  const serialNo = generateFundSerialNo(fund.year, department.code || "0")
 
   let paperIds: string[] = []
   try {

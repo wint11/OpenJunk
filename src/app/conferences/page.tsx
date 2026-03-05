@@ -59,67 +59,32 @@ export default async function ConferencesPage() {
           </div>
         ) : (
           conferencesWithCounts.map((conference) => (
-            <Card key={conference.id} className="group hover:shadow-md transition-all duration-300 border-muted/60 bg-card">
-              <div className="p-5 flex flex-col h-full">
-                {/* Conference Title Row - Spans full width */}
-                <div className="mb-4 flex items-center gap-2 overflow-hidden">
-                    <Mic2 className="h-5 w-5 text-primary shrink-0" />
-                    <h3 className="font-bold text-lg leading-tight text-foreground truncate" title={conference.name}>
-                       {conference.name}
-                    </h3>
-                 </div>
+            <Card key={conference.id} className="group relative overflow-hidden h-64 hover:shadow-xl transition-all duration-300 border-none bg-muted rounded-xl">
+              {/* Background Image */}
+              {conference.coverUrl ? (
+                <div className="absolute inset-0 z-0">
+                  <Image 
+                    src={conference.coverUrl} 
+                    alt={conference.name} 
+                    fill 
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/20" />
+                </div>
+              ) : (
+                <div className="absolute inset-0 z-0 flex items-center justify-center bg-muted/50">
+                   <span className="text-muted-foreground font-bold text-xl">{conference.name}</span>
+                </div>
+              )}
 
-                <div className="flex gap-4 flex-1">
-                  {/* Left: Description & Stats */}
-                  <div className="flex-1 flex flex-col justify-between min-w-0">
-                     <p className="text-sm text-muted-foreground line-clamp-4 leading-relaxed mb-3">
-                       {conference.description || "暂无描述"}
-                     </p>
-                     
-                     <div className="flex flex-wrap gap-2 mt-auto">
-                        <Badge variant="secondary" className="h-6 text-xs font-normal px-2 bg-muted/50 text-muted-foreground hover:bg-muted">
-                          <FileText className="mr-1 h-3 w-3" />
-                          {conference.publishedPaperCount} 篇
-                        </Badge>
-                        <Badge variant="secondary" className="h-6 text-xs font-normal px-2 bg-muted/50 text-muted-foreground hover:bg-muted">
-                          <Users className="mr-1 h-3 w-3" />
-                          {conference._count.admins + conference._count.reviewers} 委员
-                        </Badge>
-                     </div>
-                  </div>
-                  
-                  {/* Right: Cover Image - Aligned with Description */}
-                  <div className="shrink-0">
-                    <div className="w-24 h-32 relative rounded-md overflow-hidden border shadow-sm bg-muted/30">
-                      {conference.coverUrl ? (
-                        <Image 
-                          src={conference.coverUrl} 
-                          alt={conference.name} 
-                          fill 
-                          className="object-cover transition-transform group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-muted-foreground/20">
-                           <Mic2 className="h-8 w-8" />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Footer Actions */}
-                <div className="mt-5 pt-4 border-t border-muted/50 flex items-center justify-between">
-                   <Button variant="ghost" size="sm" className="h-8 text-xs text-muted-foreground hover:text-primary px-0" asChild>
-                     <Link href={`/conferences/${conference.id}`}>
-                       查看详情 <ArrowRight className="ml-1 h-3 w-3" />
-                     </Link>
-                   </Button>
-                   <Button variant="outline" size="sm" className="h-8 text-xs" asChild>
-                      <Link href={`/conferences/submission?conferenceId=${conference.id}`}>
-                        立即投稿
-                      </Link>
-                   </Button>
-                </div>
+              {/* Hover Action Layer */}
+              <div className="absolute inset-0 z-10 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                 <Button size="lg" className="rounded-full px-8 shadow-2xl scale-90 transition-transform duration-300 group-hover:scale-100 bg-white text-black hover:bg-white/90" asChild>
+                   <Link href={`/conferences/${conference.id}`}>
+                     查看详情
+                   </Link>
+                 </Button>
               </div>
             </Card>
           ))

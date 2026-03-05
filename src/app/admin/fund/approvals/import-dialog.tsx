@@ -63,11 +63,12 @@ export function ImportApplicationsDialog() {
             <AlertDescription className="text-xs text-muted-foreground mt-2">
               <p>第一行必须包含以下列名（顺序不限）：</p>
               <ul className="list-disc list-inside mt-1 font-mono">
-                <li>受理编号 (唯一)</li>
+                <li>立项编号 (唯一)</li>
                 <li>项目名称</li>
                 <li>所属基金 (必须完全匹配已有基金名称)</li>
+                <li>所属部门 (必须完全匹配已有部门名称，且属于该基金大类)</li>
                 <li>申请人</li>
-                <li>状态 (已立项/已提交)</li>
+                <li>状态 (已立项/已提交/未立项/评审中)</li>
                 <li>提交时间 (选填, yyyy-MM-dd)</li>
               </ul>
             </AlertDescription>

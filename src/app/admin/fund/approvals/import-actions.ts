@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache"
 import * as XLSX from 'xlsx'
 import { auth } from "@/auth"
 
-const REQUIRED_HEADERS = ['受理编号', '项目名称', '所属基金', '申请人', '状态']
+const REQUIRED_HEADERS = ['立项编号', '项目名称', '所属基金', '申请人', '所属部门', '状态']
 
 export async function importApplications(prevState: any, formData: FormData) {
   const session = await auth()
@@ -62,38 +62,16 @@ export async function importApplications(prevState: any, formData: FormData) {
       const rowNum = i + 2 
 
       try {
-        const serialNo = String(row['受理编号'])
+        const projectNo = String(row['立项编号']) // This is projectNumber (立项编号)
         const title = row['项目名称']
         const fundName = row['所属基金']
         const applicantName = row['申请人']
+        const departmentName = row['所属部门']
         const statusRaw = row['状态']
         const submissionTimeRaw = row['提交时间']
         
-        if (!serialNo || !title || !fundName || !applicantName || !statusRaw) {
-          throw new Error(`必填字段缺失 (受理编号, 项目名称, 所属基金, 申请人, 状态)`)
-        }
-        
-        // Resolve Status
-        let status = 'SUBMITTED'
-        if (statusRaw === '已立项') status = 'APPROVED'
-        else if (statusRaw === '已提交') status = 'SUBMITTED' // Default to submitted if explicitly stated
-        else if (statusRaw === '未立项') status = 'REJECTED' // Optional: Handle rejection if needed, but user emphasized "Approved" and "Submitted"
-        else {
-            // Fallback: try to match english or keep raw if unknown
-            status = statusRaw
-        }
-        
-        // Resolve Submission Time
-        let createdAt = new Date()
-        if (submissionTimeRaw) {
-            if (submissionTimeRaw instanceof Date) {
-                createdAt = submissionTimeRaw
-            } else {
-                const parsed = new Date(submissionTimeRaw)
-                if (!isNaN(parsed.getTime())) {
-                    createdAt = parsed
-                }
-            }
+        if (!projectNo || !title || !fundName || !applicantName || !departmentName || !statusRaw) {
+          throw new Error(`必填字段缺失 (立项编号, 项目名称, 所属基金, 申请人, 所属部门, 状态)`)
         }
 
         // Find Fund by Name (Title) and Permission
@@ -110,36 +88,85 @@ export async function importApplications(prevState: any, formData: FormData) {
           throw new Error(`找不到名为 "${fundName}" 的基金项目或无权操作`)
         }
 
-        // Check for duplicate Serial No
-        const existing = await prisma.fundApplication.findFirst({
-            where: { serialNo: serialNo }
+        // Check department
+        const department = await prisma.fundDepartment.findFirst({
+            where: {
+                name: String(departmentName),
+                categoryId: fund.categoryId // Ensure department belongs to the same category as the fund
+            }
         })
-        
-        if (existing) {
-             throw new Error(`受理编号 ${serialNo} 已存在`)
+
+        if (!department) {
+             throw new Error(`找不到名为 "${departmentName}" 的部门，或该部门不属于基金 "${fundName}" 所属的大类`)
         }
 
-        // Create Application
-        // Note: We don't have applicantId (User ID) from Excel, so it will be null (offline application import)
-        // Or we just store applicantName. Schema has applicantId?
-        // Schema: applicantId String? @relation...
-        // applicantName String? 
-        // Let's check schema for `FundApplication`... 
-        // Assuming `FundApplication` has `applicantName` string field.
+        // Auto-generate application number (受理编号)
+        // Format: {YEAR}-{DEPTCODE}-{TIMESTAMP}{RANDOM}
+        // Use department code from database
+        const { generateFundSerialNo } = await import("@/lib/fund-utils")
+        const serialNo = generateFundSerialNo(fund.year, department.code || "IMPORT")
         
-        await prisma.fundApplication.create({
-          data: {
-            fundId: fund.id,
-            title: String(title),
-            serialNo: serialNo,
-            applicantName: String(applicantName),
-            status: status,
-            createdAt: createdAt,
-            description: "线下导入数据", // Default description for imported data
-            // content: "线下导入数据", // REMOVED: content field does not exist in schema
-            // applicantId: null // Explicitly null
-          }
+        // Resolve Status
+        let status = 'SUBMITTED'
+        if (statusRaw === '已立项') status = 'APPROVED'
+        else if (statusRaw === '已提交') status = 'SUBMITTED'
+        else if (statusRaw === '未立项') status = 'REJECTED'
+        else if (statusRaw === '评审中') status = 'UNDER_REVIEW'
+        else {
+            status = statusRaw
+        }
+        
+        // Resolve Submission Time
+        let createdAt = new Date()
+        if (submissionTimeRaw) {
+            if (submissionTimeRaw instanceof Date) {
+                createdAt = submissionTimeRaw
+            } else {
+                const parsed = new Date(submissionTimeRaw)
+                if (!isNaN(parsed.getTime())) {
+                    createdAt = parsed
+                }
+            }
+        }
+
+        // Check if application already exists (by title and fund)
+        // Or should we use projectNo? projectNo is usually unique for approved projects.
+        // Let's use title + applicantName + fundId as unique constraint for import
+        const existingApp = await prisma.fundApplication.findFirst({
+            where: {
+                fundId: fund.id,
+                title: String(title),
+                applicantName: String(applicantName)
+            }
         })
+
+        if (existingApp) {
+             // Update
+             await prisma.fundApplication.update({
+                 where: { id: existingApp.id },
+                 data: {
+                     status,
+                     projectNo: projectNo, // Update project number
+                     departmentId: department.id, // Update department
+                     createdAt
+                 }
+             })
+        } else {
+            // Create
+            await prisma.fundApplication.create({
+                data: {
+                    serialNo, // Auto-generated application number
+                    projectNo: projectNo, // Imported project number (立项编号)
+                    title: String(title),
+                    fundId: fund.id,
+                    departmentId: department.id, // Link department
+                    applicantName: String(applicantName),
+                    status,
+                    createdAt,
+                    description: "线下导入数据"
+                }
+            })
+        }
 
         successCount++
       } catch (error: any) {

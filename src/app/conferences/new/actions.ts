@@ -22,7 +22,11 @@ export async function createConferenceAndAdmin(formData: FormData) {
 
   // Validation
   if (!name || !description || !userName || !userEmail || !userPassword) {
-    throw new Error("请填写所有必填字段")
+    return { error: "请填写所有必填字段" }
+  }
+
+  if (!coverFile || coverFile.size === 0) {
+    return { error: "必须上传会议封面图" }
   }
 
   // Check if email already exists
@@ -30,7 +34,7 @@ export async function createConferenceAndAdmin(formData: FormData) {
     where: { email: userEmail }
   })
   if (existingUser) {
-    throw new Error("该邮箱已被注册")
+    return { error: "该邮箱已被注册" }
   }
 
   // Handle Files (Conference)

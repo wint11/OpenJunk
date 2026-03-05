@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import { ImportApplicationsDialog } from "./import-dialog"
 
 export default async function FundApprovalsPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const session = await auth()
@@ -104,8 +105,11 @@ export default async function FundApprovalsPage({ searchParams }: { searchParams
       <div className="space-y-6">
           <div className="flex items-center justify-between">
               <div>
-                  <h1 className="text-3xl font-bold tracking-tight">立项管理</h1>
-                  <p className="text-muted-foreground">管理基金项目立项编号及状态。</p>
+                  <h1 className="text-3xl font-bold tracking-tight">立项审批</h1>
+                  <p className="text-muted-foreground">对通过函评的项目进行最终立项审批</p>
+              </div>
+              <div>
+                  <ImportApplicationsDialog />
               </div>
           </div>
 

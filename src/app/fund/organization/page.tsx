@@ -31,7 +31,7 @@ export default async function FundOrganizationPage() {
               
               {/* Left: Image & Stats */}
               <div className="space-y-4">
-                <div className="relative aspect-[4/3] overflow-hidden rounded-xl border bg-muted shadow-sm">
+                <div className="relative aspect-square overflow-hidden rounded-xl border bg-muted shadow-sm">
                   {category.introImages ? (
                     <Image
                       src={category.introImages}
