@@ -175,8 +175,8 @@ export function Stage2Record() {
     setIsSubmitting(true)
 
     const formData = new FormData()
-    formData.append('audio', audioBlob, 'recording.webm')
-    formData.append('pptId', ppt.id)
+    formData.append('audio', audioBlob)
+    formData.append('submissionId', ppt.id) // Corrected field name
     formData.append('duration', duration.toString())
     // Ensure timestamps are sorted by time before submitting
     const sortedTimestamps = [...pageTimestamps].sort((a, b) => a.time - b.time);

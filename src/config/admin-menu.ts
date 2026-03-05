@@ -1,5 +1,5 @@
 
-import { LayoutDashboard, FileText, Users, History, Layers, Mail, ClipboardList, Wallet, Landmark, Trophy, LucideIcon, BookOpen, Stamp } from "lucide-react"
+import { LayoutDashboard, FileText, Users, History, Layers, Mail, ClipboardList, Wallet, Landmark, Trophy, LucideIcon, BookOpen, Stamp, Swords } from "lucide-react"
 
 export type AdminRole = 'SUPER_ADMIN' | 'ADMIN' | 'REVIEWER' | 'FUND_ADMIN' | 'AWARD_ADMIN' | 'JOURNAL_ADMIN' | 'CONFERENCE_ADMIN'
 
@@ -64,6 +64,12 @@ export const adminMenuConfig: MenuGroup[] = [
         title: "奖项列表",
         href: "/admin/awards",
         icon: Trophy,
+        roles: ['SUPER_ADMIN']
+      },
+      {
+        title: "赛事管理",
+        href: "/admin/contest",
+        icon: Swords,
         roles: ['SUPER_ADMIN']
       },
       {
