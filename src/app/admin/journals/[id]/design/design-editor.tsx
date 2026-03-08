@@ -19,9 +19,22 @@ import { loader } from "@monaco-editor/react"
 // For simplicity in this specific environment, we'll use jsdelivr but we MUST allow it in CSP
 // We've updated next.config.ts to allow cdn.jsdelivr.net
 
-const Editor = dynamic(() => import("@monaco-editor/react"), { 
+// Pre-configure Monaco loader for faster initialization
+loader.config({
+  paths: {
+    vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs'
+  }
+})
+
+const Editor = dynamic(() => import("@monaco-editor/react"), {
     ssr: false,
-    loading: () => <div className="h-full w-full bg-[#1e1e1e] flex items-center justify-center text-muted-foreground">Loading Editor...</div>
+    loading: () => (
+        <div className="h-full w-full bg-[#1e1e1e] flex flex-col items-center justify-center text-muted-foreground gap-3">
+            <Loader2 className="h-8 w-8 animate-spin" />
+            <div className="text-sm">Loading Editor...</div>
+            <div className="text-xs text-muted-foreground/60">首次加载可能需要几秒钟</div>
+        </div>
+    )
 })
 
 // Use the default template file content as the base
@@ -70,6 +83,12 @@ export function DesignEditor({ journalId, initialConfig, defaultTemplate, journa
     }
   }, [])
 
+  // Pre-load Monaco editor when component mounts
+  useEffect(() => {
+    // Pre-initialize Monaco loader
+    loader.init().catch(console.error)
+  }, [])
+
   const [activeTab, setActiveTab] = useState("preview")
   const [device, setDevice] = useState<"mobile" | "tablet" | "desktop">("desktop")
   
@@ -92,7 +111,7 @@ export function DesignEditor({ journalId, initialConfig, defaultTemplate, journa
         console.error("Handlebars compilation error:", e);
         error = e.message;
     }
-    
+
     return `<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -100,12 +119,33 @@ export function DesignEditor({ journalId, initialConfig, defaultTemplate, journa
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>Preview</title>
       <script src="https://cdn.tailwindcss.com"></script>
+      <style>
+        /* Preview mode styles */
+        a[href]:not([href^="#"]):not([href^="javascript"]) {
+          cursor: pointer;
+        }
+      </style>
     </head>
     <body>
       ${error ? `<div style="color:red; padding: 20px; border: 1px solid red; margin: 20px; border-radius: 4px; background: #fff0f0;">
         <h3>Template Error</h3>
         <pre>${error}</pre>
       </div>` : renderedHtml}
+      <script>
+        // Handle link clicks in preview mode
+        document.addEventListener('click', function(e) {
+          const link = e.target.closest('a[href]');
+          if (link) {
+            const href = link.getAttribute('href');
+            // Allow anchor links and javascript: links to work normally
+            if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
+              e.preventDefault();
+              // Open link in new tab for preview
+              window.open(href, '_blank');
+            }
+          }
+        });
+      </script>
     </body>
     </html>`;
   }, []);

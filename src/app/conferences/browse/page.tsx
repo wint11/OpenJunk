@@ -15,14 +15,13 @@ export const metadata: Metadata = {
 interface BrowsePageProps {
   searchParams: Promise<{
     sort?: string
-    category?: string
     journal?: string
     q?: string
   }>
 }
 
 export default async function BrowseConferencePapersPage({ searchParams }: BrowsePageProps) {
-  const { sort, category, journal, q } = await searchParams
+  const { sort, journal, q } = await searchParams
   
   const orderBy: Prisma.NovelOrderByWithRelationInput = sort === 'popular' 
     ? { popularity: 'desc' } 
@@ -33,7 +32,6 @@ export default async function BrowseConferencePapersPage({ searchParams }: Brows
     conference: { 
         status: 'ACTIVE',
     },
-    ...(category ? { category } : {}),
     ...(journal ? { conferenceId: journal } : {}),
     ...(q ? {
       OR: [
@@ -58,23 +56,6 @@ export default async function BrowseConferencePapersPage({ searchParams }: Brows
     }
   })
 
-  // Get all categories for sidebar
-  const categories = await prisma.novel.groupBy({
-    by: ['category'],
-    _count: {
-      category: true
-    },
-    where: {
-      status: 'PUBLISHED',
-      conference: { 
-          status: 'ACTIVE',
-      },
-      category: {
-        not: "" 
-      }
-    }
-  })
-
   // Get all active conferences for sidebar
   const conferences = await prisma.conference.findMany({
     where: { 
@@ -85,7 +66,6 @@ export default async function BrowseConferencePapersPage({ searchParams }: Brows
 
   // Sort by Pinyin
   conferences.sort((a, b) => a.name.localeCompare(b.name, "zh-CN"))
-  categories.sort((a, b) => (a.category || "").localeCompare(b.category || "", "zh-CN"))
 
   return (
     <div className="container mx-auto py-12 px-4">
@@ -102,7 +82,7 @@ export default async function BrowseConferencePapersPage({ searchParams }: Brows
               <h4 className="text-sm font-medium text-muted-foreground">所属会议</h4>
               <div className="flex flex-col space-y-1">
                 <Link 
-                  href={`/conferences/browse?${new URLSearchParams({ ...(q && { q }), ...(sort && { sort }), ...(category && { category }) }).toString()}`}
+                  href={`/conferences/browse?${new URLSearchParams({ ...(q && { q }), ...(sort && { sort }) }).toString()}`}
                   className={`text-sm py-1 px-2 rounded-md transition-colors ${!journal ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-muted-foreground'}`}
                 >
                   全部会议
@@ -110,31 +90,10 @@ export default async function BrowseConferencePapersPage({ searchParams }: Brows
                 {conferences.map((c) => (
                   <Link 
                     key={c.id}
-                    href={`/conferences/browse?${new URLSearchParams({ ...(q && { q }), ...(sort && { sort }), ...(category && { category }), journal: c.id }).toString()}`}
+                    href={`/conferences/browse?${new URLSearchParams({ ...(q && { q }), ...(sort && { sort }), journal: c.id }).toString()}`}
                     className={`text-sm py-1 px-2 rounded-md transition-colors ${journal === c.id ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-muted-foreground'}`}
                   >
                     {c.name}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <h4 className="text-sm font-medium text-muted-foreground">学科分类</h4>
-              <div className="flex flex-col space-y-1">
-                <Link 
-                  href={`/conferences/browse?${new URLSearchParams({ ...(q && { q }), ...(sort && { sort }), ...(journal && { journal }) }).toString()}`}
-                  className={`text-sm py-1 px-2 rounded-md transition-colors ${!category ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-muted-foreground'}`}
-                >
-                  全部分类
-                </Link>
-                {categories.map((c) => (
-                  <Link 
-                    key={c.category}
-                    href={`/conferences/browse?${new URLSearchParams({ ...(q && { q }), ...(sort && { sort }), ...(journal && { journal }), category: c.category }).toString()}`}
-                    className={`text-sm py-1 px-2 rounded-md transition-colors ${category === c.category ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-muted-foreground'}`}
-                  >
-                    {c.category} <span className="text-xs text-muted-foreground ml-1">({c._count.category})</span>
                   </Link>
                 ))}
               </div>
@@ -157,20 +116,19 @@ export default async function BrowseConferencePapersPage({ searchParams }: Brows
                   defaultValue={q}
                 />
                 {sort && <input type="hidden" name="sort" value={sort} />}
-                {category && <input type="hidden" name="category" value={category} />}
                 {journal && <input type="hidden" name="journal" value={journal} />}
               </form>
 
               <div className="flex items-center border rounded-md p-1 bg-muted/20">
                  <Link
-                   href={`/conferences/browse?${new URLSearchParams({ ...(q && { q }), ...(category && { category }), ...(journal && { journal }) }).toString()}`}
+                   href={`/conferences/browse?${new URLSearchParams({ ...(q && { q }), ...(journal && { journal }) }).toString()}`}
                    className={`px-3 py-1.5 text-sm font-medium rounded-sm transition-all ${!sort ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                  >
                    <SortAsc className="h-4 w-4 inline mr-1" />
                    最新
                  </Link>
                  <Link
-                   href={`/conferences/browse?${new URLSearchParams({ ...(q && { q }), ...(category && { category }), ...(journal && { journal }), sort: 'popular' }).toString()}`}
+                   href={`/conferences/browse?${new URLSearchParams({ ...(q && { q }), ...(journal && { journal }), sort: 'popular' }).toString()}`}
                    className={`px-3 py-1.5 text-sm font-medium rounded-sm transition-all ${sort === 'popular' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                  >
                    <Filter className="h-4 w-4 inline mr-1" />
@@ -186,7 +144,7 @@ export default async function BrowseConferencePapersPage({ searchParams }: Brows
                 <BookX className="h-12 w-12 mx-auto text-muted-foreground mb-4 opacity-50" />
                 <h3 className="text-lg font-medium">暂无相关论文</h3>
                 <p className="text-muted-foreground mt-1">换个搜索词试试？</p>
-                {(q || category || journal) && (
+                {(q || journal) && (
                   <Button variant="link" asChild className="mt-4">
                     <Link href="/conferences/browse">
                       清除所有筛选

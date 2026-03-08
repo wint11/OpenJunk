@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown, ChevronRight } from "lucide-react"
 
 export function MainNav({ role }: { role?: string }) {
   const pathname = usePathname()
@@ -83,6 +83,16 @@ export function MainNav({ role }: { role?: string }) {
         { name: "Web of Nothing", href: "https://webofnothing.org", external: true },
         { name: "Web of Absurd", href: "https://tctco.github.io/Web-of-Absurd/", external: true },
         { name: "没用科学院", href: "https://caonu.labbricker.com/", external: true },
+        { 
+          name: "热门期刊导航", 
+          href: "/hots", 
+          external: true,
+          children: [
+            { name: "RUBBISH", href: "https://www.rubbish.press/", external: true },
+            { name: "S.H.I.T.", href: "https://shitjournal.org/", external: true },
+            { name: "Joker Of Academic", href: "https://jokerofacademics.asia/", external: true },
+          ]
+        },
       ]
     }
   ] as const
@@ -100,16 +110,43 @@ export function MainNav({ role }: { role?: string }) {
                 {item.name} <ChevronDown className="ml-1 h-3 w-3" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
-                {item.children.map((child) => (
-                  <DropdownMenuItem key={child.name} asChild>
-                    <Link 
-                      href={child.href} 
-                      target={'external' in child && child.external ? "_blank" : undefined}
-                    >
-                      {child.name}
-                    </Link>
-                  </DropdownMenuItem>
-                ))}
+                {item.children.map((child) => {
+                  // 如果有二级子菜单，渲染为嵌套DropdownMenu
+                  if ('children' in child && child.children) {
+                    return (
+                      <DropdownMenu key={child.name} modal={false}>
+                        <DropdownMenuTrigger className="w-full flex items-center justify-between px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground rounded-sm">
+                          <span>{child.name}</span>
+                          <ChevronRight className="ml-2 h-3 w-3" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent side="right" align="start">
+                          {child.children.map((grandChild: any) => (
+                            <DropdownMenuItem key={grandChild.name} asChild>
+                              <Link 
+                                href={grandChild.href} 
+                                target={'external' in grandChild && grandChild.external ? "_blank" : undefined}
+                              >
+                                {grandChild.name}
+                              </Link>
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )
+                  }
+                  
+                  // 普通子项
+                  return (
+                    <DropdownMenuItem key={child.name} asChild>
+                      <Link 
+                        href={child.href} 
+                        target={'external' in child && child.external ? "_blank" : undefined}
+                      >
+                        {child.name}
+                      </Link>
+                    </DropdownMenuItem>
+                  )
+                })}
               </DropdownMenuContent>
             </DropdownMenu>
           )

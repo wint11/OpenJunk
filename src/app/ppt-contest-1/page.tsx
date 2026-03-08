@@ -3,6 +3,7 @@ import { getContestStatus, getTestMode } from "./actions";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { ArrowRight, Lock } from "lucide-react";
+import { ContestBanner } from "@/components/ppt-contest/contest-banner";
 
 export default async function PPTContestPage() {
   const { stage, now, dates } = await getContestStatus();
@@ -13,25 +14,23 @@ export default async function PPTContestPage() {
 
   return (
     <div className="container mx-auto py-12 px-4 max-w-4xl">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">
-          第一届“乱讲PPT”大赛
-        </h1>
-        <p className="text-xl text-muted-foreground mb-4">
-          史上最离谱、最无厘头的学术PPT演讲比赛
-        </p>
-        <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80">
-          {TEST_MODE ? "测试模式 (所有功能已开启)" : (
-              <>
-                {stage === 0 && "即将开始"}
-                {stage === 1 && "第一阶段：PPT上传中"}
-                {stage === 1.5 && "等待第二阶段开启"}
-                {stage === 2 && "第二阶段：即兴乱讲中"}
-                {stage === 2.5 && "等待第三阶段开启"}
-                {stage === 3 && "第三阶段：大众评审中"}
-                {stage === 4 && "比赛已结束"}
-              </>
-          )}
+      {/* 横幅图片区域 */}
+      <div className="mb-12">
+        <ContestBanner className="mb-6" priority={true} />
+        <div className="text-center">
+          <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80">
+            {TEST_MODE ? "测试模式 (所有功能已开启)" : (
+                <>
+                  {stage === 0 && "即将开始"}
+                  {stage === 1 && "第一阶段：PPT上传中"}
+                  {stage === 1.5 && "等待第二阶段开启"}
+                  {stage === 2 && "第二阶段：即兴乱讲中"}
+                  {stage === 2.5 && "等待第三阶段开启"}
+                  {stage === 3 && "第三阶段：大众评审中"}
+                  {stage === 4 && "比赛已结束"}
+                </>
+            )}
+          </div>
         </div>
       </div>
 

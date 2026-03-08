@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
+import { useRouter } from "next/navigation"
 
 import Handlebars from "handlebars"
 
@@ -10,6 +11,18 @@ import Handlebars from "handlebars"
 
 export function JournalCustomRenderer({ code, data }: { code: string, data: any }) {
   const iframeRef = useRef<HTMLIFrameElement>(null)
+  const router = useRouter()
+
+  useEffect(() => {
+    // Listen for navigation messages from iframe
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data && event.data.type === 'navigate' && event.data.href) {
+        router.push(event.data.href)
+      }
+    }
+    window.addEventListener('message', handleMessage)
+    return () => window.removeEventListener('message', handleMessage)
+  }, [router])
 
   useEffect(() => {
     if (iframeRef.current) {
@@ -20,6 +33,23 @@ export function JournalCustomRenderer({ code, data }: { code: string, data: any 
             // Compile the template locally using the imported Handlebars package
             const template = Handlebars.compile(code);
             renderedHtml = template(data);
+            
+            // Debug: Log papers data
+            console.log("[CustomRenderer] Papers count:", data.papers?.length);
+            console.log("[CustomRenderer] Papers data:", JSON.stringify(data.papers, null, 2));
+            
+            // Debug: Check rendered HTML for links
+            const linkMatches = renderedHtml.match(/href="\/novel\/[^"]*"/g);
+            console.log("[CustomRenderer] Found links:", linkMatches);
+            
+            // Check for empty or undefined ids
+            if (data.papers) {
+                data.papers.forEach((p: any, i: number) => {
+                    if (!p.id) {
+                        console.error(`[CustomRenderer] Paper ${i} has no id:`, p);
+                    }
+                });
+            }
         } catch (e: any) {
             console.error("Handlebars compilation error:", e);
             error = e.message;
@@ -38,6 +68,29 @@ export function JournalCustomRenderer({ code, data }: { code: string, data: any 
             <h3>Template Error</h3>
             <pre>${error}</pre>
           </div>` : renderedHtml}
+          <script>
+            // Handle link clicks - open external links in new tab, internal links in parent
+            document.addEventListener('click', function(e) {
+              const link = e.target.closest('a[href]');
+              if (link) {
+                const href = link.getAttribute('href');
+                // Skip empty href, anchor links, and javascript: links
+                if (!href || href === '' || href === '#' || href.startsWith('#') || href.startsWith('javascript:')) {
+                  return;
+                }
+                e.preventDefault();
+                // Check if it's an external link
+                if (href.startsWith('http://') || href.startsWith('https://') || href.startsWith('//')) {
+                  // External link - open in new tab
+                  window.open(href, '_blank');
+                } else {
+                  // Internal link - use postMessage to notify parent window
+                  // Parent window will handle the navigation
+                  window.parent.postMessage({ type: 'navigate', href: href }, '*');
+                }
+              }
+            });
+          </script>
         </body>
         </html>`;
 
@@ -54,9 +107,9 @@ export function JournalCustomRenderer({ code, data }: { code: string, data: any 
         ref={iframeRef}
         className="w-full h-screen border-none"
         title="Journal Custom Homepage"
-        // SECURITY: REMOVED 'allow-same-origin' to prevent XSS attacks accessing parent window/cookies
-        // We only allow scripts to run for UI logic (Tailwind, animations), but isolated from the main app context.
-        sandbox="allow-scripts allow-popups allow-forms"
+        // SECURITY: allow-top-navigation is needed for internal links to work
+        // allow-same-origin is intentionally omitted for security
+        sandbox="allow-scripts allow-popups allow-forms allow-top-navigation"
       />
     </div>
   )

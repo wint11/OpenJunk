@@ -7,6 +7,7 @@ import { Trash2, FileText, ChevronRight, ChevronLeft, BookOpen, Download } from 
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import { NewsSection } from "@/components/news-section"
 
 interface SplashTrashDeckProps {
   papers: (Novel & {
@@ -276,13 +277,18 @@ export function SplashTrashDeck({ papers }: SplashTrashDeckProps) {
       {/* ------------------- MAIN DECK PHASE ------------------- */}
       {!showSplash && papers.length > 0 && (
         <motion.div 
-          className="relative z-10 w-full h-full flex flex-col items-center justify-center overflow-hidden pb-12"
+          className="relative z-10 w-full h-full flex flex-col items-center justify-start overflow-hidden pb-12 pt-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
-          {/* 3D Perspective Container */}
-          <div className="relative w-full max-w-7xl flex-1 flex items-center justify-center perspective-[1200px]">
+          {/* News Section (Flex Item) */}
+          <div className="z-50 w-full flex justify-center mb-2 shrink-0 px-4">
+             <NewsSection />
+          </div>
+
+          {/* 3D Perspective Container (Takes remaining height) */}
+          <div className="relative w-full max-w-7xl flex-1 flex items-center justify-center perspective-[1200px] min-h-0">
             <AnimatePresence initial={false} custom={direction} mode="popLayout">
               {/* Render 3 cards: Previous, Current, Next */}
               {[-1, 0, 1].map((offset) => {

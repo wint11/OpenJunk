@@ -80,30 +80,51 @@ export default async function FundApplicationsPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>受理编号</TableHead>
-                <TableHead>项目名称</TableHead>
-                <TableHead>所属基金</TableHead>
-                <TableHead>申请人</TableHead>
-                <TableHead>状态</TableHead>
-                <TableHead>提交时间</TableHead>
+                <TableHead className="w-[120px]">受理编号</TableHead>
+                <TableHead className="w-[300px]">项目名称</TableHead>
+                <TableHead className="w-[200px]">所属基金</TableHead>
+                <TableHead className="w-[120px]">申请人</TableHead>
+                <TableHead className="w-[100px]">状态</TableHead>
+                <TableHead className="w-[150px]">提交时间</TableHead>
+                <TableHead>操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {applications.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center h-24 text-muted-foreground">
+                  <TableCell colSpan={7} className="text-center h-24 text-muted-foreground">
                     暂无申报数据
                   </TableCell>
                 </TableRow>
               ) : (
                 applications.map((app) => (
                   <TableRow key={app.id}>
-                    <TableCell className="font-mono">{app.serialNo || '-'}</TableCell>
-                    <TableCell className="font-medium">{app.title}</TableCell>
-                    <TableCell>{app.fund.title}</TableCell>
-                    <TableCell>{app.applicantName}</TableCell>
+                    <TableCell className="font-mono">
+                      <div className="max-w-[120px] truncate" title={app.serialNo || '-'}>
+                        {app.serialNo || '-'}
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      <div className="max-w-[300px] truncate" title={app.title}>
+                        {app.title}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="max-w-[200px] truncate" title={app.fund.title}>
+                        {app.fund.title}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="max-w-[120px] truncate" title={app.applicantName}>
+                        {app.applicantName}
+                      </div>
+                    </TableCell>
                     <TableCell>{getStatusBadge(app.status)}</TableCell>
-                    <TableCell>{format(app.createdAt, 'yyyy-MM-dd HH:mm')}</TableCell>
+                    <TableCell>
+                      <div className="max-w-[150px] truncate">
+                        {format(app.createdAt, 'yyyy-MM-dd HH:mm')}
+                      </div>
+                    </TableCell>
                     <TableCell>
                       <Button variant="ghost" size="sm" asChild>
                         <Link href={`/admin/fund/applications/${app.id}`}>

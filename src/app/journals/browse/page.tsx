@@ -14,7 +14,6 @@ export const metadata: Metadata = {
 interface BrowsePageProps {
   searchParams: Promise<{
     sort?: string
-    category?: string
     journal?: string
     q?: string
     page?: string
@@ -22,7 +21,7 @@ interface BrowsePageProps {
 }
 
 export default async function BrowsePage({ searchParams }: BrowsePageProps) {
-  const { sort, category, journal, q, page } = await searchParams
+  const { sort, journal, q, page } = await searchParams
   
   const pageNumber = Number(page) || 1
   const pageSize = 20
@@ -34,7 +33,6 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
   const where: Prisma.NovelWhereInput = {
     status: 'PUBLISHED',
     journal: { status: 'ACTIVE' },
-    ...(category ? { category } : {}),
     ...(journal ? { journalId: journal } : {}),
     ...(q ? {
       OR: [
@@ -70,26 +68,10 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
       const params = new URLSearchParams()
       if (q) params.set('q', q)
       if (sort) params.set('sort', sort)
-      if (category) params.set('category', category)
       if (journal) params.set('journal', journal)
       params.set('page', p.toString())
       return `/journals/browse?${params.toString()}`
   }
-
-  // Get all categories for sidebar
-  const categories = await prisma.novel.groupBy({
-    by: ['category'],
-    _count: {
-      category: true
-    },
-    where: {
-      status: 'PUBLISHED',
-      journal: { status: 'ACTIVE' },
-      category: {
-        not: "" // Ensure category is not empty/null
-      }
-    }
-  })
 
   // Get all active journals for sidebar
   const journals = await prisma.journal.findMany({
@@ -99,9 +81,6 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
 
   // Sort journals by Pinyin
   journals.sort((a, b) => a.name.localeCompare(b.name, "zh-CN"))
-
-  // Sort categories by Pinyin
-  categories.sort((a, b) => (a.category || "").localeCompare(b.category || "", "zh-CN"))
 
   return (
     <div className="container mx-auto py-12 px-4">
@@ -118,7 +97,7 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
               <h4 className="text-sm font-medium text-muted-foreground">所属期刊</h4>
               <div className="flex flex-col space-y-1">
                 <Link 
-                  href={`/journals/browse?${new URLSearchParams({ ...(q && { q }), ...(sort && { sort }), ...(category && { category }) }).toString()}`}
+                  href={`/journals/browse?${new URLSearchParams({ ...(q && { q }), ...(sort && { sort }) }).toString()}`}
                   className={`px-3 py-2 rounded-md text-sm transition-colors flex justify-between items-center ${!journal ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-muted-foreground'}`}
                 >
                   <span>全部期刊</span>
@@ -126,7 +105,7 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
                 {journals.map((j) => (
                   <Link 
                     key={j.id}
-                    href={`/journals/browse?journal=${j.id}${category ? `&category=${category}` : ''}${sort ? `&sort=${sort}` : ''}${q ? `&q=${q}` : ''}`}
+                    href={`/journals/browse?journal=${j.id}${sort ? `&sort=${sort}` : ''}${q ? `&q=${q}` : ''}`}
                     className={`px-3 py-2 rounded-md text-sm transition-colors flex justify-between items-center ${journal === j.id ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-muted-foreground'}`}
                   >
                     <span>{j.name}</span>
@@ -135,45 +114,6 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
               </div>
             </div>
 
-            <div className="space-y-2 pt-4 border-t">
-              <h4 className="text-sm font-medium text-muted-foreground">学科分类</h4>
-              <div className="flex flex-col space-y-1">
-                <Link 
-                  href="/journals/browse" 
-                  className={`px-3 py-2 rounded-md text-sm transition-colors flex justify-between items-center ${!category ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-muted-foreground'}`}
-                >
-                  <span>全部学科</span>
-                </Link>
-                {categories.map((c) => (
-                  <Link 
-                    key={c.category}
-                    href={`/journals/browse?category=${c.category}${sort ? `&sort=${sort}` : ''}${q ? `&q=${q}` : ''}`}
-                    className={`px-3 py-2 rounded-md text-sm transition-colors flex justify-between items-center ${category === c.category ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-muted-foreground'}`}
-                  >
-                    <span>{c.category}</span>
-                    <span className="text-xs bg-muted-foreground/10 px-2 py-0.5 rounded-full">{c._count.category}</span>
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-2 pt-4 border-t">
-              <h4 className="text-sm font-medium text-muted-foreground">排序</h4>
-              <div className="flex flex-col space-y-1">
-                <Link 
-                  href={`/journals/browse?sort=latest${category ? `&category=${category}` : ''}${q ? `&q=${q}` : ''}`}
-                  className={`px-3 py-2 rounded-md text-sm transition-colors ${!sort || sort === 'latest' ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-muted-foreground'}`}
-                >
-                  最新发表
-                </Link>
-                <Link 
-                  href={`/journals/browse?sort=popular${category ? `&category=${category}` : ''}${q ? `&q=${q}` : ''}`}
-                  className={`px-3 py-2 rounded-md text-sm transition-colors ${sort === 'popular' ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-muted-foreground'}`}
-                >
-                  最多热度
-                </Link>
-              </div>
-            </div>
           </div>
         </aside>
 
@@ -182,26 +122,46 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-muted/30 p-4 rounded-lg border">
              <div className="flex items-center gap-2">
                 <h1 className="text-2xl font-bold tracking-tight">
-                  {q ? `搜索结果: "${q}"` : (category || "全部论文")}
+                  {q ? `搜索结果: "${q}"` : "全部论文"}
                 </h1>
                 <span className="text-muted-foreground text-sm font-normal ml-2">
                   (共 {totalCount} 篇)
                 </span>
              </div>
              
-             {/* Simple Search in Header */}
-             <form className="relative w-full sm:w-64" action="/journals/browse">
-               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-               <Input 
-                 type="search" 
-                 name="q"
-                 placeholder="搜索..." 
-                 defaultValue={q || ""}
-                 className="pl-9 h-9 bg-background"
-               />
-               {category && <input type="hidden" name="category" value={category} />}
-               {sort && <input type="hidden" name="sort" value={sort} />}
-             </form>
+             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+               {/* Simple Search in Header */}
+               <form className="relative w-full sm:w-64" action="/journals/browse">
+                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                 <Input 
+                   type="search" 
+                   name="q"
+                   placeholder="搜索..." 
+                   defaultValue={q || ""}
+                   className="pl-9 h-9 bg-background"
+                 />
+                 {sort && <input type="hidden" name="sort" value={sort} />}
+                 {journal && <input type="hidden" name="journal" value={journal} />}
+               </form>
+
+               {/* Sort Buttons */}
+               <div className="flex items-center border rounded-md p-1 bg-muted/20">
+                  <Link
+                    href={`/journals/browse?${new URLSearchParams({ ...(q && { q }), ...(journal && { journal }) }).toString()}`}
+                    className={`px-3 py-1.5 text-sm font-medium rounded-sm transition-all ${!sort ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                  >
+                    <SortAsc className="h-4 w-4 inline mr-1" />
+                    最新
+                  </Link>
+                  <Link
+                    href={`/journals/browse?${new URLSearchParams({ ...(q && { q }), ...(journal && { journal }), sort: 'popular' }).toString()}`}
+                    className={`px-3 py-1.5 text-sm font-medium rounded-sm transition-all ${sort === 'popular' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                  >
+                    <Filter className="h-4 w-4 inline mr-1" />
+                    最热
+                  </Link>
+               </div>
+             </div>
           </div>
 
           {novels.length > 0 ? (

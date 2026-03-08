@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator"
 import { FileArchive, Database, FolderOpen, HardDrive, File, Clock } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
+import { ContestBanner } from "@/components/ppt-contest/contest-banner"
 
 function formatBytes(bytes: number, decimals = 2) {
     if (!+bytes) return '0 Bytes'
@@ -20,14 +21,18 @@ export default async function ContestAdminPage() {
 
     return (
         <div className="space-y-8 p-8 max-w-5xl mx-auto pt-24">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">第一届乱讲PPT大赛 - 赛事管理</h1>
-                    <p className="text-muted-foreground mt-2">
-                        查看赛事数据统计，并在必要时清空所有数据（慎用）。
-                    </p>
+            {/* 横幅图片区域 */}
+            <div className="mb-8">
+                <ContestBanner className="mb-6" priority={true} />
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight">第一届乱讲PPT大赛 - 赛事管理</h1>
+                        <p className="text-muted-foreground mt-2">
+                            查看赛事数据统计，并在必要时清空所有数据（慎用）。
+                        </p>
+                    </div>
+                    <ClearButton />
                 </div>
-                <ClearButton />
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">

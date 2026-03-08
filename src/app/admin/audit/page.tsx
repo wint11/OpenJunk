@@ -27,20 +27,26 @@ export default async function AuditPage() {
         <Table className="min-w-[800px]">
           <TableHeader>
             <TableRow>
-              <TableHead>时间</TableHead>
-              <TableHead>用户</TableHead>
-              <TableHead>动作</TableHead>
-              <TableHead>资源</TableHead>
-              <TableHead>详情</TableHead>
-              <TableHead>IP</TableHead>
+              <TableHead className="w-[150px]">时间</TableHead>
+              <TableHead className="w-[150px]">用户</TableHead>
+              <TableHead className="w-[120px]">动作</TableHead>
+              <TableHead className="w-[120px]">资源</TableHead>
+              <TableHead className="w-[300px]">详情</TableHead>
+              <TableHead className="w-[120px]">IP</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {logs.map((log: AuditLogWithUser) => (
               <TableRow key={log.id}>
-                <TableCell>{new Date(log.createdAt).toLocaleString()}</TableCell>
                 <TableCell>
-                  {log.user?.name || log.user?.email || 'System'}
+                  <div className="max-w-[150px] truncate">
+                    {new Date(log.createdAt).toLocaleString()}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="max-w-[150px] truncate" title={log.user?.name || log.user?.email || 'System'}>
+                    {log.user?.name || log.user?.email || 'System'}
+                  </div>
                 </TableCell>
                 <TableCell>
                   <Badge
@@ -49,13 +55,26 @@ export default async function AuditPage() {
                       log.action.includes('APPROVE') ? 'default' :
                       'secondary'
                     }
+                    className="max-w-[120px] truncate"
                   >
                     {log.action}
                   </Badge>
                 </TableCell>
-                <TableCell>{log.resource}</TableCell>
-                <TableCell>{log.details}</TableCell>
-                <TableCell>{log.ipAddress}</TableCell>
+                <TableCell>
+                  <div className="max-w-[120px] truncate" title={log.resource}>
+                    {log.resource}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="max-w-[300px] truncate" title={log.details || ''}>
+                    {log.details}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="max-w-[120px] truncate" title={log.ipAddress || ''}>
+                    {log.ipAddress}
+                  </div>
+                </TableCell>
               </TableRow>
             ))}
             {logs.length === 0 && (

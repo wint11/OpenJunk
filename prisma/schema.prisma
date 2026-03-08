@@ -325,6 +325,7 @@ model PPTSubmission {
   fileHash    String?  // For deduplication
   
   uploaderIp  String
+  uploaderEmail String? // 上传者邮箱
   
   interpretations PPTInterpretation[]
   

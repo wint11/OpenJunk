@@ -309,11 +309,19 @@ model Award {
 model PPTSubmission {
   id          String   @id @default(cuid())
   title       String?  // Optional title
-  fileUrl     String   // PDF/PPT file URL
-  previewUrl  String?  // Converted PDF/Image preview URL
+  
+  // Vercel Blob (Optional if local only)
+  fileUrl     String?   
+  previewUrl  String?  
+  
+  // Local Storage (Prioritized)
+  localFileUrl    String?
+  localPreviewUrl String?
+
   fileHash    String?  // For deduplication
   
   uploaderIp  String
+  uploaderEmail String? // 上传者邮箱
   
   interpretations PPTInterpretation[]
   

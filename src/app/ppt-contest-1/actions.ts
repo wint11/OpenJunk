@@ -8,18 +8,18 @@ import path from "path"
 import { convertPptToPdf } from "@/lib/ppt-converter"
 
 export async function getTestMode() {
-    return true; // TEST_MODE is always true for now
+    return false; // TEST_MODE is disabled
 }
 
 
 // Contest Dates
 const DATES = {
-    STAGE1_START: new Date("2026-03-06T00:00:00+08:00"),
-    STAGE1_END: new Date("2026-03-15T23:59:59+08:00"),
-    STAGE2_START: new Date("2026-03-16T00:00:00+08:00"),
-    STAGE2_END: new Date("2026-03-30T23:59:59+08:00"),
-    STAGE3_START: new Date("2026-04-01T00:00:00+08:00"),
-    STAGE3_END: new Date("2026-04-10T23:59:59+08:00"),
+    STAGE1_START: new Date("2026-03-16T00:00:00+08:00"),
+    STAGE1_END: new Date("2026-03-30T23:59:59+08:00"),
+    STAGE2_START: new Date("2026-03-31T00:00:00+08:00"),
+    STAGE2_END: new Date("2026-04-15T23:59:59+08:00"),
+    STAGE3_START: new Date("2026-04-16T00:00:00+08:00"),
+    STAGE3_END: new Date("2026-04-30T23:59:59+08:00"),
 };
 
 export async function getContestStatus() {
@@ -50,7 +50,17 @@ export async function convertPPTForPreview(formData: FormData) {
     if (!file) return { error: "未找到文件" };
 
     try {
-        const buffer = Buffer.from(await file.arrayBuffer());
+        // 使用stream方式读取文件，避免arrayBuffer可能导致的Chrome扩展错误
+        const chunks: Uint8Array[] = [];
+        const reader = file.stream().getReader();
+        
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            chunks.push(value);
+        }
+        
+        const buffer = Buffer.concat(chunks);
         
         console.log("Attempting to convert PPT to PDF for preview...");
         const pdfBuffer = await convertPptToPdf(buffer);
@@ -81,11 +91,13 @@ export async function submitPPT(formData: FormData) {
     const testMode = await getTestMode();
     // Allow upload in stage 1, or in TEST_MODE
     if (!testMode && status.stage !== 1) {
-        return { error: "当前不在PPT上传阶段 (3月6日-3月15日)" };
+        return { error: "当前不在PPT上传阶段 (3月16日-3月31日)" };
     }
 
     const file = formData.get('file') as File;
     if (!file) return { error: "未找到文件" };
+    
+    const email = formData.get('email') as string | null;
 
     const headerList = await headers();
     const ip = headerList.get("x-forwarded-for") || "127.0.0.1";
@@ -107,7 +119,17 @@ export async function submitPPT(formData: FormData) {
     }
 
     try {
-        const buffer = Buffer.from(await file.arrayBuffer());
+        // 使用stream方式读取文件，避免arrayBuffer可能导致的Chrome扩展错误
+        const chunks: Uint8Array[] = [];
+        const reader = file.stream().getReader();
+        
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            chunks.push(value);
+        }
+        
+        const buffer = Buffer.concat(chunks);
         const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
         const baseFilename = `${Date.now()}-${safeName}`;
         
@@ -177,6 +199,10 @@ export async function submitPPT(formData: FormData) {
             } catch (convertError) {
                 console.warn("PPT conversion failed:", convertError);
             }
+        } else if (file.name.match(/\.pdf$/i)) {
+            // For PDF files, use the original file as preview
+            localPreviewUrl = localFileUrl;
+            console.log("PDF file, using original as preview:", localPreviewUrl);
         }
         
         // 4. Save to Database
@@ -187,6 +213,7 @@ export async function submitPPT(formData: FormData) {
             data: {
                 title: file.name.replace(/\.(pdf|ppt|pptx)$/i, ''),
                 uploaderIp: ip,
+                uploaderEmail: email || null,
                 // Store local URLs primarily. Remote ones might be null if background upload hasn't finished or failed.
                 // If we really wanted to store remote URLs, we'd have to await. 
                 // But user said "local success is success".
@@ -268,7 +295,7 @@ export async function submitInterpretation(formData: FormData) {
     const status = await getContestStatus();
     const testMode = await getTestMode();
     if (!testMode && status.stage !== 2) {
-        return { error: "当前不在录音阶段 (3月16日-3月30日)" };
+        return { error: "当前不在录音阶段 (3月31日-4月15日)" };
     }
 
     const audio = formData.get('audio') as File;
@@ -361,7 +388,7 @@ export async function getRandomInterpretationForVoting(excludeIds: string[] = []
     };
 }
 
-export async function voteInterpretation(id: string) {
+export async function voteInterpretation(id: string, increment: number = 1) {
     const status = await getContestStatus();
     const testMode = await getTestMode();
     if (!testMode && status.stage !== 3) {
@@ -371,7 +398,7 @@ export async function voteInterpretation(id: string) {
     await prisma.pPTInterpretation.update({
         where: { id },
         data: {
-            votes: { increment: 1 }
+            votes: { increment: increment }
         }
     });
     

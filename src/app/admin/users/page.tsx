@@ -5,8 +5,18 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { UserActions } from "./user-actions"
 import { CreateUserDialog } from "./create-user-dialog"
+import Link from "next/link"
+import { ArrowUpDown, ArrowUp, ArrowDown, SortAsc } from "lucide-react"
 
-export default async function UsersPage() {
+interface UsersPageProps {
+  searchParams: Promise<{
+    sort?: string
+    order?: string
+  }>
+}
+
+export default async function UsersPage({ searchParams }: UsersPageProps) {
+  const { sort, order } = await searchParams
   const session = await auth()
   const role = session?.user?.role ?? ""
   if (role !== 'SUPER_ADMIN' && role !== 'ADMIN') redirect("/admin")
@@ -17,9 +27,17 @@ export default async function UsersPage() {
     select: { id: true, role: true, managedJournalId: true }
   })
 
+  // Build orderBy based on sort parameter
+  let orderBy: any = { createdAt: 'desc' }
+  if (sort === 'name') {
+    orderBy = { name: order === 'asc' ? 'asc' : 'desc' }
+  } else if (sort === 'createdAt') {
+    orderBy = { createdAt: order === 'asc' ? 'asc' : 'desc' }
+  }
+
   let userQuery: any = {
-    orderBy: { createdAt: 'desc' },
-    include: { 
+    orderBy,
+    include: {
       managedJournal: true,
       reviewerJournals: true
     },
@@ -86,23 +104,66 @@ export default async function UsersPage() {
     "PENDING": "待审核"
   }
 
+  // Helper to build sort link
+  const getSortLink = (field: string) => {
+    const currentSort = sort || 'createdAt'
+    const currentOrder = order || 'desc'
+    const newOrder = currentSort === field && currentOrder === 'desc' ? 'asc' : 'desc'
+    return `/admin/users?sort=${field}&order=${newOrder}`
+  }
+
+  // Get sort icon
+  const getSortIcon = (field: string) => {
+    const currentSort = sort || 'createdAt'
+    const currentOrder = order || 'desc'
+    if (currentSort !== field) {
+      return <ArrowUpDown className="h-4 w-4 ml-1 text-muted-foreground" />
+    }
+    return currentOrder === 'asc'
+      ? <ArrowUp className="h-4 w-4 ml-1 text-primary" />
+      : <ArrowDown className="h-4 w-4 ml-1 text-primary" />
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">论文用户管理</h1>
-        <CreateUserDialog currentUserRole={role} journals={journals} />
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">论文用户管理</h1>
+          <p className="text-muted-foreground">管理系统用户账号</p>
+        </div>
+        <div className="flex items-center gap-3">
+          {/* Sort Controls */}
+          <div className="flex items-center border rounded-md p-1 bg-muted/20">
+            <Link
+              href={getSortLink('createdAt')}
+              className={`px-3 py-1.5 text-sm font-medium rounded-sm transition-all flex items-center ${!sort || sort === 'createdAt' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              <SortAsc className="h-4 w-4 mr-1" />
+              注册时间
+              {getSortIcon('createdAt')}
+            </Link>
+            <Link
+              href={getSortLink('name')}
+              className={`px-3 py-1.5 text-sm font-medium rounded-sm transition-all flex items-center ${sort === 'name' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              姓名拼音
+              {getSortIcon('name')}
+            </Link>
+          </div>
+          <CreateUserDialog currentUserRole={role} journals={journals} />
+        </div>
       </div>
       <div className="rounded-md border overflow-x-auto">
         <Table className="min-w-[800px]">
           <TableHeader>
             <TableRow>
-              <TableHead>姓名</TableHead>
-              <TableHead>账号</TableHead>
-              <TableHead>角色</TableHead>
-              <TableHead>管理期刊</TableHead>
-              <TableHead>状态</TableHead>
-              <TableHead>注册时间</TableHead>
-              <TableHead className="w-[100px]">操作</TableHead>
+              <TableHead className="w-[120px]">姓名</TableHead>
+              <TableHead className="w-[200px]">账号</TableHead>
+              <TableHead className="w-[100px]">角色</TableHead>
+              <TableHead className="w-[200px]">管理期刊</TableHead>
+              <TableHead className="w-[80px]">状态</TableHead>
+              <TableHead className="w-[120px]">注册时间</TableHead>
+              <TableHead className="w-[150px]">操作</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -125,17 +186,33 @@ export default async function UsersPage() {
 
               return (
               <TableRow key={user.id}>
-                <TableCell>{user.name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell><Badge variant="outline">{roleMap[user.role] || user.role}</Badge></TableCell>
+                <TableCell>
+                  <div className="max-w-[120px] truncate" title={user.name || ''}>
+                    {user.name}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="max-w-[200px] truncate" title={user.email}>
+                    {user.email}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <Badge variant="outline" className="max-w-[100px] truncate">
+                    {roleMap[user.role] || user.role}
+                  </Badge>
+                </TableCell>
                 <TableCell>
                   {user.role === 'ADMIN' ? (
-                     user.managedJournal ? <Badge variant="secondary">{user.managedJournal.name}</Badge> : <span className="text-muted-foreground text-sm">未分配</span>
+                     user.managedJournal ? (
+                       <Badge variant="secondary" className="max-w-[200px] truncate" title={user.managedJournal.name}>
+                         {user.managedJournal.name}
+                       </Badge>
+                     ) : <span className="text-muted-foreground text-sm">未分配</span>
                   ) : user.role === 'REVIEWER' ? (
                      user.reviewerJournals.length > 0 ? (
-                        <div className="flex flex-wrap gap-1">
+                        <div className="flex flex-wrap gap-1 max-w-[200px]">
                             {user.reviewerJournals.map((j: any) => (
-                                <Badge key={j.id} variant="outline">{j.name}</Badge>
+                                <Badge key={j.id} variant="outline" className="text-xs truncate max-w-[190px]">{j.name}</Badge>
                             ))}
                         </div>
                      ) : <span className="text-muted-foreground text-sm">未分配</span>
@@ -144,20 +221,24 @@ export default async function UsersPage() {
                   )}
                 </TableCell>
                 <TableCell>
-                  <Badge variant={user.status === 'BANNED' ? 'destructive' : 'default'}>
+                  <Badge variant={user.status === 'BANNED' ? 'destructive' : 'default'} className="max-w-[80px] truncate">
                     {statusMap[user.status] || user.status}
                   </Badge>
                 </TableCell>
-                <TableCell>{user.createdAt.toLocaleDateString('zh-CN')}</TableCell>
+                <TableCell>
+                  <div className="max-w-[120px] truncate">
+                    {user.createdAt.toLocaleDateString('zh-CN')}
+                  </div>
+                </TableCell>
                 <TableCell>
                   {currentUser?.role === 'SUPER_ADMIN' && user.role === 'SUPER_ADMIN' ? (
                     <span className="text-muted-foreground text-xs">不可操作</span>
                   ) : (
-                    <UserActions 
-                      userId={user.id} 
+                    <UserActions
+                      userId={user.id}
                       name={user.name ?? ""}
                       email={user.email}
-                      currentRole={user.role} 
+                      currentRole={user.role}
                       currentStatus={user.status}
                       managedJournalId={user.managedJournalId}
                       reviewerJournals={user.reviewerJournals}
