@@ -1,4 +1,3 @@
-
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
@@ -18,11 +17,27 @@ import Link from "next/link"
 export default async function AdminAwardsPage() {
   const session = await auth()
   
-  if (session?.user?.role !== "SUPER_ADMIN") {
+  if (!session?.user) {
+    redirect("/login")
+  }
+
+  // 获取用户信息以检查权限
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { role: true, managedAwardId: true }
+  })
+
+  const isSuperAdmin = user?.role === "SUPER_ADMIN"
+  const isAwardAdmin = user?.managedAwardId !== null
+
+  // 只有超级管理员或奖项管理员可以访问
+  if (!isSuperAdmin && !isAwardAdmin) {
     redirect("/admin")
   }
 
+  // 奖项管理员只能看到自己管理的奖项
   const awards = await prisma.award.findMany({
+    where: isSuperAdmin ? {} : { id: user?.managedAwardId || "" },
     include: {
       _count: {
         select: { applications: true, admins: true }
@@ -35,11 +50,13 @@ export default async function AdminAwardsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">奖项管理</h1>
-        <Button asChild>
-          <Link href="/awards/new" target="_blank">
-            <ExternalLink className="mr-2 h-4 w-4" /> 创办新奖项
-          </Link>
-        </Button>
+        {isSuperAdmin && (
+          <Button asChild>
+            <Link href="/awards/new" target="_blank">
+              <ExternalLink className="mr-2 h-4 w-4" /> 创办新奖项
+            </Link>
+          </Button>
+        )}
       </div>
 
       <div className="rounded-md border">

@@ -48,6 +48,9 @@ model User {
   // Fund System Relations
   fundAdminCategories FundCategory[] @relation("FundCategoryAdmins")
   fundExpertProfile   FundExpertProfile?
+  
+  // Award System
+  publishedAnnouncements AwardAnnouncement[]
 
   // Rate Limiting
   aiDesignUsage String? // JSON: { date: "2024-03-20", count: 5 }
@@ -262,6 +265,10 @@ model Journal {
   combatPower Int      @default(100) // Base combat power + accumulated bonus
   seasonStats UniverseSeasonStat[]
   quizzes     Quiz[]
+  
+  // Award System
+  awardTracks AwardTrack[]
+  awardApplications AwardApplication[]
 }
 
 model Conference {

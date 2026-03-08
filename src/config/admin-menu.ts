@@ -64,7 +64,7 @@ export const adminMenuConfig: MenuGroup[] = [
         title: "奖项列表",
         href: "/admin/awards",
         icon: Trophy,
-        roles: ['SUPER_ADMIN']
+        roles: ['SUPER_ADMIN', 'AWARD_ADMIN']
       },
       {
         title: "赛事管理",
@@ -102,9 +102,9 @@ export const adminMenuConfig: MenuGroup[] = [
         roles: ['AWARD_ADMIN', 'SUPER_ADMIN']
       },
       {
-        title: "奖项设置",
-        href: "/admin/awards/settings",
-        icon: Layers,
+        title: "发布管理",
+        href: "/admin/awards/publish",
+        icon: Trophy,
         roles: ['AWARD_ADMIN', 'SUPER_ADMIN']
       }
     ]

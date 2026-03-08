@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma"
 import UniverseClient from "@/components/universe/universe-client"
 
 export const metadata = {
-  title: "期刊宇宙 | SmartReview",
+  title: "期刊宇宙",
   description: "探索期刊星系，发现学术新大陆",
 }
 
