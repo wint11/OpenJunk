@@ -8,7 +8,6 @@ import { MainWrapper } from "@/components/main-wrapper";
 import { Footer } from "@/components/footer";
 import { Toaster } from "sonner";
 import { SessionGuard } from "@/components/session-guard";
-import { AppDownloadBanner } from "@/components/app-download-banner";
 import { MobileAppPrompter } from "@/components/mobile-app-prompter";
 
 const geistSans = Geist({
@@ -52,7 +51,6 @@ export default function RootLayout({
           <MainWrapper>{children}</MainWrapper>
           <Footer />
           <Toaster />
-          <AppDownloadBanner />
           <MobileAppPrompter />
         </ThemeProvider>
       </body>

@@ -18,6 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cookies } from "next/headers"
 import { decode } from "next-auth/jwt"
 import { addNewAccount, switchAccount } from "@/app/actions/account-switch"
+import { OnlineUsersCounter } from "@/components/online-users-counter"
 import { prisma } from "@/lib/prisma"
 
 export async function Navbar() {
@@ -84,9 +85,9 @@ export async function Navbar() {
           </span>
         </Link>
         <MainNav role={userRole} />
-        <div className="flex flex-1 items-center justify-end space-x-4">
-          <div className="hidden md:block">
-            <Suspense fallback={<div className="w-[200px] h-9 bg-muted animate-pulse rounded-md" />}>
+        <div className="flex flex-1 items-center justify-end space-x-2 sm:space-x-4 min-w-0">
+          <div className="hidden sm:block flex-shrink transition-all duration-300">
+            <Suspense fallback={<div className="w-[120px] h-9 bg-muted animate-pulse rounded-md" />}>
               <SearchBar />
             </Suspense>
           </div>
@@ -179,6 +180,7 @@ export async function Navbar() {
                 <Link href="/login">登录</Link>
               </Button>
             )}
+            <OnlineUsersCounter />
           </nav>
         </div>
       </div>

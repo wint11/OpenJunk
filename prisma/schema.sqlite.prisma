@@ -467,12 +467,12 @@ model AwardApplication {
   award       Award    @relation(fields: [awardId], references: [id])
   
   // 关联周期
-  cycleId     String
-  cycle       AwardCycle @relation(fields: [cycleId], references: [id])
-  
+  cycleId     String?
+  cycle       AwardCycle? @relation(fields: [cycleId], references: [id])
+
   // 关联赛道
-  trackId     String
-  track       AwardTrack @relation(fields: [trackId], references: [id])
+  trackId     String?
+  track       AwardTrack? @relation(fields: [trackId], references: [id])
   
   // 申请人信息
   applicantId String?

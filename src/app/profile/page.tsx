@@ -7,9 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { LogOut, User, Shield, Award } from "lucide-react"
+import { LogOut, User, Shield, Award, Palette } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { PasswordForm } from "./password-form"
+import { PreferenceForm } from "./preference-form"
 
 export default async function ProfilePage() {
   const session = await auth()
@@ -83,6 +84,10 @@ export default async function ProfilePage() {
            <TabsTrigger value="security" className="w-full justify-start px-3 py-2 h-auto data-[state=active]:bg-background">
               <Shield className="mr-2 h-4 w-4" />
               账号安全
+           </TabsTrigger>
+           <TabsTrigger value="preference" className="w-full justify-start px-3 py-2 h-auto data-[state=active]:bg-background">
+              <Palette className="mr-2 h-4 w-4" />
+              个性化
            </TabsTrigger>
 
            <div className="mt-auto pt-4 border-t w-full">
@@ -168,6 +173,18 @@ export default async function ProfilePage() {
                           </div>
                           <Button variant="outline" disabled>暂未开放</Button>
                       </div>
+                  </CardContent>
+              </Card>
+           </TabsContent>
+
+           <TabsContent value="preference" className="mt-0 h-full">
+              <Card className="h-full flex flex-col">
+                  <CardHeader>
+                      <CardTitle>个性化设置</CardTitle>
+                      <CardDescription>自定义您的使用体验</CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex-1 overflow-y-auto">
+                      <PreferenceForm />
                   </CardContent>
               </Card>
            </TabsContent>

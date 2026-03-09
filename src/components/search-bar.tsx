@@ -58,7 +58,8 @@ export function SearchBar() {
       <Input
         type="search"
         placeholder={placeholders[currentPlaceholderIndex]}
-        className="w-full bg-background pl-9 md:w-[200px] lg:w-[300px] transition-all"
+        className="w-full bg-background pl-9 transition-all duration-300 ease-in-out
+          w-[120px] sm:w-[150px] md:w-[180px] lg:w-[250px] xl:w-[300px]"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         disabled={isPending}
