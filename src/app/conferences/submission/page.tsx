@@ -63,7 +63,7 @@ export default async function ConferenceSubmissionPage() {
   const fundApplications = await prisma.fundApplication.findMany({
     where: { status: 'APPROVED' },
     select: { id: true, title: true, projectNo: true },
-    orderBy: { createdAt: 'desc' }
+    orderBy: { projectNo: 'asc' }
   })
 
   // Reuse the existing CreateWorkForm component

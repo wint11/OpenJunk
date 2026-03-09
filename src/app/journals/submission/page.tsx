@@ -64,7 +64,7 @@ export default async function NewWorkPage() {
   const fundApplications = await prisma.fundApplication.findMany({
     where: { status: 'APPROVED' },
     select: { id: true, title: true, projectNo: true },
-    orderBy: { createdAt: 'desc' }
+    orderBy: { projectNo: 'asc' }
   })
 
   return (

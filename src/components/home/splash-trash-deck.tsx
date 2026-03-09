@@ -1,10 +1,9 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { motion, AnimatePresence, useAnimation, PanInfo } from "framer-motion"
+import { motion, AnimatePresence, PanInfo } from "framer-motion"
 import { Novel } from "@prisma/client"
-import { Trash2, FileText, ChevronRight, ChevronLeft, BookOpen, Download } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Trash2, FileText, ChevronRight, ChevronLeft, BookOpen } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { NewsSection } from "@/components/news-section"
@@ -13,30 +12,269 @@ interface SplashTrashDeckProps {
   papers: (Novel & {
     journal: { id: string; name: string } | null
   })[]
+  viewMode?: "pdf" | "cover"
 }
 
-export function SplashTrashDeck({ papers }: SplashTrashDeckProps) {
+// ------------------- BOOK VIEW COMPONENTS -------------------
+
+const BOOK_WIDTH = 500
+const BOOK_HEIGHT = 700
+const TRANSITION_DURATION = 0.6
+
+const getCoverUrl = (paper: any) => {
+  if (!paper?.coverUrl) return null
+  if (paper.coverUrl.startsWith('http') || paper.coverUrl.startsWith('/')) {
+    return paper.coverUrl
+  }
+  return `/uploads/covers/${paper.coverUrl}`
+}
+
+const BookPage = ({ paper, side, shadow = false }: { paper: any, side: "left" | "right", shadow?: boolean }) => {
+  const coverUrl = getCoverUrl(paper)
+  
+  return (
+    <div className={cn(
+      "relative w-full h-full overflow-hidden bg-white dark:bg-zinc-900",
+      side === "left" ? "rounded-l-md" : "rounded-r-md",
+      "border-y border-zinc-200 dark:border-zinc-800",
+      side === "left" ? "border-l" : "border-r"
+    )}>
+      {/* Content */}
+      <div className="relative w-full h-full p-0">
+        {coverUrl ? (
+          <img 
+            src={coverUrl}
+            alt={paper?.title || "Cover"}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/30 bg-muted/20">
+            <BookOpen className="w-16 h-16 mb-2 opacity-30" />
+            <span className="text-xs">暂无封面</span>
+          </div>
+        )}
+        
+        {/* Inner Shadow for depth */}
+        <div className={cn(
+          "absolute inset-0 pointer-events-none",
+          side === "left" 
+            ? "bg-gradient-to-r from-black/5 to-transparent via-transparent" 
+            : "bg-gradient-to-l from-black/5 to-transparent via-transparent"
+        )} />
+        
+        {/* Spine Shadow */}
+        <div className={cn(
+          "absolute inset-y-0 w-8 pointer-events-none opacity-20 mix-blend-multiply dark:mix-blend-multiply",
+          side === "left" 
+            ? "right-0 bg-gradient-to-l from-black to-transparent" 
+            : "left-0 bg-gradient-to-r from-black to-transparent"
+        )} />
+      </div>
+
+      {/* Dynamic Shadow for Flipping */}
+      {shadow && (
+        <div className="absolute inset-0 bg-black/10 pointer-events-none" />
+      )}
+    </div>
+  )
+}
+
+const BookView = ({ papers }: { papers: any[] }) => {
+  const [spreadIndex, setSpreadIndex] = useState(0)
+  const [isFlipping, setIsFlipping] = useState(false)
+  const [animatingSheet, setAnimatingSheet] = useState<number | null>(null)
+  const [direction, setDirection] = useState<"next" | "prev" | null>(null)
+
+  const totalSpreads = Math.ceil(papers.length / 2)
+
+  const goToNext = () => {
+    if (isFlipping || spreadIndex >= totalSpreads - 1) return
+    setIsFlipping(true)
+    setDirection("next")
+    setAnimatingSheet(spreadIndex + 1)
+  }
+
+  const goToPrev = () => {
+    if (isFlipping || spreadIndex <= 0) return
+    setIsFlipping(true)
+    setDirection("prev")
+    setAnimatingSheet(spreadIndex)
+  }
+
+  const handleAnimationComplete = () => {
+    if (direction === "next") {
+      setSpreadIndex(prev => prev + 1)
+    } else if (direction === "prev") {
+      setSpreadIndex(prev => prev - 1)
+    }
+    setIsFlipping(false)
+    setAnimatingSheet(null)
+    setDirection(null)
+  }
+
+  // Calculate indices
+  // Current Spread: Left=spreadIndex*2, Right=spreadIndex*2+1
+  
+  // Base Pages (Underneath)
+  let baseLeftIndex = -1
+  let baseRightIndex = -1
+
+  if (isFlipping && animatingSheet !== null) {
+    // If animating sheet K (Front=2K-1, Back=2K)
+    // Left Base is 2(K-1) = 2K-2
+    // Right Base is 2K+1
+    baseLeftIndex = (animatingSheet - 1) * 2
+    baseRightIndex = animatingSheet * 2 + 1
+  } else {
+    // Static
+    baseLeftIndex = spreadIndex * 2
+    baseRightIndex = spreadIndex * 2 + 1
+  }
+
+  const baseLeftPaper = papers[baseLeftIndex]
+  const baseRightPaper = papers[baseRightIndex]
+
+  // Flipper Pages
+  // If animatingSheet K: Front=2K-1, Back=2K
+  const flipperFrontIndex = animatingSheet !== null ? animatingSheet * 2 - 1 : -1
+  const flipperBackIndex = animatingSheet !== null ? animatingSheet * 2 : -1
+  
+  const flipperFrontPaper = papers[flipperFrontIndex]
+  const flipperBackPaper = papers[flipperBackIndex]
+
+  return (
+    <div className="relative w-full h-full flex items-center justify-center">
+      <div className="relative flex items-center justify-center perspective-[2000px]">
+        {/* Book Container */}
+        <div 
+          className="relative flex items-center justify-center"
+          style={{ width: 'min(90vw, 1000px)', aspectRatio: '1.5/1' }}
+        >
+          {/* Back Cover / Pages Stack Effect (Left) */}
+          <div className="absolute left-1/2 top-2 bottom-2 w-[48%] -translate-x-[102%] rounded-l-md bg-white border border-zinc-200 dark:bg-zinc-800 dark:border-zinc-700 shadow-xl transform translate-z-[-2px]">
+             <div className="absolute right-0 top-0 bottom-0 w-4 bg-gradient-to-l from-zinc-200 to-transparent dark:from-zinc-900" />
+          </div>
+          {/* Back Cover / Pages Stack Effect (Right) */}
+          <div className="absolute right-1/2 top-2 bottom-2 w-[48%] translate-x-[102%] rounded-r-md bg-white border border-zinc-200 dark:bg-zinc-800 dark:border-zinc-700 shadow-xl transform translate-z-[-2px]">
+             <div className="absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-zinc-200 to-transparent dark:from-zinc-900" />
+          </div>
+
+          {/* BASE LEFT PAGE */}
+          <div className="absolute left-0 w-[50%] h-full z-0 pr-[1px]"> {/* pr-1px for spine gap */}
+             {baseLeftPaper ? (
+               <BookPage paper={baseLeftPaper} side="left" />
+             ) : (
+               <div className="w-full h-full bg-transparent" /> // Empty slot
+             )}
+          </div>
+
+          {/* BASE RIGHT PAGE */}
+          <div className="absolute right-0 w-[50%] h-full z-0 pl-[1px]">
+             {baseRightPaper ? (
+               <BookPage paper={baseRightPaper} side="right" />
+             ) : (
+               <div className="w-full h-full bg-transparent" />
+             )}
+          </div>
+
+          {/* FLIPPING SHEET */}
+          {isFlipping && animatingSheet !== null && (
+            <motion.div
+              className="absolute left-1/2 top-0 bottom-0 w-[50%] z-20 origin-left"
+              initial={{ rotateY: direction === "next" ? 0 : -180 }}
+              animate={{ rotateY: direction === "next" ? -180 : 0 }}
+              transition={{ duration: 0.8, ease: [0.645, 0.045, 0.355, 1.000] }} // cubic-bezier for smooth paper feel
+              onAnimationComplete={handleAnimationComplete}
+              style={{ transformStyle: "preserve-3d" }}
+            >
+              {/* Front Face (Visible when rotateY = 0) - Acts as RIGHT PAGE */}
+              <div 
+                className="absolute inset-0 backface-hidden pl-[1px]"
+                style={{ backfaceVisibility: "hidden" }}
+              >
+                <BookPage paper={flipperFrontPaper} side="right" shadow={true} />
+                {/* Lighting gradient that changes with rotation could be added here */}
+              </div>
+
+              {/* Back Face (Visible when rotateY = -180) - Acts as LEFT PAGE */}
+              <div 
+                className="absolute inset-0 backface-hidden pr-[1px]"
+                style={{ 
+                  backfaceVisibility: "hidden", 
+                  transform: "rotateY(180deg)" 
+                }}
+              >
+                <BookPage paper={flipperBackPaper} side="left" shadow={true} />
+              </div>
+            </motion.div>
+          )}
+          
+          {/* Spine Highlight */}
+          <div className="absolute left-1/2 top-0 bottom-0 w-px bg-black/10 dark:bg-white/10 z-30 shadow-[0_0_10px_rgba(0,0,0,0.5)]" />
+
+          {/* Click Zones for Navigation */}
+          <div 
+            className="absolute left-0 top-0 bottom-0 w-1/2 cursor-pointer z-40 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+            onClick={goToPrev}
+            title="上一页"
+          />
+          <div 
+            className="absolute right-0 top-0 bottom-0 w-1/2 cursor-pointer z-40 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+            onClick={goToNext}
+            title="下一页"
+          />
+
+        </div>
+
+        {/* Navigation Buttons (Floating) */}
+        <button 
+          onClick={(e) => { e.stopPropagation(); goToPrev(); }}
+          disabled={spreadIndex <= 0 || isFlipping}
+          className="absolute -left-4 md:-left-16 top-1/2 -translate-y-1/2 p-3 rounded-full bg-background/80 hover:bg-background backdrop-blur text-foreground shadow-lg transition-all z-50 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100"
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+        <button 
+          onClick={(e) => { e.stopPropagation(); goToNext(); }}
+          disabled={spreadIndex >= totalSpreads - 1 || isFlipping}
+          className="absolute -right-4 md:-right-16 top-1/2 -translate-y-1/2 p-3 rounded-full bg-background/80 hover:bg-background backdrop-blur text-foreground shadow-lg transition-all z-50 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100"
+        >
+          <ChevronRight className="w-6 h-6" />
+        </button>
+      </div>
+
+      {/* Page Indicators */}
+      <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1 z-50">
+         {Array.from({ length: totalSpreads }).map((_, idx) => (
+            <div 
+              key={idx}
+              className={cn(
+                "h-1 rounded-full transition-all duration-300",
+                idx === spreadIndex ? "w-8 bg-primary" : "w-2 bg-primary/20"
+              )}
+            />
+         ))}
+      </div>
+    </div>
+  )
+}
+
+// ------------------- MAIN COMPONENT -------------------
+
+export function SplashTrashDeck({ papers, viewMode = "pdf" }: SplashTrashDeckProps) {
   const [showSplash, setShowSplash] = useState(true)
   const [cardsThrown, setCardsThrown] = useState(false)
-  const controls = useAnimation()
   
-  // Card Deck State
-  const [currentIndex, setCurrentIndex] = useState(0)
+  // PDF Carousel State
+  const [currentPageIndex, setCurrentPageIndex] = useState(0)
   const [direction, setDirection] = useState(0)
   const lastNavTime = useRef(0)
-
+  
   // Trigger splash sequence on mount
   useEffect(() => {
     const sequence = async () => {
-      // 1. Wait a bit (Initial pause before shake)
       await new Promise(r => setTimeout(r, 1000))
-      
-      // 2. Trash can shake/open animation (handled by variants)
-      // 3. Cards fly out
       setCardsThrown(true)
-      
-      // 4. Wait for fly out animation to finish before removing splash overlay fully
-      // Keeping splash screen longer to let users see the trash throwing effect
       await new Promise(r => setTimeout(r, 2000))
       setShowSplash(false)
     }
@@ -45,13 +283,11 @@ export function SplashTrashDeck({ papers }: SplashTrashDeckProps) {
 
   const paginate = (newDirection: number) => {
     const now = Date.now()
-    if (now - lastNavTime.current < 1000) return
+    if (now - lastNavTime.current < 800) return
     lastNavTime.current = now
 
-    if (papers.length === 0) return
-
     setDirection(newDirection)
-    setCurrentIndex((prev) => {
+    setCurrentPageIndex((prev) => {
       let nextIndex = prev + newDirection
       if (nextIndex < 0) nextIndex = papers.length - 1
       if (nextIndex >= papers.length) nextIndex = 0
@@ -59,13 +295,8 @@ export function SplashTrashDeck({ papers }: SplashTrashDeckProps) {
     })
   }
 
-  const currentPaper = papers[currentIndex]
-  
   const getPdfUrl = (url: string | null) => {
     if (!url) return null
-    // If running in development (localhost), try to use local path if it matches the pattern
-    // The pattern from Vercel Blob is like: https://<id>.public.blob.vercel-storage.com/uploads/pdfs/<filename>
-    // We want to extract "/uploads/pdfs/<filename>"
     if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname.includes('192.168'))) {
        if (url.includes('/uploads/pdfs/')) {
           const match = url.match(/uploads\/pdfs\/.+$/);
@@ -74,129 +305,222 @@ export function SplashTrashDeck({ papers }: SplashTrashDeckProps) {
           }
        }
     }
-    
     if (url.startsWith('http') || url.startsWith('/')) return url
     return `/uploads/pdfs/${url}`
   }
-  const pdfUrl = currentPaper ? getPdfUrl(currentPaper.pdfUrl) : null
 
-    // ------------------------------------------------------------------
-    // Animation Variants
-    // ------------------------------------------------------------------
-  
-    // Trash Can Animation
-    const trashVariants = {
-      initial: { scale: 0, opacity: 0, rotate: 0, y: -50 }, // Move up slightly
-      appear: { 
-        scale: 1, 
-        opacity: 1, 
-        y: -50,
-        transition: { type: "spring", stiffness: 200, damping: 20 } 
-      },
-      shake: {
-        rotate: [0, -10, 10, -10, 10, 0],
-        y: -50,
-        transition: { duration: 0.5, delay: 0.5 }
-      },
-      exit: { 
-        scale: 0, 
-        opacity: 0, 
-        y: 200,
-        transition: { duration: 0.5 } 
+  // Animation Variants
+  const trashVariants = {
+    initial: { scale: 0, opacity: 0, rotate: 0, y: -50 },
+    appear: { 
+      scale: 1, 
+      opacity: 1, 
+      y: -50,
+      transition: { type: "spring", stiffness: 200, damping: 20 } 
+    },
+    shake: {
+      rotate: [0, -10, 10, -10, 10, 0],
+      y: -50,
+      transition: { duration: 0.5, delay: 0.5 }
+    },
+    exit: { 
+      scale: 0, 
+      opacity: 0, 
+      y: 200,
+      transition: { duration: 0.5 } 
+    }
+  } as any
+
+  const flyOutVariants = {
+    hidden: { 
+      y: -50,
+      x: 0, 
+      scale: 0, 
+      opacity: 0 
+    },
+    visible: (i: number) => ({
+      y: (Math.random() - 0.5) * 500 - 200, 
+      x: (Math.random() - 0.5) * 1000, 
+      scale: 0.8 + Math.random() * 0.5, 
+      opacity: 1,
+      rotate: (Math.random() - 0.5) * 180, 
+      transition: { 
+        type: "spring",
+        stiffness: 60, 
+        damping: 8,
+        delay: 0.8 + i * 0.05 
       }
-    } as any
-  
-    // Cards Flying Out Animation (Initial)
-    // Each card will have a different delay and angle
-    const flyOutVariants = {
-      hidden: { 
-        y: -50, // Match trash can position
-        x: 0, 
-        scale: 0, 
-        opacity: 0 
-      },
-      visible: (i: number) => ({
-        // Scatter around the center (-300 to +300) instead of flying way up
-        y: (Math.random() - 0.5) * 500 - 200, 
-        x: (Math.random() - 0.5) * 1000, 
-        scale: 0.8 + Math.random() * 0.5, 
-        opacity: 1,
-        rotate: (Math.random() - 0.5) * 180, 
-        transition: { 
-          type: "spring",
-          stiffness: 60, 
-          damping: 8,
-          delay: 0.8 + i * 0.05 
-        }
-      })
-    } as any
-  
-    // Card Stack Carousel Variants (Coverflow style)
-    const cardStackVariants = {
-      enter: (direction: number) => ({
-        x: direction > 0 ? '100%' : '-100%',
-        scale: 0.8,
-        opacity: 0,
-        zIndex: 0,
-        rotateY: direction > 0 ? -45 : 45, // 3D rotation
-      }),
-      center: {
-        x: 0,
-        scale: 1,
-        opacity: 1,
-        zIndex: 2,
-        rotateY: 0,
-        transition: {
-          duration: 0.5,
-          type: "spring",
-          stiffness: 300,
-          damping: 30
-        }
-      },
-      exit: (direction: number) => ({
-        x: direction < 0 ? '100%' : '-100%',
-        scale: 0.8,
-        opacity: 0,
-        zIndex: 0,
-        rotateY: direction < 0 ? -45 : 45,
-        transition: {
-          duration: 0.5,
-          type: "spring",
-          stiffness: 300,
-          damping: 30
-        }
-      }),
-      // Side cards (visible but behind)
-      left: {
-        x: '-60%',
-        scale: 0.85,
-        opacity: 0.6,
-        zIndex: 1,
-        rotateY: 30,
-        transition: { duration: 0.5 }
-      },
-      right: {
-        x: '60%',
-        scale: 0.85,
-        opacity: 0.6,
-        zIndex: 1,
-        rotateY: -30,
-        transition: { duration: 0.5 }
+    })
+  } as any
+
+  // 3D 轮播变体
+  const cardStackVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? '100%' : '-100%',
+      scale: 0.8,
+      opacity: 0,
+      zIndex: 0,
+      rotateY: direction > 0 ? -45 : 45,
+    }),
+    center: {
+      x: 0,
+      scale: 1,
+      opacity: 1,
+      zIndex: 2,
+      rotateY: 0,
+      transition: {
+        duration: 0.5,
+        type: "spring",
+        stiffness: 300,
+        damping: 30
       }
-    } as any
+    },
+    exit: (direction: number) => ({
+      x: direction < 0 ? '100%' : '-100%',
+      scale: 0.8,
+      opacity: 0,
+      zIndex: 0,
+      rotateY: direction < 0 ? -45 : 45,
+      transition: {
+        duration: 0.5,
+        type: "spring",
+        stiffness: 300,
+        damping: 30
+      }
+    }),
+  } as any
 
   const swipeConfidenceThreshold = 10000
   const swipePower = (offset: number, velocity: number) => {
     return Math.abs(offset) * velocity
   }
 
-  // Helper to get card at relative index
-  const getCardIndex = (offset: number) => {
-    if (papers.length === 0) return 0
-    let index = currentIndex + offset
-    if (index < 0) index = papers.length + index
-    if (index >= papers.length) index = index % papers.length
-    return index
+  // 渲染 PDF 模式的 3D 轮播
+  const renderPDFCarousel = () => {
+    const currentPaper = papers[currentPageIndex]
+    const pdfUrl = currentPaper ? getPdfUrl(currentPaper.pdfUrl) : null
+    
+    return (
+      <div className="relative w-full max-w-7xl flex-1 flex items-center justify-center perspective-[1200px] min-h-0">
+        <div className="relative w-full h-full flex items-center justify-center">
+          {/* Left Card (Background) */}
+          <motion.div
+            className="absolute w-[60%] md:w-[40%] aspect-[1/1.414] md:aspect-[16/10] bg-white dark:bg-zinc-900 rounded-2xl shadow-xl border border-border/50 opacity-40 z-0 pointer-events-none"
+            initial={false}
+            animate={{ 
+              x: '-55%', 
+              scale: 0.85, 
+              rotateY: 25,
+              opacity: 0.6,
+              zIndex: 0 
+            }}
+            transition={{ duration: 0.5, type: "spring", stiffness: 300, damping: 30 }}
+            style={{ transformStyle: "preserve-3d" }}
+          >
+            <div className="w-full h-full bg-muted/20 flex items-center justify-center">
+              <div className="w-full h-full bg-white dark:bg-zinc-800 opacity-50" />
+            </div>
+          </motion.div>
+
+          {/* Right Card (Background) */}
+          <motion.div
+            className="absolute w-[60%] md:w-[40%] aspect-[1/1.414] md:aspect-[16/10] bg-white dark:bg-zinc-900 rounded-2xl shadow-xl border border-border/50 opacity-40 z-0 pointer-events-none"
+            initial={false}
+            animate={{ 
+              x: '55%', 
+              scale: 0.85, 
+              rotateY: -25,
+              opacity: 0.6,
+              zIndex: 0
+            }}
+            transition={{ duration: 0.5, type: "spring", stiffness: 300, damping: 30 }}
+            style={{ transformStyle: "preserve-3d" }}
+          >
+            <div className="w-full h-full bg-muted/20 flex items-center justify-center">
+              <div className="w-full h-full bg-white dark:bg-zinc-800 opacity-50" />
+            </div>
+          </motion.div>
+
+          {/* Center Card (Interactive) */}
+          <AnimatePresence initial={false} custom={direction} mode="popLayout">
+            {currentPaper && (
+              <motion.div
+                key={currentPaper.id}
+                custom={direction}
+                variants={cardStackVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={1}
+                onDragEnd={(e, { offset, velocity }: PanInfo) => {
+                  const swipe = swipePower(offset.x, velocity.x)
+                  if (swipe < -swipeConfidenceThreshold) {
+                    paginate(1)
+                  } else if (swipe > swipeConfidenceThreshold) {
+                    paginate(-1)
+                  }
+                }}
+                className="absolute w-[85%] md:w-[60%] h-[75%] md:h-[85%] bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-border/50 flex flex-col z-20"
+                style={{ transformStyle: "preserve-3d" }}
+              >
+                {/* PDF / Cover Area */}
+                <div className="relative flex-1 bg-muted/10 overflow-hidden group">
+                  {pdfUrl ? (
+                    <>
+                      <iframe 
+                        src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH&page=1`}
+                        className="w-full h-full border-none pointer-events-none select-none scale-[1.02] origin-top" 
+                        title="Preview"
+                      />
+                      <div className="absolute inset-0 bg-transparent group-hover:bg-black/5 transition-colors pointer-events-none" />
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                        <div className="bg-background/80 backdrop-blur-md text-foreground px-6 py-3 rounded-full shadow-lg font-bold transform scale-90 group-hover:scale-100 transition-transform">
+                          阅读全文
+                        </div>
+                      </div>
+                      <Link href={`/novel/${currentPaper.id}`} className="absolute inset-0 z-10" />
+                    </>
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/30">
+                      <FileText className="w-20 h-20 mb-2" />
+                      <span className="text-sm">无预览</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Minimal Meta Footer */}
+                <div className="h-auto bg-background/95 backdrop-blur border-t p-4 flex flex-col gap-2">
+                  <h3 className="text-xl md:text-2xl font-bold leading-tight line-clamp-1 text-center" title={currentPaper.title}>
+                    {currentPaper.title}
+                  </h3>
+                  <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                    <span className="font-medium text-primary">{currentPaper.author}</span>
+                    <span>•</span>
+                    <span>{currentPaper.category}</span>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Navigation Arrows */}
+        <button 
+          onClick={() => paginate(-1)}
+          className="absolute left-2 md:left-10 top-1/2 -translate-y-1/2 p-3 rounded-full bg-background/50 hover:bg-background/80 backdrop-blur text-foreground shadow-lg transition-all z-20 hover:scale-110 active:scale-95"
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+        <button 
+          onClick={() => paginate(1)}
+          className="absolute right-2 md:right-10 top-1/2 -translate-y-1/2 p-3 rounded-full bg-background/50 hover:bg-background/80 backdrop-blur text-foreground shadow-lg transition-all z-20 hover:scale-110 active:scale-95"
+        >
+          <ChevronRight className="w-6 h-6" />
+        </button>
+      </div>
+    )
   }
 
   return (
@@ -234,14 +558,11 @@ export function SplashTrashDeck({ papers }: SplashTrashDeckProps) {
                     OpenJunk 正在倒垃圾...
                   </motion.p>
                 )}
+              </motion.div>
 
-
-        </motion.div>
-
-              {/* Flying Cards (Visual only during splash) */}
+              {/* Flying Cards */}
               {cardsThrown && (
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-0 h-0">
-                  {/* Create an array of 12 items for more trash */}
                   {Array.from({ length: 12 }).map((_, i) => (
                     <motion.div
                       key={`splash-card-${i}`}
@@ -253,11 +574,9 @@ export function SplashTrashDeck({ papers }: SplashTrashDeckProps) {
                       style={{ 
                         originX: 0.5, 
                         originY: 1,
-                        // Randomize z-index slightly
                         zIndex: Math.floor(Math.random() * 10) 
                       }} 
                     >
-                      {/* Mini Preview Content - Simplified */}
                       <div className="w-full h-full bg-muted/10 p-2 flex flex-col gap-1.5 opacity-50">
                         <div className="h-1/2 bg-muted/40 rounded-sm w-full" />
                         <div className="h-1.5 w-full bg-muted/40 rounded-sm" />
@@ -282,209 +601,36 @@ export function SplashTrashDeck({ papers }: SplashTrashDeckProps) {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
-          {/* News Section (Flex Item) */}
+          {/* News Section */}
           <div className="z-50 w-full flex justify-center mb-2 shrink-0 px-4">
-             <NewsSection />
+            <NewsSection />
           </div>
 
-          {/* 3D Perspective Container (Takes remaining height) */}
-          <div className="relative w-full max-w-7xl flex-1 flex items-center justify-center perspective-[1200px] min-h-0">
-            <AnimatePresence initial={false} custom={direction} mode="popLayout">
-              {/* Render 3 cards: Previous, Current, Next */}
-              {[-1, 0, 1].map((offset) => {
-                const index = getCardIndex(offset)
-                const paper = papers[index]
-                if (!paper) return null
-
-                const isCenter = offset === 0
-                const variant = isCenter ? 'center' : (offset < 0 ? 'left' : 'right')
-                
-                // For AnimatePresence to work correctly with swiping, we need to be careful with keys
-                // But for a simple carousel, re-rendering with updated positions works best if we animate 'layout' or x/scale
-                // Here we use absolute positioning and motion variants
-                
-                // Actual PDF url for this card
-                const thisPdfUrl = getPdfUrl(paper.pdfUrl)
-
-                return (
-                  <motion.div
-                    key={`${paper.id}-${offset}`} // Key includes offset to force re-mount/animate on position change? 
-                    // Actually, for smooth transitions, we want the card that WAS right to BECOME center.
-                    // So key should be just paper.id. 
-                    // BUT, we are rendering 3 distinct slots.
-                    // Let's try rendering just the Current one with AnimatePresence for enter/exit, 
-                    // and manually placing the side ones? 
-                    // The user wants "stacking effect... left to center... right to center".
-                    // A true carousel needs track logic. 
-                    
-                    // Simplified approach for "Coverflow":
-                    // Render ALL cards (or a window) and animate their properties based on distance from current index.
-                  />
-                )
-              })}
-              
-              {/* 
-                 Better Approach: Render the center card with AnimatePresence for swipe in/out,
-                 AND render the "background" cards statically (or animated) based on current index.
-              */}
-            </AnimatePresence>
-            
-            {/* 
-              Re-implementing logic:
-              We need a container that holds the cards. 
-              Let's render a "window" of cards.
-            */}
-             
-             <div className="relative w-full h-full flex items-center justify-center">
-                {/* Left Card (Background) */}
-                <motion.div
-                   key={`left-${getCardIndex(-1)}`}
-                   className="absolute w-[60%] md:w-[40%] aspect-[1/1.414] md:aspect-[16/10] bg-white dark:bg-zinc-900 rounded-2xl shadow-xl border border-border/50 opacity-40 z-0 pointer-events-none"
-                   initial={false}
-                   animate={{ 
-                     x: '-55%', 
-                     scale: 0.85, 
-                     rotateY: 25,
-                     opacity: 0.6,
-                     zIndex: 0 
-                   }}
-                   transition={{ duration: 0.5, type: "spring", stiffness: 300, damping: 30 }}
-                   style={{ transformStyle: "preserve-3d" }}
-                >
-                   {/* Content placeholder */}
-                   <div className="w-full h-full bg-muted/20 flex items-center justify-center">
-                      <div className="w-full h-full bg-white dark:bg-zinc-800 opacity-50" />
-                   </div>
-                </motion.div>
-
-                {/* Right Card (Background) */}
-                <motion.div
-                   key={`right-${getCardIndex(1)}`}
-                   className="absolute w-[60%] md:w-[40%] aspect-[1/1.414] md:aspect-[16/10] bg-white dark:bg-zinc-900 rounded-2xl shadow-xl border border-border/50 opacity-40 z-0 pointer-events-none"
-                   initial={false}
-                   animate={{ 
-                     x: '55%', 
-                     scale: 0.85, 
-                     rotateY: -25,
-                     opacity: 0.6,
-                     zIndex: 0
-                   }}
-                   transition={{ duration: 0.5, type: "spring", stiffness: 300, damping: 30 }}
-                   style={{ transformStyle: "preserve-3d" }}
-                >
-                    <div className="w-full h-full bg-muted/20 flex items-center justify-center">
-                        <div className="w-full h-full bg-white dark:bg-zinc-800 opacity-50" />
-                    </div>
-                </motion.div>
-
-                {/* Center Card (Interactive) */}
-                <AnimatePresence initial={false} custom={direction} mode="popLayout">
-                  {currentPaper && (
-                  <motion.div
-                    key={currentPaper.id}
-                    custom={direction}
-                    variants={cardStackVariants}
-                    initial="enter"
-                    animate="center"
-                    exit="exit"
-                    drag="x"
-                    dragConstraints={{ left: 0, right: 0 }}
-                    dragElastic={1}
-                    onDragEnd={(e, { offset, velocity }: PanInfo) => {
-                      const swipe = swipePower(offset.x, velocity.x)
-                      if (swipe < -swipeConfidenceThreshold) {
-                        paginate(1)
-                      } else if (swipe > swipeConfidenceThreshold) {
-                        paginate(-1)
-                      }
-                    }}
-                    className="absolute w-[85%] md:w-[60%] h-[75%] md:h-[85%] bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-border/50 flex flex-col z-20"
-                    style={{ transformStyle: "preserve-3d" }}
-                  >
-                     {/* PDF / Cover Area */}
-                    <div className="relative flex-1 bg-muted/10 overflow-hidden group">
-                       {pdfUrl ? (
-                          <>
-                            <iframe 
-                                src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH&page=1`}
-                                className="w-full h-full border-none pointer-events-none select-none scale-[1.02] origin-top" 
-                                title="Preview"
-                            />
-                            <div className="absolute inset-0 bg-transparent group-hover:bg-black/5 transition-colors pointer-events-none" />
-                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                                <div className="bg-background/80 backdrop-blur-md text-foreground px-6 py-3 rounded-full shadow-lg font-bold transform scale-90 group-hover:scale-100 transition-transform">
-                                    阅读全文
-                                </div>
-                            </div>
-                            <Link href={`/novel/${currentPaper.id}`} className="absolute inset-0 z-10" />
-                          </>
-                       ) : (
-                          <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/30">
-                             <FileText className="w-20 h-20 mb-2" />
-                             <span className="text-sm">无预览</span>
-                          </div>
-                       )}
-                    </div>
-
-                    {/* Minimal Meta Footer */}
-                    <div className="h-auto bg-background/95 backdrop-blur border-t p-4 flex flex-col gap-2">
-                       <h3 className="text-xl md:text-2xl font-bold leading-tight line-clamp-1 text-center" title={currentPaper.title}>
-                          {currentPaper.title}
-                       </h3>
-                       <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-                          <span className="font-medium text-primary">{currentPaper.author}</span>
-                          <span>•</span>
-                          <span>{currentPaper.category}</span>
-                       </div>
-                    </div>
-                  </motion.div>
-                  )}
-                </AnimatePresence>
-             </div>
-
-          </div>
-
-          {/* Navigation Arrows (Floating) */}
-          <button 
-              onClick={() => paginate(-1)}
-              className="absolute left-2 md:left-10 top-1/2 -translate-y-1/2 p-3 rounded-full bg-background/50 hover:bg-background/80 backdrop-blur text-foreground shadow-lg transition-all z-20 hover:scale-110 active:scale-95 pointer-events-auto"
-          >
-              <ChevronLeft className="w-6 h-6" />
-          </button>
-          <button 
-              onClick={() => paginate(1)}
-              className="absolute right-2 md:right-10 top-1/2 -translate-y-1/2 p-3 rounded-full bg-background/50 hover:bg-background/80 backdrop-blur text-foreground shadow-lg transition-all z-20 hover:scale-110 active:scale-95 pointer-events-auto"
-          >
-              <ChevronRight className="w-6 h-6" />
-          </button>
+          {/* 根据 viewMode 渲染不同的布局 */}
+          {viewMode === "cover" ? <BookView papers={papers} /> : renderPDFCarousel()}
 
           {/* Bottom Navigation */}
-          <div className="absolute bottom-6 left-0 right-0 flex flex-col items-center gap-2 z-20 pointer-events-none">
-             {/* Pagination Dots */}
-             <div className="flex gap-2 pointer-events-auto">
-                 {papers.map((_, idx) => (
-                    <button 
-                       key={idx} 
-                       onClick={() => {
-                         const now = Date.now()
-                         if (now - lastNavTime.current < 1000) return
-                         lastNavTime.current = now
-
-                         setDirection(idx > currentIndex ? 1 : -1)
-                         setCurrentIndex(idx)
-                       }}
-                       className={cn(
+          {viewMode === "pdf" && (
+            <div className="absolute bottom-6 left-0 right-0 flex flex-col items-center gap-2 z-20 pointer-events-none">
+              <div className="flex gap-2 pointer-events-auto">
+                {papers.map((_, idx) => (
+                      <button 
+                        key={idx} 
+                        onClick={() => setCurrentPageIndex(idx)}
+                        className={cn(
                           "w-2 h-2 rounded-full transition-all duration-300",
-                          idx === currentIndex ? "bg-primary w-6" : "bg-muted-foreground/30 hover:bg-primary/50"
-                       )} 
-                    />
-                 ))}
-             </div>
+                          idx === currentPageIndex ? "bg-primary w-6" : "bg-muted-foreground/30 hover:bg-primary/50"
+                        )} 
+                      />
+                    ))
+                }
+              </div>
 
-             <p className="text-xs text-muted-foreground animate-pulse">
+              <p className="text-xs text-muted-foreground animate-pulse">
                 左右滑动切换
-             </p>
-          </div>
+              </p>
+            </div>
+          )}
 
         </motion.div>
       )}

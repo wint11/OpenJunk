@@ -302,9 +302,113 @@ model Award {
   // Who manages this award (usually SUPER_ADMIN or specific Award Committee)
   admins      User[]   @relation("AwardAdmin")
   
+  // 赛道定义
+  tracks      AwardTrack[]
+  
+  // 奖项周期（支持多届）
+  cycles      AwardCycle[]
+  
+  // 奖项等级定义（一等奖、二等奖等，由管理员自定义）
+  prizeLevels AwardPrizeLevel[]
+  
   // Applications/Nominations for this award
   applications AwardApplication[]
 
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// 赛道定义
+model AwardTrack {
+  id          String   @id @default(cuid())
+  awardId     String
+  award       Award    @relation(fields: [awardId], references: [id], onDelete: Cascade)
+  
+  name        String   // 赛道名称，如 "理论垃圾"、"实验垃圾"
+  description String?  // 赛道描述
+  
+  // 该赛道关联的期刊（可选，为空则对所有期刊开放）
+  journals    Journal[]
+  
+  order       Int      @default(0) // 排序
+  
+  // 该赛道的所有申请
+  applications AwardApplication[]
+  
+  createdAt   DateTime @default(now())
+  
+  @@unique([awardId, name])
+}
+
+// 奖项周期（每届奖项）
+model AwardCycle {
+  id          String   @id @default(cuid())
+  awardId     String
+  award       Award    @relation(fields: [awardId], references: [id], onDelete: Cascade)
+  
+  name        String   // 周期名称，如 "2025年度"、"第一届"
+  
+  // 时间安排
+  startDate   DateTime // 申请开始时间
+  endDate     DateTime // 申请截止时间
+  announceDate DateTime? // 结果公布时间
+  
+  status      String   @default("UPCOMING") // UPCOMING, OPEN, CLOSED, ANNOUNCED
+  
+  // 该周期的所有申请
+  applications AwardApplication[]
+  
+  // 该周期的公示
+  announcements AwardAnnouncement[]
+  
+  createdAt   DateTime @default(now())
+}
+
+// 奖项等级定义（由管理员自定义）
+model AwardPrizeLevel {
+  id          String   @id @default(cuid())
+  awardId     String
+  award       Award    @relation(fields: [awardId], references: [id], onDelete: Cascade)
+  
+  name        String   // 等级名称，如 "一等奖"、"金奖"
+  description String?  // 等级描述
+  
+  order       Int      @default(0) // 排序（一等奖排前面）
+  
+  // 视觉样式
+  color       String   @default("#FFD700") // 颜色，默认金色
+  icon        String?  // 图标
+  
+  // 获得该等级的申请
+  applications AwardApplication[]
+  
+  createdAt   DateTime @default(now())
+  
+  @@unique([awardId, name])
+}
+
+// 公示公告
+model AwardAnnouncement {
+  id          String   @id @default(cuid())
+  
+  cycleId     String
+  cycle       AwardCycle @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+  
+  // 公示内容
+  title       String   // 公示标题
+  content     String?  // 公示正文（支持Markdown）
+  
+  // 公示状态
+  status      String   @default("DRAFT") // DRAFT, PUBLISHED, ARCHIVED
+  
+  // 公示时间
+  publishAt   DateTime? // 发布时间
+  expireAt    DateTime? // 公示截止时间
+  
+  // 发布人
+  publishedBy String?
+  publisher   User?    @relation(fields: [publishedBy], references: [id])
+  
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -357,20 +461,52 @@ model PPTInterpretation {
 
 model AwardApplication {
   id          String   @id @default(cuid())
+  
+  // 关联奖项
   awardId     String
   award       Award    @relation(fields: [awardId], references: [id])
   
+  // 关联周期
+  cycleId     String?
+  cycle       AwardCycle? @relation(fields: [cycleId], references: [id])
+
+  // 关联赛道
+  trackId     String?
+  track       AwardTrack? @relation(fields: [trackId], references: [id])
+  
+  // 申请人信息
   applicantId String?
   applicant   User?    @relation(fields: [applicantId], references: [id])
   
-  // For self-nomination or nomination of others
-  nomineeName String
+  // 被提名者（可以是个人、团队或期刊）
+  nomineeName String?
+  nomineeType String   @default("INDIVIDUAL") // INDIVIDUAL, TEAM, JOURNAL
+  
+  // 关联期刊（新增）
+  journalId   String?
+  journal     Journal? @relation(fields: [journalId], references: [id])
+  
   workDescription String?
 
   // Linked Papers (Proof of work)
   nominationPapers Novel[] @relation("AwardNominationPapers")
   
-  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  // 评审状态
+  status      String   @default("PENDING") // PENDING, REVIEWING, REJECTED, or PRIZE_LEVEL_ID
+  
+  // 如果获奖，关联到具体等级
+  prizeLevelId String?
+  prizeLevel   AwardPrizeLevel? @relation(fields: [prizeLevelId], references: [id])
+  
+  // 评审意见
+  reviewComment String?
+  reviewedBy  String?
+  reviewedAt  DateTime?
+  
+  // 评审结果是否已发布
+  isPublished Boolean  @default(false)
+  publishedAt DateTime?
+  publishedBy String?
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
