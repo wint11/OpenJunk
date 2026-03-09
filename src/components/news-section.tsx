@@ -3,9 +3,16 @@
 import { Megaphone } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
-import { getActiveNews, type NewsItem } from "@/lib/news-config"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+
+interface NewsItem {
+  id: string
+  content: string
+  link: string | null
+  priority: number
+  active: boolean
+}
 
 interface NewsSectionProps {
   className?: string
@@ -14,8 +21,27 @@ interface NewsSectionProps {
 
 export function NewsSection({ className, autoScrollInterval = 5000 }: NewsSectionProps) {
   const [currentNewsIndex, setCurrentNewsIndex] = useState(0)
-  const activeNews = getActiveNews()
+  const [activeNews, setActiveNews] = useState<NewsItem[]>([])
+  const [loading, setLoading] = useState(true)
   const router = useRouter()
+
+  useEffect(() => {
+    // 从 API 获取新闻数据
+    async function fetchNews() {
+      try {
+        const response = await fetch('/api/news')
+        if (response.ok) {
+          const data = await response.json()
+          setActiveNews(data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch news:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchNews()
+  }, [])
 
   useEffect(() => {
     if (activeNews.length <= 1) return
@@ -34,7 +60,7 @@ export function NewsSection({ className, autoScrollInterval = 5000 }: NewsSectio
     }
   }
 
-  if (activeNews.length === 0) {
+  if (loading || activeNews.length === 0) {
     return null
   }
 

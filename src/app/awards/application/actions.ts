@@ -33,14 +33,14 @@ export async function submitAwardApplication(prevState: FormState, formData: For
   const user = session?.user
 
   const rawData = {
-    awardId: formData.get('awardId'),
-    cycleId: formData.get('cycleId'),
-    trackId: formData.get('trackId'),
-    journalId: formData.get('journalId'),
-    nomineeType: formData.get('nomineeType'),
-    nomineeName: formData.get('nomineeName'),
-    workDescription: formData.get('workDescription'),
-    paperIds: formData.get('paperIds'),
+    awardId: formData.get('awardId') || '',
+    cycleId: formData.get('cycleId') || '',
+    trackId: formData.get('trackId') || '',
+    journalId: formData.get('journalId') || undefined,
+    nomineeType: formData.get('nomineeType') || 'INDIVIDUAL',
+    nomineeName: formData.get('nomineeName') || undefined,
+    workDescription: formData.get('workDescription') || undefined,
+    paperIds: formData.get('paperIds') || undefined,
   }
 
   const validatedFields = awardApplicationSchema.safeParse(rawData)

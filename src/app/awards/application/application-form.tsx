@@ -59,7 +59,9 @@ export function ApplicationForm({ awards, journals, defaultAwardId }: Applicatio
   
   // Form State
   const [selectedAwardId, setSelectedAwardId] = useState(defaultAwardId || "")
+  const [selectedCycleId, setSelectedCycleId] = useState("")
   const [selectedTrackId, setSelectedTrackId] = useState("")
+  const [selectedJournalId, setSelectedJournalId] = useState("")
   const [nomineeType, setNomineeType] = useState("INDIVIDUAL")
   
   // Paper Search State
@@ -83,8 +85,18 @@ export function ApplicationForm({ awards, journals, defaultAwardId }: Applicatio
     if (state.success) {
       toast.success("奖项申请已提交！")
       router.push("/awards")
+    } else if (state.error) {
+      if (typeof state.error === 'string') {
+        toast.error(state.error)
+      } else {
+        // 检查是否有字段错误
+        const fieldErrors = Object.values(state.error).flat()
+        if (fieldErrors.length > 0) {
+          toast.error(`提交失败：${fieldErrors[0]}`)
+        }
+      }
     }
-  }, [state.success, router])
+  }, [state.success, state.error, router])
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return
@@ -126,12 +138,13 @@ export function ApplicationForm({ awards, journals, defaultAwardId }: Applicatio
           {/* 奖项选择 */}
           <div className="space-y-2">
             <Label htmlFor="awardId">申请奖项 <span className="text-red-500">*</span></Label>
-            <Select 
-              name="awardId" 
+            <Select
               value={selectedAwardId}
               onValueChange={(value) => {
                 setSelectedAwardId(value)
+                setSelectedCycleId("")
                 setSelectedTrackId("")
+                setSelectedJournalId("")
               }}
             >
               <SelectTrigger>
@@ -145,6 +158,7 @@ export function ApplicationForm({ awards, journals, defaultAwardId }: Applicatio
                 ))}
               </SelectContent>
             </Select>
+            <input type="hidden" name="awardId" value={selectedAwardId} />
             {state.error && typeof state.error !== 'string' && state.error.awardId && (
               <p className="text-sm text-red-500">{state.error.awardId[0]}</p>
             )}
@@ -155,22 +169,28 @@ export function ApplicationForm({ awards, journals, defaultAwardId }: Applicatio
             <div className="space-y-2">
               <Label htmlFor="cycleId">申请周期 <span className="text-red-500">*</span></Label>
               {availableCycles.length > 0 ? (
-                <Select name="cycleId">
-                  <SelectTrigger>
-                    <SelectValue placeholder="请选择申请周期" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availableCycles.map((cycle) => (
-                      <SelectItem key={cycle.id} value={cycle.id}>
-                        {cycle.name} 
-                        {cycle.status === 'OPEN' 
-                          ? ' (进行中)' 
-                          : ` (${new Date(cycle.startDate).toLocaleDateString()} 开始)`
-                        }
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <>
+                  <Select
+                    value={selectedCycleId}
+                    onValueChange={setSelectedCycleId}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="请选择申请周期" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableCycles.map((cycle) => (
+                        <SelectItem key={cycle.id} value={cycle.id}>
+                          {cycle.name}
+                          {cycle.status === 'OPEN'
+                            ? ' (进行中)'
+                            : ` (${new Date(cycle.startDate).toLocaleDateString()} 开始)`
+                          }
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <input type="hidden" name="cycleId" value={selectedCycleId} />
+                </>
               ) : (
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
@@ -189,8 +209,7 @@ export function ApplicationForm({ awards, journals, defaultAwardId }: Applicatio
           {selectedAward && availableTracks.length > 0 && (
             <div className="space-y-2">
               <Label htmlFor="trackId">申请赛道 <span className="text-red-500">*</span></Label>
-              <Select 
-                name="trackId" 
+              <Select
                 value={selectedTrackId}
                 onValueChange={setSelectedTrackId}
               >
@@ -206,6 +225,7 @@ export function ApplicationForm({ awards, journals, defaultAwardId }: Applicatio
                   ))}
                 </SelectContent>
               </Select>
+              <input type="hidden" name="trackId" value={selectedTrackId} />
               {selectedTrack?.description && (
                 <p className="text-xs text-muted-foreground">{selectedTrack.description}</p>
               )}
@@ -218,15 +238,13 @@ export function ApplicationForm({ awards, journals, defaultAwardId }: Applicatio
           {/* 被提名者类型 */}
           <div className="space-y-2">
             <Label>被提名者类型 <span className="text-red-500">*</span></Label>
-            <RadioGroup 
-              name="nomineeType" 
+            <RadioGroup
+              name="nomineeType"
               value={nomineeType}
               onValueChange={(value) => {
                 setNomineeType(value)
-                // 切换类型时清空之前的选择
-                if (value !== 'JOURNAL') {
-                  setSelectedTrackId("")
-                }
+                // 切换类型时只清空期刊选择
+                setSelectedJournalId("")
               }}
               className="flex gap-4 flex-wrap"
             >
@@ -266,7 +284,7 @@ export function ApplicationForm({ awards, journals, defaultAwardId }: Applicatio
             /* 被提名期刊选择 */
             <div className="space-y-2">
               <Label htmlFor="journalId">被提名期刊 <span className="text-red-500">*</span></Label>
-              <Select name="journalId" required>
+              <Select value={selectedJournalId} onValueChange={setSelectedJournalId}>
                 <SelectTrigger>
                   <SelectValue placeholder="请选择被提名的期刊" />
                 </SelectTrigger>
@@ -278,6 +296,7 @@ export function ApplicationForm({ awards, journals, defaultAwardId }: Applicatio
                   ))}
                 </SelectContent>
               </Select>
+              <input type="hidden" name="journalId" value={selectedJournalId} />
               <p className="text-xs text-muted-foreground">
                 选择要被提名的期刊
               </p>
@@ -360,7 +379,9 @@ export function ApplicationForm({ awards, journals, defaultAwardId }: Applicatio
           </div>
 
           {state.error && typeof state.error === 'string' && (
-            <div className="text-sm text-red-500">{state.error}</div>
+            <div className="p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-600">
+              {state.error}
+            </div>
           )}
 
           <div className="flex justify-end">

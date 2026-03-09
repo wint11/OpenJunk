@@ -31,7 +31,11 @@ const getCoverUrl = (paper: any) => {
 
 const BookPage = ({ paper, side, shadow = false }: { paper: any, side: "left" | "right", shadow?: boolean }) => {
   const coverUrl = getCoverUrl(paper)
-  
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+  }
+
   return (
     <div className={cn(
       "relative w-full h-full overflow-hidden bg-white dark:bg-zinc-900",
@@ -42,31 +46,44 @@ const BookPage = ({ paper, side, shadow = false }: { paper: any, side: "left" | 
       {/* Content */}
       <div className="relative w-full h-full p-0">
         {coverUrl ? (
-          <img 
-            src={coverUrl}
-            alt={paper?.title || "Cover"}
-            className="w-full h-full object-cover"
-          />
+          <Link
+            href={paper?.id ? `/novel/${paper.id}` : '#'}
+            className="block w-full h-full relative z-50"
+            onClick={handleClick}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={coverUrl}
+              alt={paper?.title || "Cover"}
+              className="w-full h-full object-cover cursor-pointer hover:opacity-95 transition-opacity"
+            />
+          </Link>
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/30 bg-muted/20">
-            <BookOpen className="w-16 h-16 mb-2 opacity-30" />
-            <span className="text-xs">暂无封面</span>
-          </div>
+          <Link
+            href={paper?.id ? `/novel/${paper.id}` : '#'}
+            className="block w-full h-full relative z-50"
+            onClick={handleClick}
+          >
+            <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/30 bg-muted/20 cursor-pointer hover:bg-muted/30 transition-colors">
+              <BookOpen className="w-16 h-16 mb-2 opacity-30" />
+              <span className="text-xs">暂无封面</span>
+            </div>
+          </Link>
         )}
-        
+
         {/* Inner Shadow for depth */}
         <div className={cn(
           "absolute inset-0 pointer-events-none",
-          side === "left" 
-            ? "bg-gradient-to-r from-black/5 to-transparent via-transparent" 
+          side === "left"
+            ? "bg-gradient-to-r from-black/5 to-transparent via-transparent"
             : "bg-gradient-to-l from-black/5 to-transparent via-transparent"
         )} />
-        
+
         {/* Spine Shadow */}
         <div className={cn(
           "absolute inset-y-0 w-8 pointer-events-none opacity-20 mix-blend-multiply dark:mix-blend-multiply",
-          side === "left" 
-            ? "right-0 bg-gradient-to-l from-black to-transparent" 
+          side === "left"
+            ? "right-0 bg-gradient-to-l from-black to-transparent"
             : "left-0 bg-gradient-to-r from-black to-transparent"
         )} />
       </div>
@@ -88,24 +105,28 @@ const BookView = ({ papers }: { papers: any[] }) => {
   const totalSpreads = Math.ceil(papers.length / 2)
 
   const goToNext = () => {
-    if (isFlipping || spreadIndex >= totalSpreads - 1) return
+    if (isFlipping) return
     setIsFlipping(true)
     setDirection("next")
-    setAnimatingSheet(spreadIndex + 1)
+    // 循环到下一页，如果是最后一页则回到第一页
+    const nextSheet = spreadIndex >= totalSpreads - 1 ? 0 : spreadIndex + 1
+    setAnimatingSheet(nextSheet)
   }
 
   const goToPrev = () => {
-    if (isFlipping || spreadIndex <= 0) return
+    if (isFlipping) return
     setIsFlipping(true)
     setDirection("prev")
-    setAnimatingSheet(spreadIndex)
+    // 循环到上一页，如果是第一页则回到最后一页
+    const prevSheet = spreadIndex <= 0 ? totalSpreads - 1 : spreadIndex
+    setAnimatingSheet(prevSheet)
   }
 
   const handleAnimationComplete = () => {
     if (direction === "next") {
-      setSpreadIndex(prev => prev + 1)
+      setSpreadIndex(prev => prev >= totalSpreads - 1 ? 0 : prev + 1)
     } else if (direction === "prev") {
-      setSpreadIndex(prev => prev - 1)
+      setSpreadIndex(prev => prev <= 0 ? totalSpreads - 1 : prev - 1)
     }
     setIsFlipping(false)
     setAnimatingSheet(null)
@@ -212,31 +233,19 @@ const BookView = ({ papers }: { papers: any[] }) => {
           {/* Spine Highlight */}
           <div className="absolute left-1/2 top-0 bottom-0 w-px bg-black/10 dark:bg-white/10 z-30 shadow-[0_0_10px_rgba(0,0,0,0.5)]" />
 
-          {/* Click Zones for Navigation */}
-          <div 
-            className="absolute left-0 top-0 bottom-0 w-1/2 cursor-pointer z-40 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
-            onClick={goToPrev}
-            title="上一页"
-          />
-          <div 
-            className="absolute right-0 top-0 bottom-0 w-1/2 cursor-pointer z-40 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
-            onClick={goToNext}
-            title="下一页"
-          />
-
         </div>
 
         {/* Navigation Buttons (Floating) */}
-        <button 
+        <button
           onClick={(e) => { e.stopPropagation(); goToPrev(); }}
-          disabled={spreadIndex <= 0 || isFlipping}
+          disabled={isFlipping}
           className="absolute -left-4 md:-left-16 top-1/2 -translate-y-1/2 p-3 rounded-full bg-background/80 hover:bg-background backdrop-blur text-foreground shadow-lg transition-all z-50 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100"
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
-        <button 
+        <button
           onClick={(e) => { e.stopPropagation(); goToNext(); }}
-          disabled={spreadIndex >= totalSpreads - 1 || isFlipping}
+          disabled={isFlipping}
           className="absolute -right-4 md:-right-16 top-1/2 -translate-y-1/2 p-3 rounded-full bg-background/80 hover:bg-background backdrop-blur text-foreground shadow-lg transition-all z-50 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100"
         >
           <ChevronRight className="w-6 h-6" />
@@ -244,16 +253,22 @@ const BookView = ({ papers }: { papers: any[] }) => {
       </div>
 
       {/* Page Indicators */}
-      <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1 z-50">
-         {Array.from({ length: totalSpreads }).map((_, idx) => (
-            <div 
-              key={idx}
-              className={cn(
-                "h-1 rounded-full transition-all duration-300",
-                idx === spreadIndex ? "w-8 bg-primary" : "w-2 bg-primary/20"
-              )}
-            />
-         ))}
+      <div className="absolute bottom-4 left-0 right-0 flex flex-col items-center gap-2 z-50">
+         {/* 论文计数指示器 */}
+         <div className="text-xs text-muted-foreground bg-background/80 backdrop-blur px-3 py-1 rounded-full">
+           第 {spreadIndex * 2 + 1}-{Math.min((spreadIndex + 1) * 2, papers.length)} 篇 / 共 {papers.length} 篇
+         </div>
+         <div className="flex justify-center gap-1">
+           {Array.from({ length: totalSpreads }).map((_, idx) => (
+              <div
+                key={idx}
+                className={cn(
+                  "h-1 rounded-full transition-all duration-300",
+                  idx === spreadIndex ? "w-8 bg-primary" : "w-2 bg-primary/20"
+                )}
+              />
+           ))}
+         </div>
       </div>
     </div>
   )

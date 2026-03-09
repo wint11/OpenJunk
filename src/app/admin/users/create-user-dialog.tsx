@@ -122,7 +122,6 @@ export function CreateUserDialog({ currentUserRole, journals }: CreateUserDialog
                  <SelectContent>
                    <SelectItem value="ADMIN">期刊管理员</SelectItem>
                    <SelectItem value="REVIEWER">责任编辑</SelectItem>
-                   <SelectItem value="SUPER_ADMIN">平台管理员</SelectItem>
                  </SelectContent>
                </Select>
              </div>

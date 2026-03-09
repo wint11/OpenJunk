@@ -1,5 +1,5 @@
 
-import { LayoutDashboard, FileText, Users, History, Layers, Mail, ClipboardList, Wallet, Landmark, Trophy, LucideIcon, BookOpen, Stamp, Swords } from "lucide-react"
+import { LayoutDashboard, FileText, Users, History, Layers, Mail, ClipboardList, Wallet, Landmark, Trophy, LucideIcon, BookOpen, Stamp, Swords, Megaphone } from "lucide-react"
 
 export type AdminRole = 'SUPER_ADMIN' | 'ADMIN' | 'REVIEWER' | 'FUND_ADMIN' | 'AWARD_ADMIN' | 'JOURNAL_ADMIN' | 'CONFERENCE_ADMIN'
 
@@ -29,6 +29,12 @@ export const adminMenuConfig: MenuGroup[] = [
         href: "/admin/messages",
         icon: Mail,
         roles: ['SUPER_ADMIN', 'FUND_ADMIN', 'AWARD_ADMIN', 'JOURNAL_ADMIN', 'REVIEWER']
+      },
+      {
+        title: "平台通知",
+        href: "/admin/news",
+        icon: Megaphone,
+        roles: ['SUPER_ADMIN']
       }
     ]
   },

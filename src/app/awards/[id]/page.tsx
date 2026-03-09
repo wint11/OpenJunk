@@ -99,8 +99,13 @@ export default async function AwardDetailPage({ params }: PageProps) {
     return acc
   }, {} as Record<string, { levelName: string; levelColor: string; levelOrder: number; applications: typeof publishedApplications }>)
 
-  // 按 order 排序
-  const sortedGroups = Object.values(groupedByPrizeLevel).sort((a, b) => a.levelOrder - b.levelOrder)
+  // 按 order 排序，如果 order 相同则按 levelName 排序
+  const sortedGroups = Object.values(groupedByPrizeLevel).sort((a, b) => {
+    if (a.levelOrder !== b.levelOrder) {
+      return a.levelOrder - b.levelOrder
+    }
+    return a.levelName.localeCompare(b.levelName, 'zh-CN')
+  })
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-6xl">

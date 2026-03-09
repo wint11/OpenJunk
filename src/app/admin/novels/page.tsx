@@ -113,7 +113,9 @@ export default async function PublishedNovelsPage() {
                     <NovelActions 
                       id={novel.id} 
                       status={novel.status} 
-                      isRecommended={novel.isRecommended} 
+                      isRecommended={novel.isRecommended}
+                      coverUrl={novel.coverUrl}
+                      title={novel.title}
                     />
                   </TableCell>
                 </TableRow>

@@ -823,3 +823,16 @@ model TrendingTopic {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+// 平台通知/公告
+model News {
+  id          String   @id @default(cuid())
+  content     String   // 通知内容
+  link        String?  // 可选的跳转链接
+  priority    Int      @default(1) // 优先级，数字越小越靠前
+  active      Boolean  @default(true) // 是否启用
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([active, priority])
+}

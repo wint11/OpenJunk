@@ -266,11 +266,16 @@ export async function createUser(formData: FormData) {
   const name = formData.get("name") as string
   const email = formData.get("email") as string
   const password = formData.get("password") as string
-  const role = formData.get("role") as string 
+  const role = formData.get("role") as string
   const journalId = formData.get("journalId") as string | null
 
   if (!name || !email || !password || !role) {
     throw new Error("请填写所有必填字段")
+  }
+
+  // Prevent creating SUPER_ADMIN through this interface
+  if (role === 'SUPER_ADMIN') {
+    throw new Error("不能通过此界面创建平台管理员")
   }
 
   const existingUser = await prisma.user.findUnique({ where: { email } })
@@ -279,6 +284,7 @@ export async function createUser(formData: FormData) {
   const hashedPassword = await bcrypt.hash(password, 10)
 
   if (currentUserRole === 'ADMIN') {
+    // Admin can only create REVIEWER
     if (role !== 'REVIEWER') throw new Error("期刊管理员只能创建编辑账号")
     
     const currentAdmin = await prisma.user.findUnique({
@@ -298,6 +304,11 @@ export async function createUser(formData: FormData) {
         }
     })
   } else if (currentUserRole === 'SUPER_ADMIN') {
+    // Super Admin can only create ADMIN or REVIEWER
+    if (role !== 'ADMIN' && role !== 'REVIEWER') {
+      throw new Error("平台管理员只能创建期刊管理员或编辑")
+    }
+
     // Super Admin logic
     const newUser = await prisma.user.create({
         data: {
