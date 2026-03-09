@@ -82,6 +82,7 @@ export function MainNav({ role }: { role?: string }) {
         { name: "Gaggle Scholar", href: "http://47.100.93.220:5000", external: true },
         { name: "Web of Nothing", href: "https://webofnothing.org", external: true },
         { name: "Web of Absurd", href: "https://tctco.github.io/Web-of-Absurd/", external: true },
+        { name: "rubbishjournal", href: "https://rubbishjournal.org/zh", external: true },
         { name: "没用科学院", href: "https://caonu.labbricker.com/", external: true },
         { 
           name: "热门期刊导航", 
@@ -90,7 +91,8 @@ export function MainNav({ role }: { role?: string }) {
           children: [
             { name: "RUBBISH", href: "https://www.rubbish.press/", external: true },
             { name: "S.H.I.T.", href: "https://shitjournal.org/", external: true },
-            { name: "Joker Of Academic", href: "https://jokerofacademics.asia/", external: true },
+            { name: "Joker Of Academic", href: "https://jokerofacademics.com/", external: true },
+            { name: "HELL", href: "https://hellpress.org/", external: true },
           ]
         },
       ]
