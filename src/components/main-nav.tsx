@@ -75,8 +75,8 @@ export function MainNav({ role }: { role?: string }) {
       name: "发现",
       href: "/discovery",
       children: [
+        { name: "故事社区", href: "/discovery/stories" },
         { name: "Junk宇宙", href: "/universe" },
-        { name: "排版工具", href: "/discovery/typesetting" },
         { name: "关于我们", href: "/about" },
       ]
     },
@@ -87,10 +87,10 @@ export function MainNav({ role }: { role?: string }) {
         { name: "Gaggle Scholar", href: "http://47.100.93.220:5000", external: true },
         { name: "Web of Nothing", href: "https://webofnothing.org", external: true },
         { name: "Web of Absurd", href: "https://tctco.github.io/Web-of-Absurd/", external: true },
-        { name: "rubbishjournal", href: "https://rubbishjournal.org/zh", external: true },
+        { name: "Rubbish Journal", href: "https://rubbishjournal.org/zh", external: true },
         { name: "没用科学院", href: "https://caonu.labbricker.com/", external: true },
         { 
-          name: "热门期刊导航", 
+          name: "热门内容导航", 
           href: "/hots", 
           external: true,
           children: [
@@ -98,6 +98,7 @@ export function MainNav({ role }: { role?: string }) {
             { name: "S.H.I.T.", href: "https://shitjournal.org/", external: true },
             { name: "Joker Of Academic", href: "https://jokerofacademics.com/", external: true },
             { name: "HELL", href: "https://hellpress.org/", external: true },
+            { name: "星火 | 女性写作共鸣社区", href: "https://xinghuo-journal.aifnd.top/", external: true },
           ]
         },
       ]

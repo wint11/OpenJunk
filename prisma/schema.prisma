@@ -836,3 +836,39 @@ model News {
 
   @@index([active, priority])
 }
+
+// ==========================================
+// Story System - 温暖的故事社区
+// ==========================================
+
+model Story {
+  id          String   @id @default(cuid())
+  title       String   // 故事标题
+  content     String   // 故事内容
+  category    String   // TRACE(迹), CROSS(渡), LIGHT(光), UNFINISHED(未)
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  
+  // 作者信息（完全独立，不关联User表）
+  authorName  String   // 作者署名（笔名/匿名）
+  authorEmail String?  // 作者邮箱（可选，用于通知）
+  
+  // 审阅信息
+  reviewedBy  String?  // 审阅人ID
+  reviewedAt  DateTime? // 审阅时间
+  reviewNote  String?  // 审阅意见
+  
+  // 统计数据
+  likes       Int      @default(0)
+  views       Int      @default(0)
+  
+  // 特色标记
+  isFeatured  Boolean  @default(false) // 精选故事
+  featuredAt  DateTime? // 精选时间
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category, status])
+  @@index([status, createdAt])
+  @@index([isFeatured, featuredAt])
+}
