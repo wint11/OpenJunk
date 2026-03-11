@@ -2,7 +2,7 @@ import { Metadata } from "next"
 import { FileText, AlertTriangle, Scale, Shield } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "用户协议 - OpenJunk",
+  title: "用户协议",
   description: "OpenJunk 用户协议 - 使用我们服务前请仔细阅读。",
 }
 
@@ -46,7 +46,6 @@ export default function TermsPage() {
             {/* 第一条 */}
             <div className="space-y-4">
               <h2 className="text-2xl font-bold flex items-center gap-2">
-                <Scale className="h-6 w-6 text-primary" />
                 1. 服务性质声明
               </h2>
               <div className="text-muted-foreground space-y-2">
@@ -68,7 +67,6 @@ export default function TermsPage() {
             {/* 第二条 */}
             <div className="space-y-4">
               <h2 className="text-2xl font-bold flex items-center gap-2">
-                <Shield className="h-6 w-6 text-primary" />
                 2. 用户责任
               </h2>
               <div className="text-muted-foreground space-y-2">
@@ -187,8 +185,8 @@ export default function TermsPage() {
                   如对本协议有任何疑问，请通过以下方式联系我们：
                 </p>
                 <ul className="list-disc list-inside pl-4 space-y-1">
-                  <li>邮箱：contact@openjunk.org</li>
-                  <li>GitHub Issues</li>
+                  <li>小红书账号：OpenJunk</li>
+                  <li>未来可能补充的其它渠道</li>
                 </ul>
               </div>
             </div>

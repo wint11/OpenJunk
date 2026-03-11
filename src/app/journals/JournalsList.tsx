@@ -6,12 +6,12 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { BookOpen, FileText, Users, ArrowRight, ArrowUpDown } from "lucide-react"
 import Image from "next/image"
 
@@ -28,35 +28,53 @@ type Journal = {
   publishedPaperCount: number
 }
 
-type SortOption = "name" | "createdAt" | "paperCount"
+type SortOption = 
+  | "name-asc" 
+  | "name-desc" 
+  | "createdAt-desc" 
+  | "createdAt-asc" 
+  | "paperCount-desc" 
+  | "paperCount-asc"
 
 interface JournalsListProps {
   journals: Journal[]
 }
 
 export function JournalsList({ journals }: JournalsListProps) {
-  const [sortBy, setSortBy] = useState<SortOption>("name")
+  const [sortBy, setSortBy] = useState<SortOption>("name-asc")
 
   const sortedJournals = useMemo(() => {
     const sorted = [...journals]
     switch (sortBy) {
-      case "name":
+      case "name-asc":
         sorted.sort((a, b) => a.name.localeCompare(b.name, "zh-CN"))
         break
-      case "createdAt":
+      case "name-desc":
+        sorted.sort((a, b) => b.name.localeCompare(a.name, "zh-CN"))
+        break
+      case "createdAt-desc":
         sorted.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         break
-      case "paperCount":
+      case "createdAt-asc":
+        sorted.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+        break
+      case "paperCount-desc":
         sorted.sort((a, b) => b.publishedPaperCount - a.publishedPaperCount)
+        break
+      case "paperCount-asc":
+        sorted.sort((a, b) => a.publishedPaperCount - b.publishedPaperCount)
         break
     }
     return sorted
   }, [journals, sortBy])
 
   const sortOptions = [
-    { value: "name", label: "按名称" },
-    { value: "createdAt", label: "按注册时间" },
-    { value: "paperCount", label: "按发文数量" },
+    { value: "name-asc", label: "按名称 (A-Z)" },
+    { value: "name-desc", label: "按名称 (Z-A)" },
+    { value: "createdAt-desc", label: "最新注册" },
+    { value: "createdAt-asc", label: "最早注册" },
+    { value: "paperCount-desc", label: "发文最多" },
+    { value: "paperCount-asc", label: "发文最少" },
   ]
 
   return (
@@ -70,19 +88,23 @@ export function JournalsList({ journals }: JournalsListProps) {
         </div>
         
         <div className="flex items-center gap-2 shrink-0">
-          <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
-          <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="排序方式" />
-            </SelectTrigger>
-            <SelectContent>
-              {sortOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="w-[160px] justify-between">
+                {sortOptions.find((option) => option.value === sortBy)?.label}
+                <ArrowUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[160px]">
+              <DropdownMenuRadioGroup value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
+                {sortOptions.map((option) => (
+                  <DropdownMenuRadioItem key={option.value} value={option.value}>
+                    {option.label}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 

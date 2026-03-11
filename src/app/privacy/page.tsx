@@ -2,7 +2,7 @@ import { Metadata } from "next"
 import { Shield, Lock, Eye, Database, Cookie, UserX } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "隐私政策 - OpenJunk",
+  title: "隐私政策",
   description: "OpenJunk 隐私政策 - 了解我们如何保护您的个人信息。",
 }
 

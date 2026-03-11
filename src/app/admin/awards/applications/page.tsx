@@ -4,6 +4,7 @@ import { redirect } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { ApplicationActions } from "./application-actions"
+import { ViewReasonButton } from "./view-reason-button"
 import Link from "next/link"
 
 export default async function AwardApplicationsPage() {
@@ -85,7 +86,7 @@ export default async function AwardApplicationsPage() {
                 <TableHead>申请人</TableHead>
                 <TableHead>关联代表作</TableHead>
                 <TableHead>申请时间</TableHead>
-                <TableHead>状态</TableHead>
+                <TableHead>申请理由</TableHead>
                 <TableHead className="text-right">操作</TableHead>
               </TableRow>
             </TableHeader>
@@ -158,26 +159,7 @@ export default async function AwardApplicationsPage() {
                       {new Date(app.createdAt).toLocaleString('zh-CN')}
                     </TableCell>
                     <TableCell>
-                      {app.status === 'PENDING' && (
-                        <span className="text-yellow-600 bg-yellow-50 px-2 py-1 rounded text-xs">待审核</span>
-                      )}
-                      {app.status === 'REVIEWING' && (
-                        <span className="text-blue-600 bg-blue-50 px-2 py-1 rounded text-xs">评审中</span>
-                      )}
-                      {app.status === 'REJECTED' && (
-                        <span className="text-red-600 bg-red-50 px-2 py-1 rounded text-xs">不予授奖</span>
-                      )}
-                      {app.prizeLevel && (
-                        <span 
-                          className="px-2 py-1 rounded text-xs font-medium"
-                          style={{ 
-                            backgroundColor: `${app.prizeLevel.color}20`,
-                            color: app.prizeLevel.color 
-                          }}
-                        >
-                          {app.prizeLevel.name}
-                        </span>
-                      )}
+                      <ViewReasonButton reason={app.workDescription} nomineeName={app.nomineeName} />
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end items-center gap-2">

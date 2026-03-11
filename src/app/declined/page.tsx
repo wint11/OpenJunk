@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
 export const metadata: Metadata = {
-  title: "访问被拒绝 - OpenJunk",
+  title: "访问被拒绝",
   description: "您需要同意免责声明才能访问 OpenJunk",
 }
 

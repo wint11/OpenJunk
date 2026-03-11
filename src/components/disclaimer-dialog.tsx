@@ -82,17 +82,7 @@ export function DisclaimerDialog() {
         onPointerDownOutside={(e) => e.preventDefault()}
         onInteractOutside={(e) => e.preventDefault()}
       >
-        <DialogHeader className="space-y-4">
-          <div className="mx-auto w-16 h-16 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center">
-            <AlertTriangle className="h-8 w-8 text-amber-600 dark:text-amber-400" />
-          </div>
-          <DialogTitle className="text-2xl text-center">
-            欢迎来到 OpenJunk
-          </DialogTitle>
-          <DialogDescription className="text-center text-base">
-            在继续使用本站之前，请仔细阅读以下重要声明
-          </DialogDescription>
-        </DialogHeader>
+        
 
         <div className="space-y-6 py-4">
           {/* 核心声明 */}
@@ -118,7 +108,7 @@ export function DisclaimerDialog() {
               <li className="flex gap-2">
                 <span className="text-primary font-bold">1.</span>
                 <span>
-                  本站内容<strong>不构成任何形式的学术建议、专业指导或投资意见</strong>，
+                  本站内容<strong>不构成任何形式的学术建议、专业指导或意见</strong>，
                   用户应自行判断内容的真实性和适用性。
                 </span>
               </li>
@@ -133,13 +123,13 @@ export function DisclaimerDialog() {
                 <span className="text-primary font-bold">3.</span>
                 <span>
                   本站会尽力维护内容的准确性和服务的稳定性，但
-                  <strong>不保证内容的完全正确和服务的持续可用</strong>，出现问题在所难免。
+                  <strong>不保证内容的完全正确和服务的持续可用</strong>。
                 </span>
               </li>
               <li className="flex gap-2">
                 <span className="text-primary font-bold">4.</span>
                 <span>
-                  使用本站内容产生的任何后果由用户自行承担，
+                  违规使用或扩大本站内容产生的任何后果由用户自行承担，
                   <strong>本站不承担任何直接或间接责任</strong>。
                 </span>
               </li>
