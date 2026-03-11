@@ -1,0 +1,192 @@
+// ============================================================
+// Paper Schema - 跨项目共享论文表
+// ============================================================
+// 注意：此表为独立维护的共享表，不与当前项目其他模型关联
+// 部分数据由外部项目提供
+// ============================================================
+
+datasource db {
+  provider = "sqlite"
+  url      = env("UNION_DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/union-client"
+}
+
+model Paper {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // ==================== 基础信息 ====================
+  /// 论文标题
+  title       String
+
+  /// 作者列表，JSON格式: [{"name": "张三", "unit": "清华大学"}, {"name": "李四", "unit": "北京大学"}]
+  authors     String
+
+  /// 论文摘要
+  abstract    String?
+
+  /// 封面图片URL
+  coverUrl    String?
+
+  /// PDF文件URL
+  pdfUrl      String?
+
+  /// PDF文件SHA-256哈希值，用于去重
+  pdfHash     String?
+
+  // ==================== 状态与分类 ====================
+  /// 论文状态:
+  /// - RECEIVED_PENDING_REVIEWER(已接收待分配审稿人)
+  /// - REVIEWED_PENDING_RESULT(已审稿待公布结果)
+  /// - ACCEPTED_PENDING_PUBLISH(已接收待发表)
+  /// - MINOR_REVISION(小修)
+  /// - MAJOR_REVISION(大修)
+  /// - DESK_REJECT(桌拒)
+  /// - REJECTED_AFTER_REVIEW(审稿后拒稿)
+  /// - RETRACTED(已撤稿)
+  /// - PUBLISHED(已发表)
+  status      String   @default("RECEIVED_PENDING_REVIEWER")
+
+  /// 学科分类
+  category    String?
+
+  /// 论文类型: PAPER(研究论文), REVIEW(综述), SHORT(短文), COMMENT(评论)等
+  type        String   @default("PAPER")
+
+  /// 提交/发布时间
+  submitTime  DateTime?
+
+  // ==================== 统计指标 ====================
+  /// 浏览次数
+  views       Int      @default(0)
+
+  /// 下载次数
+  downloads   Int      @default(0)
+
+  /// 被引用次数
+  cite        Int      @default(0)
+
+  // ==================== 期刊信息 ====================
+  /// 所属期刊名称
+  journalName String?
+
+  /// 卷号 (Volume)
+  vol         String?
+
+  /// 期号 (Number/Issue)
+  no          String?
+
+  // ==================== 基金信息 ====================
+  /// 基金类别ID，如 NSFC
+  fundCategoryId     String?
+
+  /// 基金类别名称，如 国家自然科学基金
+  fundCategoryName   String?
+
+  /// 基金学部ID，如 1
+  fundDepartmentId   String?
+
+  /// 基金学部名称，如 数理科学部
+  fundDepartmentName String?
+
+  /// 基金项目ID
+  fundProjectId      String?
+
+  /// 基金项目名称，如 2026年度面上项目
+  fundProjectName    String?
+
+  /// 基金批准号
+  fundApprovalNumber String?
+
+  // ==================== AOI 学术过度指数 ====================
+  /// 客观性评分 (0-10)
+  aiObjectivity     Float?
+
+  /// 专业性评分 (0-10)
+  aiProfessionalism Float?
+
+  /// 可复现性评分 (0-10)
+  aiReproducibility Float?
+
+  /// 严谨性评分 (0-10)
+  aiRigor           Float?
+
+  /// 规范性评分 (0-10)
+  aiStandardization Float?
+
+  /// AOI综合得分 (0-10)
+  aoiScore          Float?
+
+  // ==================== 标识符 ====================
+  /// Nothing Of Index - 仿DOI的论文唯一标识符
+  noi               String?  @unique
+
+  // ==================== 索引 ====================
+  /// 数据来源，标识数据来自哪个平台/系统
+  dataSource  String   @default("openjunk")
+
+  @@index([status])
+  @@index([journalName])
+  @@index([category])
+  @@index([submitTime])
+  @@index([aoiScore])
+  @@index([noi])
+  @@index([fundCategoryId])
+  @@index([fundApprovalNumber])
+  @@index([dataSource])
+}
+
+// ============================================================
+// Journal Model - 期刊信息表
+// ============================================================
+
+model Journal {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // ==================== 基本信息 ====================
+  /// 期刊名称
+  name        String   @unique
+
+  /// 期刊主页URL
+  homepage    String?
+
+  /// 联系方式
+  contact     String?
+
+  /// NSSN (National Standard Serial Number) - 国家标准期刊编号
+  nssn        String?  @unique
+
+  /// 期刊封面图URL
+  coverUrl    String?
+
+  /// 投稿模板文件URL
+  templateUrl String?
+
+  /// 期刊说明/简介
+  description String?
+
+  // ==================== 编委会信息 ====================
+  /// 主编，JSON格式: [{"name": "张三", "unit": "清华大学", "email": "zhangsan@tsinghua.edu.cn"}]
+  editorInChief String?
+
+  /// 副主编，JSON格式: [{"name": "李四", "unit": "北京大学"}, {"name": "王五", "unit": "复旦大学"}]
+  associateEditors String?
+
+  /// 编委，JSON格式: [{"name": "赵六", "unit": "中科院"}, ...]
+  editorialBoard String?
+
+  /// 数据来源，标识数据来自哪个平台/系统
+  dataSource  String   @default("openjunk")
+
+  // ==================== 索引 ====================
+  @@index([name])
+  @@index([nssn])
+  @@index([dataSource])
+}
