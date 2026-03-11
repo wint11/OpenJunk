@@ -9,6 +9,7 @@ import { Footer } from "@/components/footer";
 import { Toaster } from "sonner";
 import { SessionGuard } from "@/components/session-guard";
 import { MobileAppPrompter } from "@/components/mobile-app-prompter";
+import { DisclaimerDialog } from "@/components/disclaimer-dialog";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -52,6 +53,7 @@ export default function RootLayout({
           <Footer />
           <Toaster />
           <MobileAppPrompter />
+          <DisclaimerDialog />
         </ThemeProvider>
       </body>
     </html>

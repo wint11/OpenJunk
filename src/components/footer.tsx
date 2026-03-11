@@ -28,8 +28,8 @@ export function Footer() {
           
           <div className="flex gap-6 text-sm text-muted-foreground">
              <Link href="/about" className="hover:text-primary transition-colors">关于我们</Link>
+             <Link href="/terms" className="hover:text-primary transition-colors">用户协议</Link>
              <Link href="/privacy" className="hover:text-primary transition-colors">隐私政策</Link>
-             <Link href="/contact" className="hover:text-primary transition-colors">联系我们</Link>
           </div>
 
           <div className="flex gap-4">

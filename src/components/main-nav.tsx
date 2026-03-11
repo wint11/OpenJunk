@@ -23,52 +23,52 @@ export function MainNav({ role }: { role?: string }) {
 
   const navItems = [
     {
-      name: "期刊",
+      name: "底侃",
       href: "/journals",
       children: [
-        { name: "期刊矩阵", href: "/journals" },
-        { name: "期刊论文", href: "/journals/browse" },
+        { name: "底侃矩阵", href: "/journals" },
+        { name: "底侃论文", href: "/journals/browse" },
         { name: "在线投稿", href: "/journals/submission" },
-        { name: "创办期刊", href: "/journals/new" },
+        { name: "创办底侃", href: "/journals/new" },
       ]
     },
     {
-      name: "会议",
+      name: "汇艺",
       href: "/conferences",
       children: [
-        { name: "会议矩阵", href: "/conferences" },
-        { name: "会议论文", href: "/conferences/browse" },
-        { name: "会议投稿", href: "/conferences/submission" },
-        { name: "创办会议", href: "/conferences/new" },
+        { name: "汇艺矩阵", href: "/conferences" },
+        { name: "汇艺论文", href: "/conferences/browse" },
+        { name: "汇艺投稿", href: "/conferences/submission" },
+        { name: "创办汇艺", href: "/conferences/new" },
       ]
     },
     {
-      name: "基金",
+      name: "鸡精",
       href: "/fund",
       children: [
-        { name: "基金申报", href: "/fund" },
-        { name: "组织介绍", href: "/fund/organization" },
-        { name: "项目列表", href: "/fund/projects" },
+        { name: "鸡精申报", href: "/fund" },
+        { name: "足趾介绍", href: "/fund/organization" },
+        { name: "橡木列表", href: "/fund/projects" },
         { name: "查询状态", href: "/fund/check" },
       ]
     },
     {
-      name: "奖项",
+      name: "酱香",
       href: "/awards",
       children: [
-        { name: "奖项矩阵", href: "/awards" },
-        { name: "申请奖项", href: "/awards/application" },
-        { name: "创办奖项", href: "/awards/new" },
+        { name: "酱香矩阵", href: "/awards" },
+        { name: "申请酱香", href: "/awards/application" },
+        { name: "创办酱香", href: "/awards/new" },
       ]
     },
     {
-      name: "评审",
+      name: "评甚",
       href: "/public-review",
       children: [
-        { name: "期刊评审", href: "/public-review/journals" },
-        { name: "会议评审", href: "/public-review/conferences" },
-        { name: "基金评审", href: "/public-review/fund" },
-        { name: "奖项评审", href: "/public-review/awards" },
+        { name: "期刊评甚", href: "/public-review/journals" },
+        { name: "汇艺评甚", href: "/public-review/conferences" },
+        { name: "鸡精评甚", href: "/public-review/fund" },
+        { name: "酱香评甚", href: "/public-review/awards" },
       ]
     },
     {
