@@ -2,7 +2,7 @@ import React from "react"
 
 interface DataUsageAgreementProps {
   /** 用户名称 */
-  userName?: string
+  userName?: React.ReactNode
   /** 日期 */
   date?: string
   /** 平台名称 */
@@ -139,11 +139,11 @@ export function DataUsageAgreement({
         
         <div className="flex justify-between mt-8">
           <div>
-            <p className="mb-4"><strong>甲方（签字/确认）：</strong>_______________</p>
+            <p className="mb-4"><strong>甲方：</strong>{userName}</p>
             <p><strong>日期：</strong>{date}</p>
           </div>
           <div>
-            <p className="mb-4"><strong>乙方（盖章）：</strong>_______________</p>
+            <p className="mb-4"><strong>乙方：</strong>{platformName}</p>
             <p><strong>日期：</strong>{date}</p>
           </div>
         </div>
