@@ -1,640 +1,206 @@
 <template>
 	<view class="container">
-		<!-- Top Bar Removed -->
+		<view class="hero-section">
+			<view class="logo-box">
+				<text class="logo-icon">🗑️</text>
+			</view>
+			<text class="hero-title">OpenJunk</text>
+			<text class="hero-subtitle">全球最真实的学术垃圾场</text>
+		</view>
 
-		<!-- Card Stack -->
-		<view class="card-stack-container" v-if="cards.length > 0">
-			<view 
-				class="card-wrapper"
-				v-for="(item, index) in displayCards" 
-				:key="item.id"
-				:style="getCardStyle(index)"
-				@touchstart="onTouchStart($event, index)"
-				@touchmove="onTouchMove($event, index)"
-				@touchend="onTouchEnd($event, index)"
-				@click="onCardClick(index)"
-			>
-				<view class="paper-card" :style="{ background: item.bgGradient }">
-					<!-- Card Header: Fixed Height -->
-					<view class="card-header">
-						<view class="journal-badge" v-if="item.journalName">
-							{{ item.journalName }}
-						</view>
-						<view class="category-badge" v-if="item.category">
-							{{ item.category }}
-						</view>
-					</view>
+		<view class="mission-card">
+			<view class="card-header">
+				<text class="card-icon">🎯</text>
+				<text class="card-title">我们的使命</text>
+			</view>
+			<text class="card-content">
+				致力于收录全球各类“底刊”与“学术垃圾”，为那些无处安放的思想提供最后的归宿。在这里，我们不粉饰太平，直面学术生涯中的废品。
+			</text>
+		</view>
 
-					<!-- Main Content -->
-					<view class="card-content">
-						<!-- Title: Fixed Height + Ellipsis -->
-						<text class="paper-title">{{ item.title }}</text>
-						
-						<!-- Author: Fixed Height -->
-						<view class="author-row">
-							<text class="author-label">by</text>
-							<text class="author-name">{{ item.author }}</text>
-						</view>
-						
-						<view class="divider"></view>
-						
-						<!-- Abstract: Flex Fill + Ellipsis -->
-						<text class="paper-abstract">{{ item.description || '暂无摘要' }}</text>
-					</view>
-
-					<!-- Footer Info: Fixed Height -->
-					<view class="card-footer">
-						<view class="meta-item">
-							<text class="meta-label">发布于</text>
-							<text class="meta-value">{{ formatDate(item.createdAt) }}</text>
-						</view>
-						<view class="meta-item">
-							<text class="meta-label">热度</text>
-							<text class="meta-value">{{ item.popularity ? item.popularity.toFixed(0) : 0 }}</text>
-						</view>
-					</view>
-					
-					<!-- Swipe Indicators -->
-					<view class="swipe-indicator like" :style="{ opacity: getLikeOpacity(index) }">
-						<text>INTERESTING</text>
-					</view>
-					<view class="swipe-indicator pass" :style="{ opacity: getPassOpacity(index) }">
-						<text>PASS</text>
-					</view>
-				</view>
+		<view class="features-grid">
+			<view class="feature-item">
+				<view class="feature-icon bg-red">⚠️</view>
+				<text class="feature-title">诚实面对</text>
+				<text class="feature-desc">如果是垃圾，就称之为垃圾。</text>
+			</view>
+			<view class="feature-item">
+				<view class="feature-icon bg-green">♻️</view>
+				<text class="feature-title">变废为宝</text>
+				<text class="feature-desc">也许有人能在垃圾堆里翻到金子。</text>
+			</view>
+			<view class="feature-item">
+				<view class="feature-icon bg-blue">💨</view>
+				<text class="feature-title">自由呼吸</text>
+				<text class="feature-desc">没有拒稿烦恼，享受学术废气。</text>
 			</view>
 		</view>
 
-		<!-- Empty State -->
-		<view class="empty-state" v-else-if="!loading">
-			<text class="empty-icon">🎉</text>
-			<text class="empty-text">所有内容已阅完</text>
-			<button class="reload-btn" @click="reloadCards">重新发现</button>
+		<view class="story-section">
+			<text class="section-title">我们的故事</text>
+			<text class="story-text">
+				OpenJunk 成立于 2026 年的一个深夜，当时我们的创始人面对着第 108 次被拒稿的邮件，陷入了深深的沉思...
+			</text>
+			<text class="story-text">
+				于是，一个大胆的想法诞生了：建立一个专门收录“被遗弃论文”的平台。我们不追求影响因子，我们追求“垃圾因子”。
+			</text>
 		</view>
 
-		<view class="loading-state" v-if="loading && cards.length === 0">
-			<view class="loading-spinner"></view>
+		<view class="footer">
+			<text class="footer-text">© 2026 OpenJunk. All Wrongs Reserved.</text>
 		</view>
-
-		<!-- Action Bar Removed as requested -->
 	</view>
 </template>
 
 <script setup>
-	import { ref, computed } from 'vue';
-	import { onLoad } from '@dcloudio/uni-app';
-	import { API } from '@/common/config.js';
-
-	// Constants
-	const SWIPE_THRESHOLD = 50; // Lower threshold for easier swipes
-	
-	// State
-	const cards = ref([]);
-	const loading = ref(false);
-	const page = ref(1);
-	
-	// Touch State
-	const startX = ref(0);
-	const startY = ref(0);
-	const moveX = ref(0);
-	const moveY = ref(0);
-	const isDragging = ref(false);
-
-	// Computed
-	const displayCards = computed(() => {
-		// Only render top 3 cards for performance
-		return cards.value.slice(0, 3).reverse(); 
-	});
-
-	// Colors for gradient generation - Darker, richer colors for white text contrast
-	const gradients = [
-		'linear-gradient(135deg, #4b6cb7, #182848)', // Deep Blue
-		'linear-gradient(135deg, #8E2DE2, #4A00E0)', // Deep Purple
-		'linear-gradient(135deg, #00416A, #E4E5E6)', // Dark Blue to Grey (Check contrast on end) -> Replace
-		'linear-gradient(135deg, #373B44, #4286f4)', // Dark Grey to Blue
-		'linear-gradient(135deg, #0F2027, #203A43, #2C5364)', // Deep Teal/Space
-		'linear-gradient(135deg, #C33764, #1D2671)', // Pink to Deep Blue
-		'linear-gradient(135deg, #141E30, #243B55)', // Dark Slate
-		'linear-gradient(135deg, #200122, #6f0000)', // Dark Red/Black
-		'linear-gradient(135deg, #4568DC, #B06AB3)', // Blue Purple
-		'linear-gradient(135deg, #02AAB0, #00CDAC)', // Teal (Darker end needed? Maybe ok)
-	];
-
-	// Refined gradients to ensure white text readability
-	const safeGradients = [
-		'linear-gradient(135deg, #1A2980, #26D0CE)', 
-		'linear-gradient(135deg, #603813, #b29f94)', 
-		'linear-gradient(135deg, #16222A, #3A6073)', 
-		'linear-gradient(135deg, #191654, #43C6AC)',
-		'linear-gradient(135deg, #43cea2, #185a9d)',
-		'linear-gradient(135deg, #DA22FF, #9733EE)',
-		'linear-gradient(135deg, #D4145A, #FBB03B)',
-		'linear-gradient(135deg, #009245, #FCEE21)', // Might be too light at end
-		'linear-gradient(135deg, #662D8C, #ED1E79)'
-	];
-
-	const getGradient = (str) => {
-		let hash = 0;
-		for (let i = 0; i < str.length; i++) {
-			hash = str.charCodeAt(i) + ((hash << 5) - hash);
-		}
-		const index = Math.abs(hash) % safeGradients.length;
-		return safeGradients[index];
-	};
-
-	// Methods
-	const loadData = () => {
-		if (loading.value) return;
-		loading.value = true;
-		
-		uni.request({
-			url: API.PAPERS,
-			data: {
-				page: page.value,
-				limit: 20, 
-				sort: 'latest'
-			},
-			success: (res) => {
-				if (res.statusCode === 200) {
-					const newCards = res.data.data.map(item => ({
-						...item,
-						bgGradient: getGradient(item.title + item.id)
-					}));
-					
-					for (let i = newCards.length - 1; i > 0; i--) {
-						const j = Math.floor(Math.random() * (i + 1));
-						[newCards[i], newCards[j]] = [newCards[j], newCards[i]];
-					}
-					
-					cards.value = [...cards.value, ...newCards];
-					page.value++;
-				}
-			},
-			complete: () => {
-				loading.value = false;
-			}
-		});
-	};
-
-	const reloadCards = () => {
-		page.value = 1;
-		cards.value = [];
-		loadData();
-	};
-
-	// Card Interaction Logic
-	const getCardStyle = (index) => {
-		const realIndex = displayCards.value.length - 1 - index; 
-		const isTop = realIndex === 0;
-		
-		let x = 0;
-		let y = 0;
-		let rotate = 0;
-		let scale = 1 - (realIndex * 0.05);
-		let opacity = 1;
-		let zIndex = 100 - realIndex;
-		
-		if (isTop) {
-			// Apply moveX/Y whenever it's non-zero (dragging OR animating out)
-			// Only apply rotation if dragging or animating out
-			if (isDragging.value || moveX.value !== 0) {
-				x = moveX.value;
-				y = moveY.value;
-				rotate = moveX.value * 0.1;
-			}
-		}
-		
-		// Stack offset - NEGATIVE Y pushes background cards UP
-		if (!isTop) {
-			y = -realIndex * 30; // Visually peek from TOP
-			// Add random stagger effect based on index
-			// Use simple math to alternate left/right and rotation
-			const staggerDir = realIndex % 2 === 0 ? 1 : -1;
-			x = staggerDir * (realIndex * 10); // Offset X
-			rotate = staggerDir * (realIndex * 2); // Slight rotation
-		}
-
-		return {
-			transform: `translate3d(${x}px, ${y}px, 0) rotate(${rotate}deg) scale(${scale})`,
-			zIndex: zIndex,
-			opacity: opacity,
-			// Optimize transition: instant when dragging, smooth spring when releasing
-			// Use a standard ease-out for fly-away to avoid spring back visual glitch
-			transition: isDragging.value && isTop ? 'none' : 'transform 0.5s ease-out'
-		};
-	};
-	
-	const getLikeOpacity = (index) => {
-		const realIndex = displayCards.value.length - 1 - index;
-		if (realIndex !== 0 || !isDragging.value) return 0;
-		return moveX.value > 0 ? Math.min(moveX.value / 100, 1) : 0;
-	};
-
-	const getPassOpacity = (index) => {
-		const realIndex = displayCards.value.length - 1 - index;
-		if (realIndex !== 0 || !isDragging.value) return 0;
-		return moveX.value < 0 ? Math.min(Math.abs(moveX.value) / 100, 1) : 0;
-	};
-
-	const onTouchStart = (e, index) => {
-		const realIndex = displayCards.value.length - 1 - index;
-		if (realIndex !== 0) return; 
-		
-		isDragging.value = true;
-		startX.value = e.touches[0].clientX;
-		startY.value = e.touches[0].clientY;
-	};
-
-	const onTouchMove = (e, index) => {
-		const realIndex = displayCards.value.length - 1 - index;
-		if (realIndex !== 0) return;
-		
-		moveX.value = e.touches[0].clientX - startX.value;
-		moveY.value = e.touches[0].clientY - startY.value;
-	};
-
-	const onTouchEnd = (e, index) => {
-		const realIndex = displayCards.value.length - 1 - index;
-		if (realIndex !== 0) return;
-		
-		isDragging.value = false;
-		
-		if (Math.abs(moveX.value) > SWIPE_THRESHOLD) {
-			const direction = moveX.value > 0 ? 'like' : 'pass';
-			handleSwipe(direction);
-		} else {
-			moveX.value = 0;
-			moveY.value = 0;
-		}
-	};
-	
-	const handleSwipe = (direction) => {
-		// Fly away distance - make sure it's off screen
-		moveX.value = direction === 'like' ? 1000 : -1000;
-		
-		// Wait for animation to complete before removing card
-		// 500ms matches the CSS transition duration
-		setTimeout(() => {
-			const topCard = cards.value[0];
-			cards.value.shift();
-			
-			// Reset for next card
-			moveX.value = 0;
-			moveY.value = 0;
-			
-			if (direction === 'like') {
-				console.log('Liked:', topCard.title);
-			}
-			
-			if (cards.value.length < 5) {
-				loadData();
-			}
-		}, 300); // Slightly shorter than transition to ensure smooth switch? 
-        // Actually, if we wait too long, user waits. If too short, it snaps.
-        // Let's try 300ms - the card will be mostly gone, then we swap. 
-        // Since the next card slides into place, it shouldn't look like a snap-back.
-	};
-	
-	const handleAction = (type) => {
-		if (cards.value.length === 0) return;
-		
-        // Only keeping this for programmatic access if needed later, or remove entirely.
-        // Since UI buttons are gone, this might not be called from template.
-		if (type === 'info') {
-			onCardClick(displayCards.value.length - 1); 
-		} else {
-			handleSwipe(type);
-		}
-	};
-
-	const onCardClick = (index) => {
-		const realIndex = displayCards.value.length - 1 - index;
-		if (realIndex !== 0) return;
-		
-		const item = cards.value[0];
-		uni.navigateTo({
-			url: `/pages/paper/detail?id=${item.id}&title=${encodeURIComponent(item.title)}&pdfUrl=${encodeURIComponent(item.pdfUrl || '')}`
-		});
-	};
-
-	const formatDate = (dateString) => {
-		if (!dateString) return '';
-		const date = new Date(dateString);
-		return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}`;
-	};
-	
-	const toggleFilter = () => {
-		uni.showToast({ title: '筛选功能开发中', icon: 'none' });
-	};
-
-	onLoad(() => {
-		loadData();
-	});
+	// Simple static page
 </script>
 
 <style lang="scss">
 	.container {
-		width: 100vw;
-		height: 100vh;
-		background-color: #f5f7fa; 
-		display: flex;
-		flex-direction: column;
-		overflow: hidden;
-		padding-top: 40rpx; 
-		box-sizing: border-box;
+		padding: 40rpx;
+		background-color: #f8f9fa;
+		min-height: 100vh;
 	}
 
-	// .top-bar removed
-
-	.card-stack-container {
-		flex: 1;
-		position: relative;
+	.hero-section {
 		display: flex;
-		justify-content: center;
+		flex-direction: column;
 		align-items: center;
-		margin-top: 0;
-		margin-bottom: 0;
+		margin: 60rpx 0 80rpx;
 	}
 
-	.card-wrapper {
-		position: absolute;
-		width: 96%; // Maximized width
-		height: 90%; // Maximized height
-		will-change: transform;
-	}
-
-	.paper-card {
-		width: 100%;
-		height: 100%;
-		border-radius: 32rpx;
-		padding: 40rpx 36rpx;
-		box-sizing: border-box;
+	.logo-box {
+		width: 160rpx;
+		height: 160rpx;
+		background: #fff;
+		border-radius: 40rpx;
 		display: flex;
-		flex-direction: column;
-		color: #fff;
-		box-shadow: 0 16rpx 40rpx rgba(0,0,0,0.15); 
-		position: relative;
-		overflow: hidden;
-		
-		&::before {
-			content: '';
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3h1v1H1V3zm2-2h1v1H3V1z' fill='%23ffffff' fill-opacity='0.08' fill-rule='evenodd'/%3E%3C/svg%3E");
-			pointer-events: none;
-		}
+		align-items: center;
+		justify-content: center;
+		box-shadow: 0 10rpx 30rpx rgba(0,0,0,0.05);
+		margin-bottom: 30rpx;
+	}
+
+	.logo-icon {
+		font-size: 80rpx;
+	}
+
+	.hero-title {
+		font-size: 56rpx;
+		font-weight: 900;
+		color: #333;
+		margin-bottom: 16rpx;
+	}
+
+	.hero-subtitle {
+		font-size: 32rpx;
+		color: #666;
+		font-weight: 300;
+	}
+
+	.mission-card {
+		background: #fff;
+		padding: 40rpx;
+		border-radius: 24rpx;
+		box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.03);
+		margin-bottom: 40rpx;
 	}
 
 	.card-header {
 		display: flex;
-		justify-content: space-between;
+		align-items: center;
 		margin-bottom: 20rpx;
-		height: 50rpx; // Fixed height
-		
-		.journal-badge, .category-badge {
-			font-size: 22rpx;
-			background: rgba(255,255,255,0.25);
-			padding: 6rpx 18rpx;
-			border-radius: 100rpx;
-			backdrop-filter: blur(4px);
-			font-weight: 500;
-			letter-spacing: 0.5rpx;
-			box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.05);
-			max-width: 45%;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
+	}
+
+	.card-icon {
+		font-size: 40rpx;
+		margin-right: 20rpx;
+	}
+
+	.card-title {
+		font-size: 36rpx;
+		font-weight: bold;
+		color: #333;
 	}
 
 	.card-content {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		overflow: hidden; // Contain overflow
-		
-		.paper-title {
-			font-size: 44rpx; 
-			font-weight: 700;
-			line-height: 1.3;
-			margin-bottom: 20rpx;
-			text-shadow: 0 2rpx 4rpx rgba(0,0,0,0.1);
-			
-			// Limit to ~3 lines max
-			height: 172rpx; // Strict fixed height as requested
-			overflow: hidden;
-			text-overflow: ellipsis;
-			display: -webkit-box;
-			-webkit-box-orient: vertical;
-			-webkit-line-clamp: 3;
-		}
-		
-		.author-row {
-			display: flex;
-			align-items: baseline;
-			margin-bottom: 30rpx;
-			height: 40rpx; // Fixed height
-			
-			.author-label {
-				font-size: 22rpx;
-				opacity: 0.8;
-				margin-right: 10rpx;
-				font-style: italic;
-			}
-			
-			.author-name {
-				font-size: 28rpx;
-				font-weight: 500;
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				max-width: 80%;
-			}
-		}
-		
-		.divider {
-			width: 40rpx;
-			height: 4rpx;
-			background: rgba(255,255,255,0.4);
-			margin-bottom: 30rpx;
-			border-radius: 2rpx;
-			flex-shrink: 0;
-		}
-		
-		.paper-abstract {
-			font-size: 28rpx;
-			line-height: 1.7;
-			opacity: 0.95;
-			text-align: justify;
-			font-weight: 400;
-			
-			// Fill remaining space but handle overflow
-			flex: 1;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			display: -webkit-box;
-			-webkit-box-orient: vertical;
-			// No line clamp here, just fill height
-			-webkit-line-clamp: 12; 
-		}
+		font-size: 28rpx;
+		color: #555;
+		line-height: 1.6;
 	}
 
-	.card-footer {
+	.features-grid {
 		display: flex;
 		justify-content: space-between;
-		border-top: 1rpx solid rgba(255,255,255,0.15);
-		padding-top: 24rpx;
-		margin-top: 20rpx;
-		height: 80rpx; // Fixed height
-		flex-shrink: 0;
-		
-		.meta-item {
-			display: flex;
-			flex-direction: column;
-			
-			.meta-label {
-				font-size: 18rpx;
-				opacity: 0.7;
-				text-transform: uppercase;
-				letter-spacing: 1rpx;
-				margin-bottom: 4rpx;
-			}
-			
-			.meta-value {
-				font-size: 24rpx;
-				font-weight: 600;
-			}
-		}
+		margin-bottom: 50rpx;
 	}
 
-	.swipe-indicator {
-		position: absolute;
-		top: 60rpx;
-		padding: 10rpx 20rpx;
-		border: 6rpx solid;
-		border-radius: 12rpx;
-		font-size: 48rpx;
-		font-weight: 800;
-		text-transform: uppercase;
-		letter-spacing: 4rpx;
-		transform: rotate(-15deg);
-		z-index: 10;
-		
-		&.like {
-			left: 40rpx;
-			color: #4cd964;
-			border-color: #4cd964;
-			transform: rotate(-15deg);
-		}
-		
-		&.pass {
-			right: 40rpx;
-			color: #ff3b30;
-			border-color: #ff3b30;
-			transform: rotate(15deg);
-		}
-	}
-
-	.action-bar {
-		height: 140rpx;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		gap: 50rpx;
-		padding-bottom: 10rpx;
-		
-		.action-btn {
-			width: 100rpx;
-			height: 100rpx;
-			border-radius: 50%;
-			background: #fff;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			box-shadow: 0 8rpx 16rpx rgba(0,0,0,0.08);
-			transition: all 0.2s;
-			
-			&:active {
-				transform: scale(0.9);
-				box-shadow: 0 4rpx 8rpx rgba(0,0,0,0.05);
-			}
-			
-			text {
-				font-size: 40rpx;
-			}
-			
-			&.pass-btn {
-				color: #ff3b30;
-			}
-			
-			&.like-btn {
-				color: #4cd964;
-				font-size: 50rpx;
-			}
-			
-			&.info-btn {
-				width: 80rpx;
-				height: 80rpx;
-				color: #007aff;
-				
-				text {
-					font-size: 32rpx;
-				}
-			}
-		}
-	}
-	
-	.empty-state {
-		flex: 1;
+	.feature-item {
+		width: 30%;
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
 		align-items: center;
+		text-align: center;
+	}
+
+	.feature-icon {
+		width: 100rpx;
+		height: 100rpx;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 40rpx;
+		margin-bottom: 20rpx;
+	}
+
+	.bg-red { background: #ffebee; color: #d32f2f; }
+	.bg-green { background: #e8f5e9; color: #388e3c; }
+	.bg-blue { background: #e3f2fd; color: #1976d2; }
+
+	.feature-title {
+		font-size: 28rpx;
+		font-weight: bold;
+		color: #333;
+		margin-bottom: 8rpx;
+	}
+
+	.feature-desc {
+		font-size: 22rpx;
 		color: #999;
-		
-		.empty-icon {
-			font-size: 80rpx;
-			margin-bottom: 20rpx;
-		}
-		
-		.empty-text {
-			margin-bottom: 30rpx;
-			font-size: 28rpx;
-		}
-		
-		.reload-btn {
-			margin-top: 20rpx;
-			background: #2979ff;
-			color: #fff;
-			border-radius: 100rpx;
-			padding: 0 60rpx;
-			font-size: 28rpx;
-			box-shadow: 0 4rpx 12rpx rgba(41, 121, 255, 0.3);
-		}
+		line-height: 1.4;
 	}
-	
-	.loading-state {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		
-		.loading-spinner {
-			width: 60rpx;
-			height: 60rpx;
-			border: 6rpx solid rgba(0,0,0,0.1);
-			border-radius: 50%;
-			border-top-color: #2979ff;
-			animation: spin 1s linear infinite;
-		}
+
+	.story-section {
+		margin-bottom: 60rpx;
 	}
-	
-	@keyframes spin {
-		0% { transform: rotate(0deg); }
-		100% { transform: rotate(360deg); }
+
+	.section-title {
+		font-size: 36rpx;
+		font-weight: bold;
+		color: #333;
+		margin-bottom: 30rpx;
+		display: block;
+		text-align: center;
+	}
+
+	.story-text {
+		font-size: 28rpx;
+		color: #666;
+		line-height: 1.8;
+		margin-bottom: 20rpx;
+		display: block;
+		text-indent: 2em;
+	}
+
+	.footer {
+		text-align: center;
+		padding-bottom: 40rpx;
+	}
+
+	.footer-text {
+		font-size: 24rpx;
+		color: #ccc;
 	}
 </style>

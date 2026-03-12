@@ -9,5 +9,8 @@ export const API = {
 	PAPERS: `${BASE_URL}/api/v1/papers`,
 	JOURNALS: `${BASE_URL}/api/v1/journals`,
 	TRENDS: `${BASE_URL}/api/v1/trends`,
-	PDF_BASE: `${BASE_URL}/uploads/pdfs/`
+	PDF_BASE: `${BASE_URL}/uploads/pdfs/`,
+	LOGIN: `${BASE_URL}/api/v1/mobile/login`,
+	PROFILE: `${BASE_URL}/api/v1/mobile/user`,
+	CHAT: `${BASE_URL}/api/v1/mobile/chat`
 }
