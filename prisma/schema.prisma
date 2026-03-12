@@ -58,6 +58,16 @@ model User {
 
   // Rate Limiting
   aiDesignUsage String? // JSON: { date: "2024-03-20", count: 5 }
+
+  sentAdminMessages AdminChatMessage[] @relation("AdminSender")
+}
+
+model AdminChatMessage {
+  id        String   @id @default(cuid())
+  content   String
+  senderId  String
+  sender    User     @relation("AdminSender", fields: [senderId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 }
 
 model Notification {
