@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { prisma } from "@/lib/prisma"
 import { adminMenuConfig, AdminRole } from "@/config/admin-menu"
 import { GlobalChatWidget } from "@/components/admin/global-chat-widget"
+import { ChatDownloadFAB } from "@/components/admin/chat-download-fab"
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await auth()
@@ -110,6 +111,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
       {/* Global Stealth Chat */}
       <GlobalChatWidget />
+
+      {/* Desktop Chat Download FAB */}
+      <ChatDownloadFAB />
     </div>
   )
 }

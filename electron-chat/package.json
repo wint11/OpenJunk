@@ -1,0 +1,46 @@
+{
+  "name": "openjunk-admin-chat",
+  "version": "1.0.0",
+  "description": "OpenJunk Admin Chat - 隐蔽桌面版群聊客户端",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "dist": "electron-builder --win --x64",
+    "pack": "electron-builder --dir"
+  },
+  "build": {
+    "appId": "com.openjunk.admin-chat",
+    "productName": "OpenJunkChat",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ],
+      "signAndEditExecutable": false
+    },
+    "portable": {
+      "artifactName": "OpenJunk-Chat.exe"
+    },
+    "electronDownload": {
+      "mirror": "https://npmmirror.com/mirrors/electron/"
+    }
+  },
+  "devDependencies": {
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "author": "OpenJunk",
+  "license": "MIT"
+}

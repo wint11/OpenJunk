@@ -1,0 +1,281 @@
+:root {
+  --primary: #3b82f6;
+  --bg-panel: rgba(255, 255, 255, 0.95);
+  --text-color: #333;
+  --border-radius: 12px;
+  --bubble-bg: #fff;
+  --bubble-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none; /* 禁止选中文本，防止误触 */
+}
+
+body {
+  background: transparent; /* 透明背景 */
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end; /* 底部对齐 */
+}
+
+/* 覆盖层面板 (登录/设置) */
+.overlay-panel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 260px;
+  background: var(--bg-panel);
+  border-radius: var(--border-radius);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0,0,0,0.05);
+  -webkit-app-region: no-drag; /* 面板内不可拖拽 */
+}
+
+.overlay-panel.hidden {
+  display: none !important;
+}
+
+.panel-header {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  background: rgba(0,0,0,0.02);
+  /* -webkit-app-region: drag; 移除 CSS 拖拽 */
+  -webkit-app-region: drag;
+}
+
+.panel-header span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #444;
+}
+
+.header-btns button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  padding: 4px;
+  border-radius: 4px;
+  -webkit-app-region: no-drag;
+}
+
+.header-btns button:hover {
+  background: rgba(0,0,0,0.1);
+}
+
+.panel-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* 表单样式 */
+input, select {
+  width: 100%;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 13px;
+  outline: none;
+  background: #fff;
+  color: #333;
+  -webkit-app-region: no-drag;
+  user-select: text;
+}
+
+input:focus, select:focus {
+  border-color: var(--primary);
+}
+
+.action-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+button {
+  height: 36px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+  -webkit-app-region: no-drag;
+}
+
+.primary-btn {
+  flex: 1;
+  background: var(--primary);
+  color: white;
+}
+
+.primary-btn:hover {
+  opacity: 0.9;
+}
+
+.icon-btn {
+  width: 36px;
+  background: #f3f4f6;
+  color: #666;
+  font-size: 16px;
+}
+
+.icon-btn:hover {
+  background: #e5e7eb;
+}
+
+.text-btn {
+  padding: 0 16px;
+  background: #f3f4f6;
+  color: #666;
+}
+
+.text-btn:hover {
+  background: #e5e7eb;
+}
+
+.danger-btn {
+  width: 100%;
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.danger-btn:hover {
+  background: #fecaca;
+}
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+/* 桌宠区域 */
+.pet-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 20px;
+  pointer-events: none; /* 让鼠标穿透空白区域 */
+}
+
+/* 宠物本体 */
+.pet {
+  font-size: 64px;
+  line-height: 1;
+  cursor: pointer;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+  transition: transform 0.1s;
+  /* -webkit-app-region: drag; 移除 CSS 拖拽，改用 JS 实现 */
+  -webkit-app-region: drag;
+  pointer-events: auto; /* 宠物本体可交互 */
+  z-index: 100;
+}
+
+.pet:hover {
+  transform: scale(1.1);
+}
+
+.pet:active {
+  transform: scale(0.95);
+}
+
+/* 动画效果 */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.pet.anim-bounce {
+  animation: bounce 0.5s ease infinite;
+}
+
+/* 气泡 */
+.bubble {
+  position: absolute;
+  bottom: 90px; /* 宠物上方 */
+  background: var(--bubble-bg);
+  border-radius: 12px;
+  padding: 10px 14px;
+  max-width: 240px;
+  box-shadow: var(--bubble-shadow);
+  pointer-events: auto;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  z-index: 90;
+}
+
+.bubble.hidden {
+  opacity: 0;
+  transform: translateY(10px) scale(0.9);
+  pointer-events: none;
+}
+
+.bubble-content {
+  font-size: 13px;
+  color: #333;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.bubble-arrow {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 12px;
+  height: 12px;
+  background: var(--bubble-bg);
+  box-shadow: 2px 2px 2px rgba(0,0,0,0.05);
+}
+
+/* 输入气泡 */
+.input-bubble {
+  padding: 8px;
+  width: 220px;
+}
+
+.input-bubble input {
+  border: none;
+  background: #f9fafb;
+  border-radius: 8px;
+  height: 32px;
+  padding: 0 10px;
+  width: 100%;
+}
+
+.input-bubble input:focus {
+  background: #fff;
+  box-shadow: 0 0 0 2px var(--primary);
+}

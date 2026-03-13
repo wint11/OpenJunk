@@ -70,3 +70,7 @@ public/generated-manuscripts/
 # backend
 venv
 .venv
+
+# electron
+electron-chat/dist
+electron-chat/node_modules
