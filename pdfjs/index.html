@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PDF Viewer</title>
+    <style>
+        * { margin: 0; padding: 0; }
+        body { background-color: #525659; height: 100vh; width: 100vw; overflow: hidden; }
+        #pdf-container { width: 100%; height: 100%; overflow: auto; -webkit-overflow-scrolling: touch; }
+        canvas { display: block; margin: 0 auto 10px auto; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .loading { color: white; text-align: center; margin-top: 50%; transform: translateY(-50%); font-family: sans-serif; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+    <div id="pdf-container">
+        <div class="loading">Loading PDF...</div>
+    </div>
+
+    <script>
+        // Set worker script path
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        // Get file URL from query parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const fileUrl = urlParams.get('file');
+
+        if (fileUrl) {
+            const container = document.getElementById('pdf-container');
+            const loading = document.querySelector('.loading');
+
+            pdfjsLib.getDocument(fileUrl).promise.then(function(pdf) {
+                loading.style.display = 'none';
+                
+                // Render all pages
+                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                    pdf.getPage(pageNum).then(function(page) {
+                        const scale = 1.5; // Good quality for mobile
+                        const viewport = page.getViewport({ scale: scale });
+                        
+                        // Create canvas
+                        const canvas = document.createElement('canvas');
+                        const context = canvas.getContext('2d');
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+                        
+                        // Adjust canvas style for mobile width
+                        const clientWidth = container.clientWidth;
+                        if (viewport.width > clientWidth) {
+                           canvas.style.width = '100%';
+                           canvas.style.height = 'auto';
+                        }
+
+                        container.appendChild(canvas);
+
+                        const renderContext = {
+                            canvasContext: context,
+                            viewport: viewport
+                        };
+                        page.render(renderContext);
+                    });
+                }
+            }).catch(function(error) {
+                loading.innerHTML = 'Error loading PDF: ' + error.message;
+                console.error('Error loading PDF:', error);
+            });
+        } else {
+            document.querySelector('.loading').innerHTML = 'No file specified';
+        }
+    </script>
+</body>
+</html>

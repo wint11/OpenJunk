@@ -1,0 +1,39 @@
+1:"$Sreact.fragment"
+2:I[10196,["/_next/static/chunks/fb2ff57bae076136.js","/_next/static/chunks/c022a629a3161d5a.js"],"ViewportBoundary"]
+3:I[10196,["/_next/static/chunks/fb2ff57bae076136.js","/_next/static/chunks/c022a629a3161d5a.js"],"MetadataBoundary"]
+4:"$Sreact.suspense"
+6:I[97291,["/_next/static/chunks/fb2ff57bae076136.js","/_next/static/chunks/c022a629a3161d5a.js"],"IconMark"]
+5:Te60,《观察》（Observe）
+
+在知识日益碎片化的时代，《观察》（Observe）期刊致力于打破学科壁垒，重建对世界整体性的认知。我们坚信，最深刻的洞见往往诞生于常规视野的边缘，以及不同领域思想的碰撞之中。
+
+核心理念：
+本刊专注于发表“非常规观察”。我们关注那些被主流范式忽略的细节、挑战既有认知框架的异常现象，以及预示着学科范式转移的早期信号。我们相信，真正的科学突破和思想革新，往往始于对“常态”之外的一次忠实记录与深刻反思。
+
+涵盖领域：
+《观察》搭建的是一个跨学科对话的平台，涵盖范围广泛，包括但不限于：
+ 人文社科： 关注社会行为中的非理性因素、边缘文化现象、历史叙事的断层、以及人类思维模式的潜在演变。
+ 自然科学： 聚焦物理学中的未解之谜、化学中的非常规反应、地球科学中的罕见地质现象等挑战现有理论边界的观察。
+ 生命科学与生物学： 致力于发表关于生物行为异常、生态系统中的微妙平衡、进化路径上的偶然性，以及生命体与环境之间非典型互动关系的新颖观察。
+
+特色与愿景：
+我们不仅记录“看到了什么”，更追问“为何只有少数人看到”。《观察》旨在成为全球科研工作者、思想家和探索者的集结地，共同捕捉时代的思想暗流，孵化改变世界的灵感。
+
+在这里，我们致敬好奇心，更礼赞那些敢于凝视未知的双眼。因为观察，是好奇心的起点，也是洞见的终点。
+Introduction to Observe Journal
+
+In an era of increasing knowledge fragmentation, Observe Journal is dedicated to breaking down disciplinary silos and rebuilding a holistic understanding of our world. We firmly believe that the most profound insights often emerge at the edges of conventional vision, from the collision of ideas across different fields.
+
+Core Philosophy:
+We focus on publishing "unconventional observations." Our scope includes details overlooked by mainstream paradigms, anomalies that challenge existing cognitive frameworks, and early signals heralding a paradigm shift in scientific disciplines. We believe that true breakthroughs and intellectual renewals begin with a faithful record and deep reflection on what lies beyond the "normal."
+
+Scope of Coverage:
+Observe serves as a platform for interdisciplinary dialogue, encompassing a wide range of fields, including but not limited to:
+• Humanities & Social Sciences: Examining irrational factors in social behavior, marginal cultural phenomena, ruptures in historical narratives, and potential evolutions in human thought patterns.
+• Natural Sciences: Focusing on unsolved mysteries in physics, unconventional reactions in chemistry, rare geological events in earth sciences, and other observations that challenge the boundaries of existing theories.
+• Life Sciences & Biology: Dedicating space to novel observations on anomalous biological behaviors, subtle balances in ecosystems, contingencies in evolutionary paths, and atypical interactions between organisms and their environments.
+
+Distinction & Vision:
+We do not merely record "what was seen," but also ask, "why did so few see it?" Observe aims to be a gathering point for researchers, thinkers, and explorers worldwide to capture the undercurrents of our time and incubate world-changing ideas.
+
+Here, we pay tribute to curiosity and celebrate those who dare to gaze into the unknown. For to observe is both the starting point of curiosity and the endpoint of insight.0:{"buildId":"KULENC-SAwxv3i_NGO8Ob","rsc":["$","$1","h",{"children":[null,["$","$L2",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$L3",null,{"children":["$","$4",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Observe - OpenJunk"}],["$","meta","1",{"name":"description","content":"$5"}],["$","link","2",{"rel":"icon","href":"/favicon.ico?favicon.0b3bf435.ico","sizes":"256x256","type":"image/x-icon"}],["$","$L6","3",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"loading":null,"isPartial":false}

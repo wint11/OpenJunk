@@ -1,0 +1,28 @@
+[
+  {
+    "id": "cmm2u2fh70014s0jmrj8ywc22",
+    "userId": "cmlqbdmog0008i51uvi5nuxy6",
+    "realName": "总编",
+    "title": null,
+    "researchField": null,
+    "institution": null,
+    "bankCard": null,
+    "idCard": null,
+    "isActive": true,
+    "createdAt": "2026-02-26T02:17:35.707Z",
+    "updatedAt": "2026-02-26T02:17:35.707Z"
+  },
+  {
+    "id": "cmm2u624b001bs0jm3jpixz77",
+    "userId": "cmm2870e40007s0jmtiaetm2o",
+    "realName": "自燃科学鸡精委员会",
+    "title": null,
+    "researchField": null,
+    "institution": null,
+    "bankCard": null,
+    "idCard": null,
+    "isActive": true,
+    "createdAt": "2026-02-26T02:20:25.019Z",
+    "updatedAt": "2026-02-26T02:20:25.019Z"
+  }
+]

@@ -1,0 +1,5 @@
+1:"$Sreact.fragment"
+2:I[10196,["/_next/static/chunks/fb2ff57bae076136.js","/_next/static/chunks/c022a629a3161d5a.js"],"OutletBoundary"]
+3:"$Sreact.suspense"
+0:{"buildId":"KULENC-SAwxv3i_NGO8Ob","rsc":["$","$1","c",{"children":[["$","div",null,{"className":"container mx-auto py-12 px-4 text-center","children":[["$","h1",null,{"className":"text-3xl font-bold mb-4","children":"作者"}],["$","p",null,{"className":"text-muted-foreground","children":"正在建设中，敬请期待..."}]]}],null,["$","$L2",null,{"children":["$","$3",null,{"name":"Next.MetadataOutlet","children":"$@4"}]}]]}],"loading":null,"isPartial":false}
+4:null

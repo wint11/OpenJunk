@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[10196,["/_next/static/chunks/fb2ff57bae076136.js","/_next/static/chunks/c022a629a3161d5a.js"],"ViewportBoundary"]
+3:I[10196,["/_next/static/chunks/fb2ff57bae076136.js","/_next/static/chunks/c022a629a3161d5a.js"],"MetadataBoundary"]
+4:"$Sreact.suspense"
+5:I[97291,["/_next/static/chunks/fb2ff57bae076136.js","/_next/static/chunks/c022a629a3161d5a.js"],"IconMark"]
+0:{"buildId":"KULENC-SAwxv3i_NGO8Ob","rsc":["$","$1","h",{"children":[null,["$","$L2",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$L3",null,{"children":["$","$4",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Rubbish Management - OpenJunk"}],["$","meta","1",{"name":"description","content":"《Rubbish Management》是由管理学专业裁撤研究中心主管、主办，社嗑鸡精资助的学术期刊，创刊于新时代管理想象力全面溢出的关键节点。本刊顺应抽象学术与管理科学专业毕业即失业的时代浪潮，立足现实、超越现实，在荒诞与严肃之间寻找方法论张力，为荒诞管理学、无用管理学、抽象管理学，人类管理学与宇宙管理学等前沿议题提供高水平交流平台。期刊坚持“在严肃中反思严肃”的办刊理念。"}],["$","link","2",{"rel":"icon","href":"/favicon.ico?favicon.0b3bf435.ico","sizes":"256x256","type":"image/x-icon"}],["$","$L5","3",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"loading":null,"isPartial":false}

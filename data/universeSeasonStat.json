@@ -1,0 +1,107 @@
+[
+  {
+    "id": "cmm3jzn1b000de1k7we4j6bo0",
+    "seasonId": "cmm3jokzz0000ujazlxjhl5dc",
+    "journalId": "cmlx5vldc0018pbh0p9bsvpmy",
+    "combatPowerContribution": 5,
+    "updatedAt": "2026-02-26T14:23:15.552Z"
+  },
+  {
+    "id": "cmm3lmdfq000te1k72kyoasp0",
+    "seasonId": "cmm3jokzz0000ujazlxjhl5dc",
+    "journalId": "cmlqbdmnl0000i51uto1ew62x",
+    "combatPowerContribution": 9,
+    "updatedAt": "2026-03-13T13:43:30.337Z"
+  },
+  {
+    "id": "cmm50b4vq001ue1k7kp2zq1fc",
+    "seasonId": "cmm3jokzz0000ujazlxjhl5dc",
+    "journalId": "cmlw2mzpo0005pbh03v8vvt04",
+    "combatPowerContribution": 7,
+    "updatedAt": "2026-03-06T13:45:27.905Z"
+  },
+  {
+    "id": "cmm5r61cc0036e1k7ad3c35ri",
+    "seasonId": "cmm3jokzz0000ujazlxjhl5dc",
+    "journalId": "cmlqbdmo00003i51uqo85gv8e",
+    "combatPowerContribution": 16,
+    "updatedAt": "2026-03-01T15:58:26.428Z"
+  },
+  {
+    "id": "cmm6cwj9a004fe1k70ye2x9kp",
+    "seasonId": "cmm3jokzz0000ujazlxjhl5dc",
+    "journalId": "cmlqbdmo60005i51uc3u92b7t",
+    "combatPowerContribution": 11,
+    "updatedAt": "2026-03-01T04:42:11.279Z"
+  },
+  {
+    "id": "cmm7w2l4u0028bf2oirevrs5r",
+    "seasonId": "cmm3jokzz0000ujazlxjhl5dc",
+    "journalId": "cmm7uigzh000ybf2ol1jch7vm",
+    "combatPowerContribution": 2,
+    "updatedAt": "2026-03-01T15:12:33.149Z"
+  },
+  {
+    "id": "cmmd9elk1000a4tcczdy2ulzc",
+    "seasonId": "cmm3jokzz0000ujazlxjhl5dc",
+    "journalId": "cmlrlpj7v000oyru6yw83gojd",
+    "combatPowerContribution": 7,
+    "updatedAt": "2026-03-05T09:26:02.254Z"
+  },
+  {
+    "id": "cmmg8pz8n00ag4tccq8ov5jqb",
+    "seasonId": "cmm3jokzz0000ujazlxjhl5dc",
+    "journalId": "cmm91vw02008vbf2ogrt3t70o",
+    "combatPowerContribution": 19,
+    "updatedAt": "2026-03-07T11:32:39.440Z"
+  },
+  {
+    "id": "cmmg8ucwm00bh4tcc6323k68o",
+    "seasonId": "cmm3jokzz0000ujazlxjhl5dc",
+    "journalId": "cmm7iduu0002cdmce7j84uesy",
+    "combatPowerContribution": 11,
+    "updatedAt": "2026-03-07T11:33:50.179Z"
+  },
+  {
+    "id": "cmmgf6nyk00ef4tccaf8eugh4",
+    "seasonId": "cmm3jokzz0000ujazlxjhl5dc",
+    "journalId": "cmmgebeei00dp4tcc5520j4b5",
+    "combatPowerContribution": 22,
+    "updatedAt": "2026-03-07T14:30:51.990Z"
+  },
+  {
+    "id": "cmmh8uk5000h34tccg1ptvszx",
+    "seasonId": "cmm3jokzz0000ujazlxjhl5dc",
+    "journalId": "cmlxn83tb001rpbh0wx15mkku",
+    "combatPowerContribution": 6,
+    "updatedAt": "2026-03-24T07:28:29.477Z"
+  },
+  {
+    "id": "cmmivymhs002j2gpaxv7ow7dt",
+    "seasonId": "cmm3jokzz0000ujazlxjhl5dc",
+    "journalId": "cmm91228p008pbf2ot7t6vq3q",
+    "combatPowerContribution": 4,
+    "updatedAt": "2026-03-09T07:54:56.223Z"
+  },
+  {
+    "id": "cmmj1zqbr000x12xd75ynzd4b",
+    "seasonId": "cmm3jokzz0000ujazlxjhl5dc",
+    "journalId": "cmlqdj5c7000c11gxs6lozl0s",
+    "combatPowerContribution": 5,
+    "updatedAt": "2026-03-12T15:40:04.091Z"
+  },
+  {
+    "id": "cmmtdftaa008fkawt6439xghs",
+    "seasonId": "cmm3jokzz0000ujazlxjhl5dc",
+    "journalId": "cmm5vac5f003te1k70zqovyxr",
+    "combatPowerContribution": 6,
+    "updatedAt": "2026-03-16T16:02:54.488Z"
+  },
+  {
+    "id": "cmn4ajxph00e1kawtfwkt38ar",
+    "seasonId": "cmm3jokzz0000ujazlxjhl5dc",
+    "journalId": "cmlqbdmnw0002i51udwymsfe4",
+    "combatPowerContribution": 4,
+    "updatedAt": "2026-03-24T07:26:59.400Z"
+  }
+]

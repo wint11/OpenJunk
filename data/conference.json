@@ -1,0 +1,32 @@
+[
+  {
+    "id": "cmm99jrba00d2bf2olstrp78h",
+    "name": "ICML 2026: I Can’t Make Learning ",
+    "description": "拒绝内卷，拥抱拖延。庆祝我们与截稿日期惊险擦肩而过的每一个瞬间。",
+    "guidelines": "1. 主旨报告： 《从入门到理综：我的LaTeX编译失败次数与发际线退却速度的线性回归分析》\r\n2. 圆桌论坛： 《Reviewer #2 是不是刚失恋？—— 一份基于情感计算的无端指责与反击策略》\r\n3. 海报展示： 参会者将展示他们为了赶DDL而购买的、积灰已久的健身环大冒险，以及它们在“健身-久坐-颈椎病”恶性循环中的完全失效状态。\r\n4. 特别环节： “思想’壁’展”——展示那些被导师毙掉、被自己推翻、或被咖啡泼溅过的、最具潜力的PPT初稿。我们相信，没讲出来的故事，才是最动人的故事。\r\n5. 社交酒会： 特供“咖啡因过量特调”和“后悔药风味软糖”。在这里，你不用聊你的模型有多SOTA（最先进），你只需要聊你的模型有多“SOFT”（软，指一碰就碎）。交换各自“虽然这次没中，但我编的 rebuttal 理由真的很精彩”的感人故事。",
+    "guidelinesUrl": "/uploads/guidelines/1772461055255-ICML2026.docx",
+    "coverUrl": "/uploads/conferences/1772461055238-ICML2026.jpeg",
+    "customCssUrl": null,
+    "location": null,
+    "startDate": "2026-03-02T14:17:35.494Z",
+    "endDate": "2026-03-02T14:17:35.494Z",
+    "status": "ACTIVE",
+    "createdAt": "2026-03-02T14:17:35.494Z",
+    "updatedAt": "2026-03-02T14:17:35.494Z"
+  },
+  {
+    "id": "cmmgl2wd900gd4tccrepfmkkz",
+    "name": "National and Rubbish",
+    "description": "旨在处理各国之间的垃圾，平时收录各方垃圾论文",
+    "guidelines": "",
+    "guidelinesUrl": null,
+    "coverUrl": "/uploads/conferences/1772903687386-1000171860.jpg",
+    "customCssUrl": null,
+    "location": null,
+    "startDate": "2026-03-07T17:14:47.515Z",
+    "endDate": "2026-03-07T17:14:47.515Z",
+    "status": "ACTIVE",
+    "createdAt": "2026-03-07T17:14:47.515Z",
+    "updatedAt": "2026-03-07T17:14:47.515Z"
+  }
+]

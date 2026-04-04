@@ -1,0 +1,90 @@
+[
+  {
+    "id": "cmlt0zqa0000xn850yp0acew8",
+    "novelId": "cmlt0yfny000pn850n6cdd202",
+    "reviewerId": "cmlqbdmp1000ki51urqz37a2l",
+    "action": "REJECT",
+    "feedback": "快速拒稿",
+    "createdAt": "2026-02-19T05:33:45.288Z"
+  },
+  {
+    "id": "cmlt14w0d0017n8505ayn2vv9",
+    "novelId": "cmlt1267k000zn850gd4ix1i1",
+    "reviewerId": "cmlqbdmp1000ki51urqz37a2l",
+    "action": "APPROVE",
+    "feedback": "录用发布",
+    "createdAt": "2026-02-19T05:37:45.997Z"
+  },
+  {
+    "id": "cmlwaspds000rpbh0goplgoff",
+    "novelId": "cmlwarxlh000hpbh0cbftdic5",
+    "reviewerId": "cmlqbdmog0008i51uvi5nuxy6",
+    "action": "REJECT",
+    "feedback": "快速拒稿",
+    "createdAt": "2026-02-21T12:31:32.224Z"
+  },
+  {
+    "id": "cmlz8aaa1003apbh0vo8zrxvs",
+    "novelId": "cmlwf3u7f000zpbh0ij0qjv8j",
+    "reviewerId": "cmltas75d00026onq2i70kd5a",
+    "action": "APPROVE",
+    "feedback": "录用发布",
+    "createdAt": "2026-02-23T13:44:32.137Z"
+  },
+  {
+    "id": "cmm8jio1l004xbf2ok1zuf4x6",
+    "novelId": "cmm7s2sm1000mbf2ozzrq6fs1",
+    "reviewerId": "cmlqbdmog0008i51uvi5nuxy6",
+    "action": "APPROVE",
+    "feedback": "录用发布",
+    "createdAt": "2026-03-02T02:08:54.585Z"
+  },
+  {
+    "id": "cmm8qxllc0079bf2orjw2q2h8",
+    "novelId": "cmm7y2olq002ubf2o77v79o37",
+    "reviewerId": "cmlw36kua000dpbh0ku4ok6c6",
+    "action": "APPROVE",
+    "feedback": "录用发布",
+    "createdAt": "2026-03-02T05:36:28.560Z"
+  },
+  {
+    "id": "cmm9hlex20007a5jcrdye8f2w",
+    "novelId": "cmm9hjk880003a5jcmbvsn3fl",
+    "reviewerId": "cmlqbdmp1000ki51urqz37a2l",
+    "action": "MINOR_REVISION",
+    "feedback": "建议修改格式后接收",
+    "createdAt": "2026-03-02T18:02:49.671Z"
+  },
+  {
+    "id": "cmm9hmbii000ca5jchp8xegac",
+    "novelId": "cmm9hjk880003a5jcmbvsn3fl",
+    "reviewerId": "cmlqbdmp1000ki51urqz37a2l",
+    "action": "APPROVE",
+    "feedback": "录用发布",
+    "createdAt": "2026-03-02T18:03:31.914Z"
+  },
+  {
+    "id": "cmmel6u6600584tccrniyl8a9",
+    "novelId": "cmmeighvh00434tccyc4p3h4g",
+    "reviewerId": "cmlzbq318004apbh0rpzu66g0",
+    "action": "COMMENT",
+    "feedback": "引人入胜的文章，小编仿佛化身四十名同龄高中生对照组中的一员见证着Luo Xuan同学在上课铃响后大摇大摆离开教室。值得注意的是，年轻科研人的钻研精神令人敬佩，从跟踪被试在马桶上的异常手机使用到脑影像生物标记的病理性研究，小编衷心希望能看到本文作者登上十八岁破格录取全奖博士的新闻。",
+    "createdAt": "2026-03-06T07:42:18.941Z"
+  },
+  {
+    "id": "cmmepin9l00624tccmc90nu7y",
+    "novelId": "cmmeighvh00434tccyc4p3h4g",
+    "reviewerId": "cmlzbq318004apbh0rpzu66g0",
+    "action": "MINOR_REVISION",
+    "feedback": "引人入胜的文章，小编仿佛化身四十名同龄高中生对照组中的一员见证着Luo Xuan同学在上课铃响后大摇大摆离开教室。值得注意的是，年轻科研人的钻研精神令人敬佩，从跟踪被试在马桶上的异常手机使用到脑影像生物标记的病理性研究，小编衷心希望能看到本文作者登上十八岁破格录取全奖博士的新闻。",
+    "createdAt": "2026-03-06T09:43:28.316Z"
+  },
+  {
+    "id": "cmmqfca4y006pkawtecjwax6n",
+    "novelId": "cmmf2opc9007a4tcc3jao476v",
+    "reviewerId": "cmmhq0bce00002gpa548obz81",
+    "action": "APPROVE",
+    "feedback": "录用发布",
+    "createdAt": "2026-03-14T14:31:49.328Z"
+  }
+]

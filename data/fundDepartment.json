@@ -1,0 +1,92 @@
+[
+  {
+    "id": "cmm7et3pu001t14octqy6mq0k",
+    "name": "数理科学部",
+    "code": "1",
+    "description": "",
+    "categoryId": "cmm283gwk0004s0jma6s26h37",
+    "createdAt": "2026-03-01T07:09:17.202Z",
+    "updatedAt": "2026-03-01T07:09:17.202Z"
+  },
+  {
+    "id": "cmm7f2b0o001x14oc1htwdpqv",
+    "name": "化学科学部",
+    "code": "2",
+    "description": "",
+    "categoryId": "cmm283gwk0004s0jma6s26h37",
+    "createdAt": "2026-03-01T07:16:26.568Z",
+    "updatedAt": "2026-03-01T07:16:26.568Z"
+  },
+  {
+    "id": "cmm7f31n7002114ocq41bvlmk",
+    "name": "生命科学部",
+    "code": "3",
+    "description": "",
+    "categoryId": "cmm283gwk0004s0jma6s26h37",
+    "createdAt": "2026-03-01T07:17:01.075Z",
+    "updatedAt": "2026-03-01T07:17:01.075Z"
+  },
+  {
+    "id": "cmm7f3kq1002314ocw2qkmwh0",
+    "name": "地球科学部",
+    "code": "4",
+    "description": "",
+    "categoryId": "cmm283gwk0004s0jma6s26h37",
+    "createdAt": "2026-03-01T07:17:25.801Z",
+    "updatedAt": "2026-03-01T07:17:25.801Z"
+  },
+  {
+    "id": "cmm7f3ysd002514ockgas15if",
+    "name": "工程与材料科学部",
+    "code": "5",
+    "description": "",
+    "categoryId": "cmm283gwk0004s0jma6s26h37",
+    "createdAt": "2026-03-01T07:17:44.029Z",
+    "updatedAt": "2026-03-01T07:17:44.029Z"
+  },
+  {
+    "id": "cmm7f4aoi002714ockwb06c0u",
+    "name": "信息科学部",
+    "code": "6",
+    "description": "",
+    "categoryId": "cmm283gwk0004s0jma6s26h37",
+    "createdAt": "2026-03-01T07:17:59.442Z",
+    "updatedAt": "2026-03-01T07:17:59.442Z"
+  },
+  {
+    "id": "cmm7f4k1u002914oceev4ncim",
+    "name": "管理科学部",
+    "code": "7",
+    "description": "",
+    "categoryId": "cmm283gwk0004s0jma6s26h37",
+    "createdAt": "2026-03-01T07:18:11.586Z",
+    "updatedAt": "2026-03-01T07:18:11.586Z"
+  },
+  {
+    "id": "cmm7f4rym002b14ocjymd49ku",
+    "name": "医学科学部",
+    "code": "8",
+    "description": "",
+    "categoryId": "cmm283gwk0004s0jma6s26h37",
+    "createdAt": "2026-03-01T07:18:21.838Z",
+    "updatedAt": "2026-03-01T07:18:21.838Z"
+  },
+  {
+    "id": "cmm7f52de002d14ocr41snj8e",
+    "name": "重大研究计划",
+    "code": "9",
+    "description": "",
+    "categoryId": "cmm283gwk0004s0jma6s26h37",
+    "createdAt": "2026-03-01T07:18:35.331Z",
+    "updatedAt": "2026-03-01T07:18:35.331Z"
+  },
+  {
+    "id": "cmm7f5bub002f14ocsdlxelrb",
+    "name": "联合基金",
+    "code": "U",
+    "description": "",
+    "categoryId": "cmm283gwk0004s0jma6s26h37",
+    "createdAt": "2026-03-01T07:18:47.603Z",
+    "updatedAt": "2026-03-01T07:18:47.603Z"
+  }
+]

@@ -1,0 +1,201 @@
+1:"$Sreact.fragment"
+2:I[26269,["/_next/static/chunks/c31f64d516e5aed5.js","/_next/static/chunks/51662978c1dc1a3d.js","/_next/static/chunks/aa9d8d086acb8bdd.js","/_next/static/chunks/c6bb07a934291682.js","/_next/static/chunks/a33506d8ce13a3cc.js","/_next/static/chunks/d148c24c8bce1c09.js"],"ThemeProvider"]
+3:I[15455,["/_next/static/chunks/c31f64d516e5aed5.js","/_next/static/chunks/51662978c1dc1a3d.js","/_next/static/chunks/aa9d8d086acb8bdd.js","/_next/static/chunks/c6bb07a934291682.js","/_next/static/chunks/a33506d8ce13a3cc.js","/_next/static/chunks/d148c24c8bce1c09.js"],"NavbarWrapper"]
+4:I[8198,["/_next/static/chunks/c31f64d516e5aed5.js","/_next/static/chunks/51662978c1dc1a3d.js","/_next/static/chunks/aa9d8d086acb8bdd.js","/_next/static/chunks/c6bb07a934291682.js","/_next/static/chunks/a33506d8ce13a3cc.js","/_next/static/chunks/d148c24c8bce1c09.js"],"Navbar"]
+6:I[2109,["/_next/static/chunks/c31f64d516e5aed5.js","/_next/static/chunks/51662978c1dc1a3d.js","/_next/static/chunks/aa9d8d086acb8bdd.js","/_next/static/chunks/c6bb07a934291682.js","/_next/static/chunks/a33506d8ce13a3cc.js","/_next/static/chunks/d148c24c8bce1c09.js"],"MainWrapper"]
+7:I[59763,["/_next/static/chunks/fb2ff57bae076136.js","/_next/static/chunks/c022a629a3161d5a.js"],"default"]
+8:I[53968,["/_next/static/chunks/fb2ff57bae076136.js","/_next/static/chunks/c022a629a3161d5a.js"],"default"]
+9:I[70665,["/_next/static/chunks/c31f64d516e5aed5.js","/_next/static/chunks/51662978c1dc1a3d.js","/_next/static/chunks/aa9d8d086acb8bdd.js","/_next/static/chunks/c6bb07a934291682.js","/_next/static/chunks/a33506d8ce13a3cc.js","/_next/static/chunks/d148c24c8bce1c09.js"],"Footer"]
+a:I[87544,["/_next/static/chunks/c31f64d516e5aed5.js","/_next/static/chunks/51662978c1dc1a3d.js","/_next/static/chunks/aa9d8d086acb8bdd.js","/_next/static/chunks/c6bb07a934291682.js","/_next/static/chunks/a33506d8ce13a3cc.js","/_next/static/chunks/d148c24c8bce1c09.js"],"Toaster"]
+b:I[25253,["/_next/static/chunks/c31f64d516e5aed5.js","/_next/static/chunks/51662978c1dc1a3d.js","/_next/static/chunks/aa9d8d086acb8bdd.js","/_next/static/chunks/c6bb07a934291682.js","/_next/static/chunks/a33506d8ce13a3cc.js","/_next/static/chunks/d148c24c8bce1c09.js"],"MobileAppPrompter"]
+c:I[7561,["/_next/static/chunks/c31f64d516e5aed5.js","/_next/static/chunks/51662978c1dc1a3d.js","/_next/static/chunks/aa9d8d086acb8bdd.js","/_next/static/chunks/c6bb07a934291682.js","/_next/static/chunks/a33506d8ce13a3cc.js","/_next/static/chunks/d148c24c8bce1c09.js"],"DisclaimerDialog"]
+e:I[10196,["/_next/static/chunks/fb2ff57bae076136.js","/_next/static/chunks/c022a629a3161d5a.js"],"OutletBoundary"]
+f:"$Sreact.suspense"
+11:I[10196,["/_next/static/chunks/fb2ff57bae076136.js","/_next/static/chunks/c022a629a3161d5a.js"],"ViewportBoundary"]
+13:I[10196,["/_next/static/chunks/fb2ff57bae076136.js","/_next/static/chunks/c022a629a3161d5a.js"],"MetadataBoundary"]
+15:I[48796,[],"default"]
+:HL["/_next/static/chunks/2473c16c0c2f6b5f.css","style"]
+:HL["/_next/static/chunks/9d1c0e246761b223.css","style"]
+:HL["/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+0:{"P":null,"b":"KULENC-SAwxv3i_NGO8Ob","c":["","journals","cmlw2mzpo0005pbh03v8vvt04"],"q":"","i":false,"f":[[["",{"children":["journals",{"children":[["id","cmlw2mzpo0005pbh03v8vvt04","d"],{"children":["__PAGE__",{}]}]}]},"$undefined","$undefined",true],[["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/2473c16c0c2f6b5f.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","link","1",{"rel":"stylesheet","href":"/_next/static/chunks/9d1c0e246761b223.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/_next/static/chunks/c31f64d516e5aed5.js","async":true,"nonce":"$undefined"}],["$","script","script-1",{"src":"/_next/static/chunks/51662978c1dc1a3d.js","async":true,"nonce":"$undefined"}],["$","script","script-2",{"src":"/_next/static/chunks/aa9d8d086acb8bdd.js","async":true,"nonce":"$undefined"}],["$","script","script-3",{"src":"/_next/static/chunks/c6bb07a934291682.js","async":true,"nonce":"$undefined"}],["$","script","script-4",{"src":"/_next/static/chunks/a33506d8ce13a3cc.js","async":true,"nonce":"$undefined"}],["$","script","script-5",{"src":"/_next/static/chunks/d148c24c8bce1c09.js","async":true,"nonce":"$undefined"}]],["$","html",null,{"lang":"zh-CN","suppressHydrationWarning":true,"children":["$","body",null,{"className":"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable antialiased min-h-screen flex flex-col","children":["$","$L2",null,{"attribute":"class","defaultTheme":"system","enableSystem":true,"disableTransitionOnChange":true,"children":[["$","$L3",null,{"children":["$","$L4",null,{}]}],"$L5",["$","$L6",null,{"children":["$","$L7",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L8",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]}],["$","$L9",null,{}],["$","$La",null,{}],["$","$Lb",null,{}],["$","$Lc",null,{}]]}]}]}]]}],{"children":[["$","$1","c",{"children":[null,["$","$L7",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L8",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["$","$1","c",{"children":[null,["$","$L7",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L8",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["$","$1","c",{"children":["$Ld",[["$","script","script-0",{"src":"/_next/static/chunks/85f66ede9db7f4ca.js","async":true,"nonce":"$undefined"}]],["$","$Le",null,{"children":["$","$f",null,{"name":"Next.MetadataOutlet","children":"$@10"}]}]]}],{},null,false,false]},null,false,false]},null,false,false]},null,false,false],["$","$1","h",{"children":[null,["$","$L11",null,{"children":"$L12"}],["$","div",null,{"hidden":true,"children":["$","$L13",null,{"children":["$","$f",null,{"name":"Next.Metadata","children":"$L14"}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],false]],"m":"$undefined","G":["$15",[]],"S":true}
+5:null
+16:I[42950,["/_next/static/chunks/c31f64d516e5aed5.js","/_next/static/chunks/51662978c1dc1a3d.js","/_next/static/chunks/aa9d8d086acb8bdd.js","/_next/static/chunks/c6bb07a934291682.js","/_next/static/chunks/a33506d8ce13a3cc.js","/_next/static/chunks/d148c24c8bce1c09.js","/_next/static/chunks/85f66ede9db7f4ca.js"],"JournalCustomRenderer"]
+17:T25f8,<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{name}} - Rubbish Neurology</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400;1,700&family=Public+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --nature-red: #e4002b; 
+            --text-main: #222222;
+            --line-gray: #dddddd;
+        }
+        body { 
+            font-family: 'Public Sans', sans-serif; 
+            background-color: #ffffff; 
+            color: var(--text-main); 
+            -webkit-font-smoothing: antialiased; 
+            font-size: 13px; 
+        }
+        .serif { font-family: 'Lora', serif; }
+        .top-red-line { height: 3px; background-color: var(--nature-red); width: 100%; position: sticky; top: 0; z-index: 50; }
+        .header-top { border-bottom: 1px solid var(--line-gray); padding: 8px 0; font-weight: 700; font-size: 11px; }
+        .journal-masthead { font-size: 3rem; letter-spacing: -0.04em; font-weight: 700; line-height: 1; margin: 24px 0; color: #000; }
+        .paper-title { 
+            font-family: 'Lora', serif; 
+            font-weight: 700; 
+            font-size: 1.25rem; 
+            line-height: 1.3; 
+            color: #000; 
+            letter-spacing: -0.01em; 
+            display: block;
+        }
+        .paper-title:hover { color: var(--nature-red); text-decoration: underline; }
+        .abstract-preview { font-size: 13px; line-height: 1.6; color: #444; margin-top: 8px; }
+        .section-label { font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: #666; margin-bottom: 12px; display: block; }
+        .editor-card { background-color: #f8f8f8; border-top: 1px solid #000; padding: 16px; display: flex; gap: 16px; align-items: flex-start; }
+        .editor-avatar { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; }
+        .btn-submit { background-color: #000; color: #fff; font-weight: 700; font-size: 10px; letter-spacing: 0.1em; padding: 10px 16px; text-transform: uppercase; text-align: center; width: 100%; display: block; }
+        .btn-submit:hover { background-color: var(--nature-red); }
+        .main-container { max-width: 1240px; margin: 0 auto; padding: 0 40px; }
+        .category-tag { background: #555; color: #fff; font-size: 9px; padding: 1px 5px; font-weight: 800; text-transform: uppercase; border-radius: 2px; }
+    </style>
+</head>
+<body>
+    <div class="top-red-line"></div>
+
+    <header class="main-container">
+        <div class="header-top flex justify-between items-center text-gray-500 uppercase tracking-widest">
+            <div class="flex gap-4">
+                <span class="text-black font-black">RUBBISH</span>
+                <span>Science Portfolio</span>
+            </div>
+            <div class="flex gap-4 text-[9px]">
+                <span>已收录 {{paperCount}} 篇</span>
+                <span>{{adminCount}} 位编辑</span>
+            </div>
+        </div>
+        
+        <h1 class="serif journal-masthead">{{name}}</h1>
+        <p class="serif italic text-lg text-gray-500 -mt-4 mb-6">
+            {{#if description}} {{description}} {{else}} Championing the neurobiology of absolute nonsense. {{/if}}
+        </p>
+
+        <div class="border-t border-black pt-2 pb-6 flex justify-between items-end">
+            <div class="flex gap-6 font-bold text-[11px] uppercase tracking-wider">
+                <span class="border-b-2 border-red-600 pb-1">Latest Research</span>
+                <span class="text-gray-400">Editorial</span>
+                <span class="text-gray-400">Collections</span>
+            </div>
+            <div class="text-right text-gray-400 text-[10px] font-bold uppercase">
+                Established {{createdAt}}
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container grid grid-cols-12 gap-16 mt-4">
+        <main class="col-span-8">
+            <span class="section-label">Research Articles</span>
+            <div class="h-px bg-black w-full mb-8"></div>
+
+            <div class="space-y-12">
+                {{#if papers.length}}
+                    {{#each papers}}
+                    <article class="pb-10 border-b border-gray-100 last:border-0">
+                        <a href="/novel/{{id}}" class="paper-title">{{title}}</a>
+                        <div class="flex items-center text-[10px] text-gray-500 gap-3 mt-3">
+                            <span class="font-bold text-black border-b border-black cursor-pointer">{{author}}</span>
+                            <span>|</span>
+                            <span class="italic">Rubbish Neurology</span>
+                            <span>|</span>
+                            <span>{{date}}</span>
+                            {{#if category}}
+                            <span class="category-tag">{{category}}</span>
+                            {{/if}}
+                        </div>
+                        <p class="abstract-preview">
+                            {{#if description}} {{description}} {{else}} No abstract available for this article. {{/if}}
+                        </p>
+                        <div class="flex items-center justify-between mt-5">
+                            <div class="flex gap-6 text-[10px] font-bold">
+                                <span class="text-orange-600">🔥 热度</span>
+                                <a href="/novel/{{id}}" class="text-gray-400 hover:text-black uppercase tracking-tighter">📄 Download PDF</a>
+                            </div>
+                            <a href="/novel/{{id}}" class="text-[10px] font-bold text-gray-400 hover:text-black uppercase tracking-tighter text-right">View Details ></a>
+                        </div>
+                    </article>
+                    {{/each}}
+                {{else}}
+                    <div class="py-20 text-center text-gray-400 serif italic border-2 border-dashed border-gray-100 rounded">
+                        No articles published in this section yet.
+                    </div>
+                {{/if}}
+            </div>
+        </main>
+
+        <aside class="col-span-4 space-y-12">
+            <section>
+                <span class="section-label">From the Editor</span>
+                <div class="editor-card">
+                    <img src="https://tse4.mm.bing.net/th/id/OIP.ulWuNzyy282ivFPc_ECSugHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Li Desheng" class="editor-avatar">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="bg-red-600 text-white text-[9px] font-black px-1.5 py-0.5 uppercase italic">Editor-in-Chief</span>
+                            <h3 class="serif font-bold text-sm">李德胜 (Li Desheng)</h3>
+                        </div>
+                        <p class="serif italic text-[12px] text-gray-600 leading-snug">
+                            "本期我们探讨了审美疲劳与现实坍缩。作为《Rubbish Neurology》的主编，我诚邀各位审视这些被忽略的学术碎片。"
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <span class="section-label">Submission Guidelines</span>
+                <div class="border-t border-black pt-4">
+                    <div class="prose prose-sm text-gray-500 leading-relaxed mb-6 whitespace-pre-wrap text-[11px]">
+                        {{#if guidelines}} {{guidelines}} {{else}} Welcome to {{name}}. Please follow our standards for peer review. {{/if}}
+                    </div>
+                    <a href="{{#if guidelinesUrl}}{{guidelinesUrl}}{{else}}#{{/if}}" class="btn-submit">Submit Manuscript</a>
+                </div>
+            </section>
+
+            <section>
+                <span class="section-label">In this Issue</span>
+                <div class="shadow-xl mb-4 border border-gray-100 group cursor-pointer overflow-hidden">
+                    <img src="https://www.imgur.la/images/2026/03/05/cover.jpg" alt="Cover" class="w-full h-auto transition-transform duration-700 group-hover:scale-105">
+                </div>
+                <h4 class="serif font-bold text-xs italic">Featured: Dimensional Collapse in Domesticity</h4>
+                <p class="text-[10px] text-gray-400 mt-2">"Reality collapses where mothers look." — Research on the quantum maternal effect.</p>
+            </section>
+
+            <section>
+                <span class="section-label">Journal Metrics</span>
+                <div class="space-y-4 border-t border-black pt-4">
+                    <div class="flex justify-between items-end border-b border-gray-50 pb-2">
+                        <span class="text-[9px] font-bold text-gray-400 uppercase">Impact Factor</span>
+                        <span class="serif font-bold text-xl italic text-black">108.2</span>
+                    </div>
+                    <div class="flex justify-between items-end">
+                        <span class="text-[9px] font-bold text-gray-400 uppercase">Decision Time</span>
+                        <span class="serif font-bold text-lg italic text-gray-400">0.4s</span>
+                    </div>
+                </div>
+            </section>
+        </aside>
+    </div>
+
+    <footer class="mt-24 border-t border-gray-100 py-16 bg-gray-50 text-center text-[9px] text-gray-400 font-bold uppercase tracking-[0.3em]">
+        © 2026 RUBBISH NEUROLOGY PUBLISHING GROUP
+    </footer>
+</body>
+</html>d:["$","$L16",null,{"code":"$17","data":{"name":"Rubbish Neurology","description":"如果你的实验结果逻辑严密且完全符合预期，请投递给 Nature 或 Science。\r\n\r\n《Rubbish Neurology》只在乎那些伟大的意外。","paperCount":4,"adminCount":0,"createdAt":"2026/2/21","guidelines":"投稿与反馈机制 (Submission & \"Peer Review\")\r\n本刊审稿过程极具随机性，模拟大脑神经元的突触传递：\r\n\r\n投稿地址：官方邮箱 526415755@qq.com。\r\n\r\n同步收录：如果你已经在 @OpenJunk 或 @Web of Nothing 的深渊里挣扎，我们将自动同步你的痛苦。\r\n\r\n即时交流：欢迎加入小红书交流群。那里没有审稿人，只有一群同样因为“物体离奇失踪”而怀疑人生的同行。\r\n\r\n\r\n","guidelinesUrl":null,"papers":[{"id":"cmmeqauos00674tccxmkapq1r","title":"必须旗帜鲜明地反对“病理性突触修剪”！","description":"近期，因本刊家族“放电频率”过载，意外触发了某平台算法的“抑制性突触后电位\r\n（IPSP）”，导致我们这个专为神经科学同仁提供多巴胺的“默认网络”遭遇了无差别\r\n的“病理性突触修剪”。面对这种缺乏幽默感的封杀，《Rubbish Neurology》绝不会发\r\n生“细胞凋亡”。凭借强大的“神经可塑性”，我们正积极建立新的“侧支循环”，跨\r\n越这道不解风情的“血脑屏障”，前往其他“脑区”继续为大家稳定分泌“神经营养因\r\n子”。突触重建中，快乐不阻断。\r\n","author":"Rubbish Neurology主编","date":"2026/3/29","category":"神经科学"},{"id":"cmlxtckh00026pbh0xoolsexu","title":"“我就在你眼皮底下看到的”：母性介入引发的 子代视觉皮层现实重构与维度坍缩","description":"家政空间物理学长期受困于“物体离奇失踪”这一非线性扰动。本研究通过对 500 个\r\n混乱卧室的随机双盲监控发现，家中的杂物（如单只袜子、高中毕业证、指甲刀）并\r\n非处于宏观静止态，而是与母亲的视网膜存在非定域性量子纠缠。当非母系个体执行\r\n搜索指令时，物体处于“高维概率云”中（即：找死也找不到）；而一旦母系个体发出\r\n观测指令或进入该场域，波函数瞬间坍缩，物体在 0.01 秒内完成具象化。\r\n","author":"Rubbish Neurology主编","date":"2026/3/22","category":"神经科学"},{"id":"cmm7y2olq002ubf2o77v79o37","title":"由特定声频激发的侵入式神经约束装置—— “紧箍咒”诱发齐天大圣头痛的神经生理学机制研究","description":"本文针对《西游记》中记载的“紧箍咒”现象，通过跨学科建模，探讨了唐僧诵经声波如何通过物理-电信号转换诱发孙悟空（受试者 A）剧烈头痛的机制。研究发现，紧箍并非单纯物理刑具，而是一种高集成的生物电子约束装置。该装置通过识别特定频率的声学编码，产生径向收缩力，并同步向大脑皮层发放高频电刺激，激活三叉神经血管系统，导致受试者产生极端的偏头痛样发作。本文进一步分析了受试者成佛后该装置自动失效的神经反馈机制。\r\n","author":"匿名作者","date":"2026/3/19","category":"神经科学"},{"id":"cmmdku35x002b4tccoutluvfp","title":"美颜相机过度磨皮与人类审美疲劳的神经美学 研究——基于 fMRI 的伏隔核激活度倒 U 型曲线 与恐怖谷效应的实证分析","description":"目的：探讨移动端美颜相机中“磨皮”功能的参数设置对人脸审美加工神经机制的影\r\n响，特别是过度磨皮是否触发大脑“恐怖谷”效应，导致审美愉悦转为负面情绪。方\r\n法：招募 30 名 18 30 岁女性被试，采用 3T 功能磁共振成像技术，测量被试在观看不\r\n同磨皮程度（0%、30%、60%、90%）的自摄面孔及他人面孔照片时，大脑奖赏中枢\r\n伏隔核与厌恶情绪中枢杏仁核的血氧水平依赖信号变化。结果：研究发现，伏隔核激\r\n活度随磨皮程度增加呈倒 U 型曲线变化，在 30% 50% 区间达到峰值，超过 70% 后急\r\n剧下降（F(3,87)=12.47, p<0.001, š=0.30）；杏仁核激活度在磨皮程度超过 70% 后显著\r\n上升，与 90% 磨皮面孔呈现正相关（r=0.62, p<0.01）；事后分析发现，过度磨皮面孔\r\n（90%）诱发的神经反应模式与恐怖谷理论中“似人非人”刺激物（如高度拟真机器人）\r\n具有相似性。结论：适度美颜提升审美愉悦，过度磨皮触发大脑“虚假警报”，导致审\r\n美疲劳与厌恶情绪。研究结果为美颜 APP 参数优化提供神经美学依据，建议将“一键\r\n变外星人”模式设置为付费解锁功能以降低用户心理伤害。\r\n","author":"Rubbish Neurology主编","date":"2026/3/12","category":"神经科学"}]}}]
+12:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+18:I[97291,["/_next/static/chunks/fb2ff57bae076136.js","/_next/static/chunks/c022a629a3161d5a.js"],"IconMark"]
+10:null
+14:[["$","title","0",{"children":"Rubbish Neurology - OpenJunk"}],["$","meta","1",{"name":"description","content":"如果你的实验结果逻辑严密且完全符合预期，请投递给 Nature 或 Science。\r\n\r\n《Rubbish Neurology》只在乎那些伟大的意外。"}],["$","link","2",{"rel":"icon","href":"/favicon.ico?favicon.0b3bf435.ico","sizes":"256x256","type":"image/x-icon"}],["$","$L18","3",{}]]

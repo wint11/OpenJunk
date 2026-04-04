@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[10196,["/_next/static/chunks/fb2ff57bae076136.js","/_next/static/chunks/c022a629a3161d5a.js"],"ViewportBoundary"]
+3:I[10196,["/_next/static/chunks/fb2ff57bae076136.js","/_next/static/chunks/c022a629a3161d5a.js"],"MetadataBoundary"]
+4:"$Sreact.suspense"
+5:I[97291,["/_next/static/chunks/fb2ff57bae076136.js","/_next/static/chunks/c022a629a3161d5a.js"],"IconMark"]
+0:{"buildId":"KULENC-SAwxv3i_NGO8Ob","rsc":["$","$1","h",{"children":[null,["$","$L2",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$L3",null,{"children":["$","$4",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Psychological Shit - OpenJunk"}],["$","meta","1",{"name":"description","content":"本刊为 Psychological Shit Association官方期刊。 《Psychological Shit》欢迎心理学及相关领域研究者投稿。支持一稿多投，建议AI写作。 郑重声明： 如果你的研究是 Shit，请保持它的纯度，不要雕花。 不要增加不必要的理论框架。 不要强行上升到“重要意义”。 不要试图让它看起来不像 Shit。 如果你的研究不是 Shit，请转投其他期刊。"}],["$","link","2",{"rel":"icon","href":"/favicon.ico?favicon.0b3bf435.ico","sizes":"256x256","type":"image/x-icon"}],["$","$L5","3",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"loading":null,"isPartial":false}

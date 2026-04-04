@@ -1,0 +1,38 @@
+[
+  {
+    "id": "cmm9hley90009a5jcr6tu213m",
+    "content": "建议修改格式后接收",
+    "createdAt": "2026-03-02T18:02:49.714Z",
+    "updatedAt": "2026-03-02T18:02:49.714Z",
+    "userId": "cmlqbdmp1000ki51urqz37a2l",
+    "guestName": null,
+    "guestIp": null,
+    "novelId": "cmm9hjk880003a5jcmbvsn3fl",
+    "action": "MINOR_REVISION",
+    "parentId": null
+  },
+  {
+    "id": "cmmel6u6p005a4tccesuywsc4",
+    "content": "引人入胜的文章，小编仿佛化身四十名同龄高中生对照组中的一员见证着Luo Xuan同学在上课铃响后大摇大摆离开教室。值得注意的是，年轻科研人的钻研精神令人敬佩，从跟踪被试在马桶上的异常手机使用到脑影像生物标记的病理性研究，小编衷心希望能看到本文作者登上十八岁破格录取全奖博士的新闻。",
+    "createdAt": "2026-03-06T07:42:18.962Z",
+    "updatedAt": "2026-03-06T07:42:18.962Z",
+    "userId": "cmlzbq318004apbh0rpzu66g0",
+    "guestName": null,
+    "guestIp": null,
+    "novelId": "cmmeighvh00434tccyc4p3h4g",
+    "action": "COMMENT",
+    "parentId": null
+  },
+  {
+    "id": "cmmepinb000644tcc2c07wdcq",
+    "content": "引人入胜的文章，小编仿佛化身四十名同龄高中生对照组中的一员见证着Luo Xuan同学在上课铃响后大摇大摆离开教室。值得注意的是，年轻科研人的钻研精神令人敬佩，从跟踪被试在马桶上的异常手机使用到脑影像生物标记的病理性研究，小编衷心希望能看到本文作者登上十八岁破格录取全奖博士的新闻。",
+    "createdAt": "2026-03-06T09:43:28.380Z",
+    "updatedAt": "2026-03-06T09:43:28.380Z",
+    "userId": "cmlzbq318004apbh0rpzu66g0",
+    "guestName": null,
+    "guestIp": null,
+    "novelId": "cmmeighvh00434tccyc4p3h4g",
+    "action": "MINOR_REVISION",
+    "parentId": null
+  }
+]

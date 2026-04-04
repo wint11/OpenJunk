@@ -1,0 +1,157 @@
+1:"$Sreact.fragment"
+2:I[42950,["/_next/static/chunks/c31f64d516e5aed5.js","/_next/static/chunks/51662978c1dc1a3d.js","/_next/static/chunks/aa9d8d086acb8bdd.js","/_next/static/chunks/c6bb07a934291682.js","/_next/static/chunks/a33506d8ce13a3cc.js","/_next/static/chunks/d148c24c8bce1c09.js","/_next/static/chunks/85f66ede9db7f4ca.js"],"JournalCustomRenderer"]
+6:I[10196,["/_next/static/chunks/fb2ff57bae076136.js","/_next/static/chunks/c022a629a3161d5a.js"],"OutletBoundary"]
+7:"$Sreact.suspense"
+3:T1be1,<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cement and Concrete Rubbish | WebofNothing by Elsevier</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --els-blue: #00275D;
+            --els-orange: #EB6500;
+            --els-grey: #5c5c5c;
+        }
+        body {
+            background-color: #f9fafb;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        .header-shadow {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .journal-banner {
+            background-color: var(--els-blue);
+            color: white;
+        }
+        .srank-tag {
+            background: rgba(255,255,255,0.15);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-right: 8px;
+        }
+        .nav-link:hover {
+            border-bottom: 3px solid var(--els-blue);
+        }
+    </style>
+</head>
+<body>
+
+    <main>
+        <!-- Journal Hero Banner -->
+        <section class="journal-banner p-8 md:px-24 flex flex-col md:flex-row gap-10 items-center justify-center">
+            <div class="flex-shrink-0">
+                <!-- Journal Cover Image Updated -->
+                <img src="https://i.postimg.cc/VkrjhWTn/Gemini-Generated-Image-45yqxr45yqxr45yq.jpg" alt="Cement and Concrete Rubbish Cover" class="w-48 h-64 border-4 border-white shadow-2xl object-cover">
+            </div>
+            <div class="flex-grow text-center md:text-left">
+                <h1 class="text-4xl font-bold mb-4">Cement and Concrete Rubbish</h1>
+                <div class="flex flex-wrap justify-center md:justify-start gap-2 mb-6">
+                    <span class="srank-tag">IF -13.1</span>
+                    <span class="srank-tag">NCR Q1</span>
+                    <span class="srank-tag">SCIE</span>
+                    <span class="srank-tag">Supports open reject</span>
+                </div>
+                <div class="flex justify-center md:justify-start gap-10">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold">-23.5</div>
+                        <div class="text-xs uppercase opacity-80">Rubbish Score</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold">-13.1</div>
+                        <div class="text-xs uppercase opacity-80">Impact Factor</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content Area -->
+        <div class="max-w-7xl mx-auto px-4 md:px-8 py-8 flex flex-col md:flex-row gap-12">
+            
+            <!-- Left Content -->
+            <div class="flex-grow space-y-12">
+                
+                <!-- About Section Updated -->
+                <section>
+                    <h2 class="text-2xl font-semibold mb-4 border-b-2 pb-2" style="border-color: var(--els-blue);">About the journal</h2>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                        <p class="text-gray-800 leading-relaxed text-lg">
+                            《Cement and Concrete Rubbish》（中文译名：水泥与混凝土垃圾）是全球领先的、专门收录土木工程材料领域无效研究的期刊。本刊致力于为那些数据全靠编、分析全靠蒙、全是废话的论文提供一个展示平台。
+                        </p>
+                        <p class="mt-4 text-els-blue font-medium italic border-l-4 pl-4 border-blue-900">
+                            “科学的尽头是神学，建筑的尽头是废料。在 CCR里，每一块混凝土都有它被吹嘘的权利。”
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Metrics Row Updated -->
+                <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="border-l-4 p-4 bg-white shadow-sm" style="border-color: var(--els-blue);">
+                        <div class="text-2xl font-bold">1h</div>
+                        <div class="text-xs text-gray-500">Submission to first decision</div>
+                    </div>
+                    <div class="border-l-4 p-4 bg-white shadow-sm" style="border-color: var(--els-blue);">
+                        <div class="text-2xl font-bold">1h</div>
+                        <div class="text-xs text-gray-500">Submission to decision after review</div>
+                    </div>
+                    <div class="border-l-4 p-4 bg-white shadow-sm" style="border-color: var(--els-blue);">
+                        <div class="text-2xl font-bold">1d</div>
+                        <div class="text-xs text-gray-500">Submission to acceptance</div>
+                    </div>
+                    <div class="border-l-4 p-4 bg-white shadow-sm" style="border-color: var(--els-blue);">
+                        <div class="text-2xl font-bold">Free</div>
+                        <div class="text-xs text-gray-500">Article Publishing Charge</div>
+                    </div>
+                </section>
+
+                <!-- Articles Section -->
+                <section>
+                    <h2 class="text-2xl font-semibold mb-6">Articles</h2>
+                    <div class="space-y-6">
+
+                    </div>
+                </section>
+
+
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="w-full md:w-72 space-y-8">
+                <button class="w-full py-3 rounded font-bold text-white transition-opacity hover:opacity-90" style="background-color: var(--els-blue);">
+                    Submit your rubbish
+                </button>
+                <button class="w-full py-3 rounded font-bold border transition-colors hover:bg-gray-50" style="border-color: var(--els-blue); color: var(--els-blue);">
+                    Guide for bad authors
+                </button>
+
+                <div class="bg-gray-100 p-4 rounded text-sm space-y-4 shadow-inner">
+                    <h4 class="font-bold border-b pb-2">Editor-in-Chief</h4>
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-gray-300 rounded-full overflow-hidden border border-gray-400">
+                            <img src="https://i.postimg.cc/BQdg4zxs/image.png" alt="Master">
+                        </div>
+                        <div>
+                            <p class="font-bold">Dr. Shitment, Dr. Shitrete</p>
+                            <p class="text-xs text-gray-500">University of Enshiteering</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-20 p-8 text-center text-xs text-gray-400">
+        <p>Copyright © 2026 CCRubbish or its licensors or contributors. WebofNothing® is a registered trademark of Rubbish Ltd.</p>
+    </footer>
+
+</body>
+</html>0:{"buildId":"KULENC-SAwxv3i_NGO8Ob","rsc":["$","$1","c",{"children":[["$","$L2",null,{"code":"$3","data":{"name":"Cement and Concrete Rubbish","description":"《Cement and Concrete Rubbish》（中文译名：水泥与混凝土垃圾）是全球领先的、专门收录土木工程材料领域无效研究的期刊。本刊致力于为那些数据全靠编、分析全靠蒙、全是废话的论文提供一个展示平台。 “科学的尽头是神学，建筑的尽头是废料。在 CCR里，每一块混凝土都有它被吹嘘的权利。”\r\n","paperCount":1,"adminCount":0,"createdAt":"2026/3/5","guidelines":"投稿邮箱：CCRubbish@hotmail.com\r\n编辑部社媒：https://xhslink.com/m/8qrQqUO4CU9","guidelinesUrl":null,"papers":[{"id":"cmmd9uw8m00134tcc8xhz7fea","title":"Development and Micromechanical Characterization of Ultra High Shit Concrete (UHSC)","description":"针对全球可持续建筑危机以及“建筑的尽头是废料处置”这一哲学命题，本研究首次合成了超高性能石混凝土（Ultra-High Shit Concrete, UHSC）。通过引入改进的Shit&Urine松垮垮堆积模型，我们设计了一种完全由生物代谢副产物组成的基体：以Shit（一种固体人类综合垃圾）作为主要胶凝材料，以Urine（一种富尿素综合天然电解质）作为唯一液相。研究深入探讨了生物有机颗粒与富氮催化剂之间的化学协同作用。对UHSC的尿化动力学、不存在的宏观力学性能、微观结构特征（尿化物相（尿石合物‌（Urine-Shit-Hydrate，USH））形貌）等关键参数进行了评估。结果表明，UHSC的抗压强度随龄期遵循了随机衰减模型，ShitEM显示尿石合物‌（USH）形貌和Shit的emogi类似，随着龄期变化其表情改变。UHSC的研发对土木工程界的“精神冲击”是前所未有的，本工作为不科学时代的“零价值”土木工程材料研究确立了新范式。","author":"Cement and Concrete Rubbish主编","date":"2026/3/15","category":"材料科学"}]}}],["$L4"],"$L5"]}],"loading":null,"isPartial":false}
+4:["$","script","script-0",{"src":"/_next/static/chunks/85f66ede9db7f4ca.js","async":true}]
+5:["$","$L6",null,{"children":["$","$7",null,{"name":"Next.MetadataOutlet","children":"$@8"}]}]
+8:null

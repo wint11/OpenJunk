@@ -1,0 +1,90 @@
+[
+  {
+    "id": "cmlt0yfp9000qn850q9bjh8qh",
+    "userId": "cmlqbdmp1000ki51urqz37a2l",
+    "senderId": null,
+    "type": "REVIEW",
+    "title": "New Manuscript: Abstract is all you need",
+    "content": "A new manuscript \"Abstract is all you need\" has been submitted to your journal from ::ffff:136.25.169.77.",
+    "status": "READ",
+    "data": "{\"novelId\":\"cmlt0yfny000pn850n6cdd202\",\"journalId\":\"cmlqbdmo60005i51uc3u92b7t\"}",
+    "createdAt": "2026-02-19T05:32:44.923Z"
+  },
+  {
+    "id": "cmlt126890010n850vo0ca2d1",
+    "userId": "cmlqbdmp1000ki51urqz37a2l",
+    "senderId": null,
+    "type": "REVIEW",
+    "title": "New Manuscript: Abstract is all you need",
+    "content": "A new manuscript \"Abstract is all you need\" has been submitted to your journal from ::ffff:136.25.169.77.",
+    "status": "READ",
+    "data": "{\"novelId\":\"cmlt1267k000zn850gd4ix1i1\",\"journalId\":\"cmlqbdmo60005i51uc3u92b7t\"}",
+    "createdAt": "2026-02-19T05:35:39.273Z"
+  },
+  {
+    "id": "cmlwarxmo000ipbh05x4oj7qi",
+    "userId": "cmltas75d00026onq2i70kd5a",
+    "senderId": null,
+    "type": "REVIEW",
+    "title": "New Manuscript: sdada",
+    "content": "A new manuscript \"sdada\" has been submitted to your journal from ::ffff:123.148.135.132.",
+    "status": "READ",
+    "data": "{\"novelId\":\"cmlwarxlh000hpbh0cbftdic5\",\"journalId\":\"cmltarfme00006onqw5eoxcro\"}",
+    "createdAt": "2026-02-21T12:30:56.256Z"
+  },
+  {
+    "id": "cmlwf3u880010pbh0v4izzhy6",
+    "userId": "cmltas75d00026onq2i70kd5a",
+    "senderId": null,
+    "type": "REVIEW",
+    "title": "New Manuscript: 模因传播中的语义异化——以“inm语录”在网络社群中的扩张现象为例",
+    "content": "A new manuscript \"模因传播中的语义异化——以“inm语录”在网络社群中的扩张现象为例\" has been submitted to your journal from ::ffff:123.186.122.239.",
+    "status": "READ",
+    "data": "{\"novelId\":\"cmlwf3u7f000zpbh0ij0qjv8j\",\"journalId\":\"cmltarfme00006onqw5eoxcro\"}",
+    "createdAt": "2026-02-21T14:32:10.184Z"
+  },
+  {
+    "id": "cmlxwila7002npbh0i6vdd9xw",
+    "userId": "cmltas75d00026onq2i70kd5a",
+    "senderId": null,
+    "type": "REVIEW",
+    "title": "New Manuscript: 不同性取向公哈基米的嗓音声学特征研究",
+    "content": "A new manuscript \"不同性取向公哈基米的嗓音声学特征研究\" has been submitted to your journal from ::ffff:113.249.35.156.",
+    "status": "READ",
+    "data": "{\"novelId\":\"cmlxwil94002mpbh0w8qeat39\",\"journalId\":\"cmltarfme00006onqw5eoxcro\"}",
+    "createdAt": "2026-02-22T15:27:18.079Z"
+  },
+  {
+    "id": "cmlz899je0035pbh0f4a05215",
+    "userId": "cmlqbdmoj000ai51uvqy0vq0c",
+    "senderId": null,
+    "type": "REVIEW",
+    "title": "New Manuscript: The Temporal-Spatial Dynamics of Researchers' Nighttime Behavior at Home: A Comprehensive Analysis of Personality Traits, Mental Health Status, Decision-Making Styles, and Their Impact on Academic Productivity",
+    "content": "A new manuscript \"The Temporal-Spatial Dynamics of Researchers' Nighttime Behavior at Home: A Comprehensive Analysis of Personality Traits, Mental Health Status, Decision-Making Styles, and Their Impact on Academic Productivity\" has been submitted to your journal from ::ffff:111.42.246.142.",
+    "status": "READ",
+    "data": "{\"novelId\":\"cmlz899ic0034pbh0uxeb35uo\",\"journalId\":\"cmlqbdmnl0000i51uto1ew62x\"}",
+    "createdAt": "2026-02-23T13:43:44.521Z"
+  },
+  {
+    "id": "cmmhs6qj3000u2gparary70en",
+    "userId": "cmmhq0bce00002gpa548obz81",
+    "senderId": "cmmecqo96003n4tccp66kfqto",
+    "type": "SYSTEM",
+    "title": "Role Updated",
+    "content": "Your role has been updated to ADMIN.",
+    "status": "READ",
+    "data": null,
+    "createdAt": "2026-03-08T13:21:30.063Z"
+  },
+  {
+    "id": "cmmiodsr0001u2gpa05r5p8gk",
+    "userId": "cmmhq0bce00002gpa548obz81",
+    "senderId": "cmlqbdmog0008i51uvi5nuxy6",
+    "type": "SYSTEM",
+    "title": "Role Updated",
+    "content": "Your role has been updated to REVIEWER.",
+    "status": "READ",
+    "data": null,
+    "createdAt": "2026-03-09T04:22:47.244Z"
+  }
+]
