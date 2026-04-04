@@ -74,3 +74,4 @@ venv
 # electron
 electron-chat/dist
 electron-chat/node_modules
+static-version/

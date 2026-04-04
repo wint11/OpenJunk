@@ -1,0 +1,62 @@
+[
+  {
+    "id": "cmmj5mpag000k95c5ml0vtt0g",
+    "awardId": "cmmhr4e7u000g2gpa1x46qlam",
+    "name": "学术漂移大师",
+    "description": "离题万里终有岸，曲径通幽即是家。",
+    "order": 0,
+    "color": "#00ffee",
+    "icon": null,
+    "createdAt": "2026-03-09T12:25:36.137Z"
+  },
+  {
+    "id": "cmmj5nduv000m95c5yfb367j5",
+    "awardId": "cmmhr4e7u000g2gpa1x46qlam",
+    "name": "概念空心化艺术家",
+    "description": "满纸术语皆泡沫，一腔黑话付虚空。",
+    "order": 1,
+    "color": "#c061ff",
+    "icon": null,
+    "createdAt": "2026-03-09T12:26:07.976Z"
+  },
+  {
+    "id": "cmmj5nviz000o95c5k38bjdpa",
+    "awardId": "cmmhr4e7u000g2gpa1x46qlam",
+    "name": "田野调查虚构文豪",
+    "description": "田野深处无足迹，论文页里有乾坤。",
+    "order": 2,
+    "color": "#FFD700",
+    "icon": null,
+    "createdAt": "2026-03-09T12:26:30.875Z"
+  },
+  {
+    "id": "cmmoxtm0j004okawtmq4kjq6u",
+    "awardId": "cmm9amtee00dmbf2ofmb3hkuj",
+    "name": "一等奖",
+    "description": "授予有辣眼的科研或发明成果的个人",
+    "order": 0,
+    "color": "#FFD700",
+    "icon": null,
+    "createdAt": "2026-03-13T13:33:38.611Z"
+  },
+  {
+    "id": "cmmoxtzay004qkawt8mtcds1v",
+    "awardId": "cmm9amtee00dmbf2ofmb3hkuj",
+    "name": "二等奖",
+    "description": "授予有较差的科研或发明成果的个人",
+    "order": 1,
+    "color": "#ededed",
+    "icon": null,
+    "createdAt": "2026-03-13T13:33:55.835Z"
+  },
+  {
+    "id": "cmmoxugkm004skawtydy2n7kk",
+    "awardId": "cmm9amtee00dmbf2ofmb3hkuj",
+    "name": "三等奖",
+    "description": "授予有正在进行或完成的科学研究的个人",
+    "order": 2,
+    "color": "#8b7d32",
+    "icon": null,
+    "createdAt": "2026-03-13T13:34:18.215Z"
+  }
+]

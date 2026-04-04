@@ -1,0 +1,22 @@
+[
+  {
+    "id": "cmm283gwk0004s0jma6s26h37",
+    "name": "锅夹自燃科学鸡精",
+    "code": "NSFC",
+    "description": "",
+    "introContent": "凡申请，必立项\r\n给所有Rubbish一个体面的归属。",
+    "introImages": "/uploads/fund-org/1772349544891-ui04kb.jpg",
+    "createdAt": "2026-02-25T16:02:32.660Z",
+    "updatedAt": "2026-03-01T14:22:43.333Z"
+  },
+  {
+    "id": "cmm28486u0005s0jmtvtoolpn",
+    "name": "锅夹社会嗑学鸡精",
+    "code": "SCEC",
+    "description": "",
+    "introContent": null,
+    "introImages": null,
+    "createdAt": "2026-02-25T16:03:08.023Z",
+    "updatedAt": "2026-03-01T14:22:26.996Z"
+  }
+]

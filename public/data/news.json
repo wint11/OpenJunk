@@ -1,0 +1,29 @@
+[
+  {
+    "id": "cmmjdxzxy0000lbt4sqgffbf7",
+    "content": "OpenJunk 首届 '乱讲PPT大赛' 将于3月16日正式开赛，点此进入",
+    "link": "/ppt-contest-1",
+    "priority": 2,
+    "active": true,
+    "createdAt": "2026-03-09T16:18:20.086Z",
+    "updatedAt": "2026-03-11T14:02:33.349Z"
+  },
+  {
+    "id": "cmmjxr7pa000llbt4q1hczkvc",
+    "content": "OpenJunk不定时维护更新内容，访问不了就是在维护~",
+    "link": null,
+    "priority": 3,
+    "active": false,
+    "createdAt": "2026-03-10T01:32:55.870Z",
+    "updatedAt": "2026-03-11T14:02:33.349Z"
+  },
+  {
+    "id": "cmmk3xtit0000ai2yenp4guwl",
+    "content": "故事社区开通啦，欢迎大家投稿自己的成长小故事，点击前往",
+    "link": "/discovery/stories",
+    "priority": 1,
+    "active": true,
+    "createdAt": "2026-03-10T04:26:01.782Z",
+    "updatedAt": "2026-03-11T14:02:33.349Z"
+  }
+]

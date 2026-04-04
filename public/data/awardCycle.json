@@ -1,0 +1,22 @@
+[
+  {
+    "id": "cmmj5qv8e000s95c5s1coj5xp",
+    "awardId": "cmmhr4e7u000g2gpa1x46qlam",
+    "name": "2026年度",
+    "startDate": "2026-03-08T16:00:00.000Z",
+    "endDate": "2026-05-31T15:59:00.000Z",
+    "announceDate": "2026-06-15T12:00:00.000Z",
+    "status": "OPEN",
+    "createdAt": "2026-03-09T12:28:50.462Z"
+  },
+  {
+    "id": "cmmox7x2s003ukawtidex9a7j",
+    "awardId": "cmm9amtee00dmbf2ofmb3hkuj",
+    "name": "2026年度",
+    "startDate": "2025-12-31T16:00:00.000Z",
+    "endDate": "2026-12-31T15:59:00.000Z",
+    "announceDate": null,
+    "status": "OPEN",
+    "createdAt": "2026-03-13T13:16:46.516Z"
+  }
+]

@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - NEXTAUTH_URL=http://121.41.230.120:3000
+      - AUTH_TRUST_HOST=true
+      - TZ=Asia/Shanghai
+      # 确保容器内使用挂载的 sqlite 文件
+      - DATABASE_URL=file:/app/data/dev.db
+      - UNION_DATABASE_URL=file:/app/data/union_dev.db
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./uploads:/app/uploads
+      # 挂载宿主机目录以持久化 sqlite 数据库文件
+      - ./data:/app/data
+    networks:
+      - openjunk-network
+    command: >
+      sh -c '
+        npx prisma migrate deploy &&
+        node server.js
+      '
+
+networks:
+  openjunk-network:
+    driver: bridge

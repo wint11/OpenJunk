@@ -1,0 +1,992 @@
+[
+  {
+    "id": "cmm7ndm9b0001bf2ou8z76z8i",
+    "novelId": "cmm7iitgk002mdmcew4pjszi1",
+    "ip": "::ffff:203.93.11.0",
+    "userId": "cmm7iduu6002edmce8c8xc58g",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-01T11:09:11.277Z",
+    "updatedAt": "2026-03-01T11:09:11.277Z"
+  },
+  {
+    "id": "cmm7ndutu0003bf2o8tcfkyz0",
+    "novelId": "cmm7igovt002idmce1wcb382s",
+    "ip": "::ffff:203.93.11.0",
+    "userId": "cmm7iduu6002edmce8c8xc58g",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-01T11:09:22.386Z",
+    "updatedAt": "2026-03-01T11:09:22.386Z"
+  },
+  {
+    "id": "cmm7o7ysf000bbf2ofyi8nkex",
+    "novelId": "cmm7iitgk002mdmcew4pjszi1",
+    "ip": "::ffff:223.104.228.163",
+    "userId": null,
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-01T11:32:47.199Z",
+    "updatedAt": "2026-03-01T11:32:47.199Z"
+  },
+  {
+    "id": "cmm7o9f7d000hbf2o1x6zeroc",
+    "novelId": "cmm7igovt002idmce1wcb382s",
+    "ip": "::ffff:223.104.228.163",
+    "userId": null,
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-01T11:33:55.129Z",
+    "updatedAt": "2026-03-01T11:33:55.129Z"
+  },
+  {
+    "id": "cmm7ys24l002ybf2oc6czg6na",
+    "novelId": "cmm7igovt002idmce1wcb382s",
+    "ip": "::ffff:124.205.122.239",
+    "userId": null,
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-01T16:28:20.805Z",
+    "updatedAt": "2026-03-01T16:30:46.733Z"
+  },
+  {
+    "id": "cmm7ytcjk0032bf2ooz34vor5",
+    "novelId": "cmm7iitgk002mdmcew4pjszi1",
+    "ip": "::ffff:124.205.122.239",
+    "userId": null,
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-01T16:29:20.960Z",
+    "updatedAt": "2026-03-01T16:29:26.058Z"
+  },
+  {
+    "id": "cmm7yuga7003cbf2owmikviph",
+    "novelId": "cmlzbp6wa0044pbh0ib9zhg1r",
+    "ip": "::ffff:124.205.122.239",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-01T16:30:12.463Z",
+    "updatedAt": "2026-03-01T16:30:12.463Z"
+  },
+  {
+    "id": "cmm7yumcg003ebf2ooy9ehmkh",
+    "novelId": "cmlzbhvae0040pbh029wh4mgs",
+    "ip": "::ffff:124.205.122.239",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-01T16:30:20.321Z",
+    "updatedAt": "2026-03-01T16:30:23.714Z"
+  },
+  {
+    "id": "cmm7yusty003mbf2o91frn3d2",
+    "novelId": "cmm21qceq006spbh04ydseyue",
+    "ip": "::ffff:124.205.122.239",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-01T16:30:28.726Z",
+    "updatedAt": "2026-03-01T16:30:28.726Z"
+  },
+  {
+    "id": "cmm7yux45003obf2oo8vwlepr",
+    "novelId": "cmm21bay6006opbh0eybbt04q",
+    "ip": "::ffff:124.205.122.239",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-01T16:30:34.277Z",
+    "updatedAt": "2026-03-01T16:30:34.277Z"
+  },
+  {
+    "id": "cmm7yv0n2003qbf2oxq7xogrb",
+    "novelId": "cmm2165xb006kpbh0j97fu7ng",
+    "ip": "::ffff:124.205.122.239",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-01T16:30:38.846Z",
+    "updatedAt": "2026-03-01T16:30:38.846Z"
+  },
+  {
+    "id": "cmm8bxikk0040bf2ovlugsaj3",
+    "novelId": "cmm8bw55u003wbf2odytcjmhb",
+    "ip": "::ffff:138.51.43.10",
+    "userId": "cmlqbdmp1000ki51urqz37a2l",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-01T22:36:30.404Z",
+    "updatedAt": "2026-03-01T22:36:30.404Z"
+  },
+  {
+    "id": "cmm8bycmj0042bf2okfp2v6n9",
+    "novelId": "cmlt1267k000zn850gd4ix1i1",
+    "ip": "::ffff:138.51.43.10",
+    "userId": "cmlqbdmp1000ki51urqz37a2l",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-01T22:37:09.355Z",
+    "updatedAt": "2026-03-01T22:37:09.355Z"
+  },
+  {
+    "id": "cmm8bygzj0044bf2odkfgbsm3",
+    "novelId": "cmm5jz5vh002qe1k7usr9g86e",
+    "ip": "::ffff:138.51.43.10",
+    "userId": "cmlqbdmp1000ki51urqz37a2l",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-01T22:37:15.007Z",
+    "updatedAt": "2026-03-01T22:37:15.007Z"
+  },
+  {
+    "id": "cmm8bym8h0046bf2o0kon3atf",
+    "novelId": "cmm5k1j9t002ue1k78c44j7ip",
+    "ip": "::ffff:138.51.43.10",
+    "userId": "cmlqbdmp1000ki51urqz37a2l",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-01T22:37:21.809Z",
+    "updatedAt": "2026-03-01T22:37:21.809Z"
+  },
+  {
+    "id": "cmm8byrad0048bf2oksti9hfo",
+    "novelId": "cmltto5xb00087u4z4m8kfwyj",
+    "ip": "::ffff:138.51.43.10",
+    "userId": "cmlqbdmp1000ki51urqz37a2l",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-01T22:37:28.357Z",
+    "updatedAt": "2026-03-01T22:37:28.357Z"
+  },
+  {
+    "id": "cmm8bytz3004abf2o3gvl72gc",
+    "novelId": "cmm5jv3eb002ie1k7rfabeer8",
+    "ip": "::ffff:138.51.43.10",
+    "userId": "cmlqbdmp1000ki51urqz37a2l",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-01T22:37:31.839Z",
+    "updatedAt": "2026-03-01T22:37:31.839Z"
+  },
+  {
+    "id": "cmm8byzg7004cbf2oe1fyjq27",
+    "novelId": "cmlt0tdg1000ln850awmssu1o",
+    "ip": "::ffff:138.51.43.10",
+    "userId": "cmlqbdmp1000ki51urqz37a2l",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-01T22:37:38.935Z",
+    "updatedAt": "2026-03-01T22:37:38.935Z"
+  },
+  {
+    "id": "cmm8bz24h004ebf2o6szm2eji",
+    "novelId": "cmm5jxbvg002me1k7kto473xu",
+    "ip": "::ffff:138.51.43.10",
+    "userId": "cmlqbdmp1000ki51urqz37a2l",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-01T22:37:42.401Z",
+    "updatedAt": "2026-03-01T22:37:42.401Z"
+  },
+  {
+    "id": "cmm8bz6h1004gbf2oktka644i",
+    "novelId": "cmlt1sqq60019n850ebllhfwj",
+    "ip": "::ffff:138.51.43.10",
+    "userId": "cmlqbdmp1000ki51urqz37a2l",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-01T22:37:48.038Z",
+    "updatedAt": "2026-03-01T22:37:55.755Z"
+  },
+  {
+    "id": "cmm8bzofi004kbf2ojyb324bu",
+    "novelId": "cmlxeym2v001kpbh01csdckw0",
+    "ip": "::ffff:138.51.43.10",
+    "userId": "cmlqbdmp1000ki51urqz37a2l",
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-01T22:38:11.310Z",
+    "updatedAt": "2026-03-01T22:43:07.832Z"
+  },
+  {
+    "id": "cmm8c5id5004sbf2oidviy7o2",
+    "novelId": "cmm8c3hz9004obf2ogmmp54k3",
+    "ip": "::ffff:138.51.43.10",
+    "userId": "cmlqbdmp1000ki51urqz37a2l",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-01T22:42:43.385Z",
+    "updatedAt": "2026-03-01T22:42:43.385Z"
+  },
+  {
+    "id": "cmm8o9lce005xbf2oypxkimqg",
+    "novelId": "cmlxtckh00026pbh0xoolsexu",
+    "ip": "::ffff:221.6.30.248",
+    "userId": "cmlw36kua000dpbh0ku4ok6c6",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-02T04:21:49.262Z",
+    "updatedAt": "2026-03-02T04:21:49.262Z"
+  },
+  {
+    "id": "cmm8o9txs005zbf2ol4jpb46a",
+    "novelId": "cmm5xs6720041e1k73b72nphn",
+    "ip": "::ffff:221.6.30.248",
+    "userId": "cmlw36kua000dpbh0ku4ok6c6",
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-02T04:22:00.400Z",
+    "updatedAt": "2026-03-02T04:22:00.400Z"
+  },
+  {
+    "id": "cmm8op1gy0067bf2o2liigfmt",
+    "novelId": "cmlt0tdg1000ln850awmssu1o",
+    "ip": "::ffff:142.198.131.136",
+    "userId": "cmlqbdmp1000ki51urqz37a2l",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-02T04:33:50.002Z",
+    "updatedAt": "2026-03-02T04:33:50.002Z"
+  },
+  {
+    "id": "cmm8q16zy006qbf2o82li0g1x",
+    "novelId": "cmm8q0uvi006mbf2oaezc1uo3",
+    "ip": "::ffff:124.205.122.239",
+    "userId": "cmm7iduu6002edmce8c8xc58g",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-02T05:11:16.655Z",
+    "updatedAt": "2026-03-02T05:31:20.282Z"
+  },
+  {
+    "id": "cmm8qghl1006sbf2ouks1fzlx",
+    "novelId": "cmm7ocqbh000jbf2ofeh6e465",
+    "ip": "::ffff:221.6.247.195",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-02T05:23:10.213Z",
+    "updatedAt": "2026-03-02T05:23:13.089Z"
+  },
+  {
+    "id": "cmm8qz7el007bbf2osrnz1wb8",
+    "novelId": "cmm7y2olq002ubf2o77v79o37",
+    "ip": "::ffff:221.6.30.248",
+    "userId": "cmlw36kua000dpbh0ku4ok6c6",
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-02T05:37:43.485Z",
+    "updatedAt": "2026-03-02T05:37:43.485Z"
+  },
+  {
+    "id": "cmm8rawlj007dbf2o0a4dmypq",
+    "novelId": "cmm6kvi7z000114octkplr1am",
+    "ip": "::ffff:221.6.247.195",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-02T05:46:49.351Z",
+    "updatedAt": "2026-03-02T05:46:49.351Z"
+  },
+  {
+    "id": "cmm8t96x8007hbf2oev4byyxm",
+    "novelId": "cmm7igovt002idmce1wcb382s",
+    "ip": "::ffff:106.120.124.176",
+    "userId": "cmm7iduu6002edmce8c8xc58g",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-02T06:41:28.652Z",
+    "updatedAt": "2026-03-02T06:41:28.652Z"
+  },
+  {
+    "id": "cmm8ta3an007jbf2oxi0m5lvc",
+    "novelId": "cmm7iitgk002mdmcew4pjszi1",
+    "ip": "::ffff:106.120.124.176",
+    "userId": "cmm7iduu6002edmce8c8xc58g",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-02T06:42:10.607Z",
+    "updatedAt": "2026-03-02T06:42:10.607Z"
+  },
+  {
+    "id": "cmm8thi1h007lbf2o0abmcej6",
+    "novelId": "cmm21qceq006spbh04ydseyue",
+    "ip": "::ffff:112.48.20.162",
+    "userId": null,
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-02T06:47:56.309Z",
+    "updatedAt": "2026-03-02T06:48:13.639Z"
+  },
+  {
+    "id": "cmm8tho85007nbf2o889o9ljt",
+    "novelId": "cmm2165xb006kpbh0j97fu7ng",
+    "ip": "::ffff:112.48.20.162",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-02T06:48:04.325Z",
+    "updatedAt": "2026-03-02T06:48:10.008Z"
+  },
+  {
+    "id": "cmm8x5juj0087bf2o1hib75qy",
+    "novelId": "cmm8ku8ib005pbf2owyrvuaij",
+    "ip": "::ffff:61.190.88.155",
+    "userId": "cmlrlqoxp000qyru6djr1myj2",
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-02T08:30:37.243Z",
+    "updatedAt": "2026-03-02T08:30:37.243Z"
+  },
+  {
+    "id": "cmm8x7rp90089bf2owub2rkza",
+    "novelId": "cmm7s2sm1000mbf2ozzrq6fs1",
+    "ip": "::ffff:61.190.88.155",
+    "userId": "cmlrlqoxp000qyru6djr1myj2",
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-02T08:32:20.734Z",
+    "updatedAt": "2026-03-02T08:32:20.734Z"
+  },
+  {
+    "id": "cmm8xon2z008fbf2okyarqxds",
+    "novelId": "cmlux5ghz00187u4z9xj54p9e",
+    "ip": "::ffff:61.190.88.155",
+    "userId": "cmlrlqoxp000qyru6djr1myj2",
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-02T08:45:27.899Z",
+    "updatedAt": "2026-03-02T08:45:27.899Z"
+  },
+  {
+    "id": "cmm94a5nh009kbf2o2rlzkhgv",
+    "novelId": "cmm9492y2009gbf2ogps1qgsh",
+    "ip": "::ffff:111.205.230.76",
+    "userId": "cmm7iduu6002edmce8c8xc58g",
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-02T11:50:09.437Z",
+    "updatedAt": "2026-03-02T12:55:44.672Z"
+  },
+  {
+    "id": "cmm96ledy00cebf2oiq11j4rf",
+    "novelId": "cmm7ocqbh000jbf2ofeh6e465",
+    "ip": "::ffff:118.183.90.28",
+    "userId": "cmm963d8m00bcbf2oimbotq6l",
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-02T12:54:53.206Z",
+    "updatedAt": "2026-03-02T12:54:53.206Z"
+  },
+  {
+    "id": "cmm96oz8000ckbf2osvlh1n0f",
+    "novelId": "cmm96jn7z00cabf2ogvztkldn",
+    "ip": "::ffff:118.183.90.28",
+    "userId": "cmm963d8m00bcbf2oimbotq6l",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-02T12:57:40.176Z",
+    "updatedAt": "2026-03-02T12:57:40.176Z"
+  },
+  {
+    "id": "cmm96q43k00cmbf2o6q6p8t5u",
+    "novelId": "cmm96amtj00c2bf2oexl0sbty",
+    "ip": "::ffff:118.183.90.28",
+    "userId": "cmm963d8m00bcbf2oimbotq6l",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-02T12:58:33.151Z",
+    "updatedAt": "2026-03-02T12:58:33.151Z"
+  },
+  {
+    "id": "cmm9798vd00cobf2o63yd8l1k",
+    "novelId": "cmm9492y2009gbf2ogps1qgsh",
+    "ip": "::ffff:221.6.247.195",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-02T13:13:25.800Z",
+    "updatedAt": "2026-03-02T13:13:28.800Z"
+  },
+  {
+    "id": "cmm9azehi00dwbf2o1duwa89r",
+    "novelId": "cmm9a2k3j00dcbf2ozx7q5xgd",
+    "ip": "::ffff:49.52.5.55",
+    "userId": "cmm99jrbi00d4bf2o7umni9pa",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-02T14:57:44.979Z",
+    "updatedAt": "2026-03-02T14:58:09.473Z"
+  },
+  {
+    "id": "cmm9fqvbq0001a5jc9ql4tkb3",
+    "novelId": "cmm96endj00c6bf2owb70y5lk",
+    "ip": "::ffff:118.183.90.28",
+    "userId": "cmm963d8m00bcbf2oimbotq6l",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-02T17:11:04.980Z",
+    "updatedAt": "2026-03-02T17:11:04.980Z"
+  },
+  {
+    "id": "cmma8c77y001wa5jch1ute5s4",
+    "novelId": "cmluqbwon00127u4z9oxvl59r",
+    "ip": "::ffff:218.30.113.62",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-03T06:31:29.419Z",
+    "updatedAt": "2026-03-03T06:31:29.419Z"
+  },
+  {
+    "id": "cmma8xrk6001ya5jc80mq1g17",
+    "novelId": "cmm6kvi7z000114octkplr1am",
+    "ip": "::ffff:218.30.113.62",
+    "userId": null,
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-03T06:48:15.556Z",
+    "updatedAt": "2026-03-03T06:48:15.556Z"
+  },
+  {
+    "id": "cmma9nu7m0022a5jcjja8ky8a",
+    "novelId": "cmm7igovt002idmce1wcb382s",
+    "ip": "::ffff:173.224.219.177",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-03T07:08:32.050Z",
+    "updatedAt": "2026-03-03T07:08:32.050Z"
+  },
+  {
+    "id": "cmma9wlhu0026a5jce3ybnmce",
+    "novelId": "cmm9a2k3j00dcbf2ozx7q5xgd",
+    "ip": "::ffff:183.62.147.26",
+    "userId": "cmlz5thnl0030pbh0k6pu9kq8",
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-03T07:15:20.657Z",
+    "updatedAt": "2026-03-03T07:15:24.047Z"
+  },
+  {
+    "id": "cmma9x2ph002aa5jcdsew2k2y",
+    "novelId": "cmm9hjk880003a5jcmbvsn3fl",
+    "ip": "::ffff:173.224.219.177",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-03T07:15:42.965Z",
+    "updatedAt": "2026-03-03T07:15:42.965Z"
+  },
+  {
+    "id": "cmmdlq9g9002h4tcco10yqskt",
+    "novelId": "cmmd9uw8m00134tcc8xhz7fea",
+    "ip": "::ffff:220.168.100.19",
+    "userId": "cmmd9n7g9000z4tcc9cfeu9xe",
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-05T15:09:39.033Z",
+    "updatedAt": "2026-03-05T15:09:39.033Z"
+  },
+  {
+    "id": "cmmdydrel002w4tccbdoxyuga",
+    "novelId": "cmlt5yyao001fn850um6tkj0f",
+    "ip": "::ffff:65.112.8.57",
+    "userId": "cmmdy9nri002o4tcc0asg07vs",
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-05T21:03:50.781Z",
+    "updatedAt": "2026-03-05T21:03:50.781Z"
+  },
+  {
+    "id": "cmmdyequ8002y4tccoghc42y5",
+    "novelId": "cmmdyd79m002s4tccxlf57azd",
+    "ip": "::ffff:65.112.8.57",
+    "userId": "cmmdy9nri002o4tcc0asg07vs",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-05T21:04:36.704Z",
+    "updatedAt": "2026-03-05T21:04:36.704Z"
+  },
+  {
+    "id": "cmme8l8xq003a4tcc8pk4e7i7",
+    "novelId": "cmme8kte900364tcce8ch5hjk",
+    "ip": "::ffff:106.120.124.176",
+    "userId": "cmm7iduu6002edmce8c8xc58g",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-06T01:49:36.253Z",
+    "updatedAt": "2026-03-06T01:49:36.253Z"
+  },
+  {
+    "id": "cmmeay79f003d4tcc82jbjvgk",
+    "novelId": "cmmdgi7fv001r4tcc2wllw1se",
+    "ip": "::ffff:61.190.88.155",
+    "userId": "cmlrlqoxp000qyru6djr1myj2",
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-06T02:55:39.843Z",
+    "updatedAt": "2026-03-06T02:55:39.843Z"
+  },
+  {
+    "id": "cmmecoe2h003j4tcc2m3h8q9o",
+    "novelId": "cmmecffq8003f4tccfjdbus8o",
+    "ip": "::ffff:209.94.142.134",
+    "userId": "cmmdy9nri002o4tcc0asg07vs",
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-06T03:44:01.337Z",
+    "updatedAt": "2026-03-06T03:44:01.337Z"
+  },
+  {
+    "id": "cmmel8c46005c4tcc8j7s97mc",
+    "novelId": "cmm7y2olq002ubf2o77v79o37",
+    "ip": "::ffff:210.10.76.119",
+    "userId": "cmlzbq318004apbh0rpzu66g0",
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-06T07:43:28.854Z",
+    "updatedAt": "2026-03-06T07:43:28.854Z"
+  },
+  {
+    "id": "cmmely0bz005v4tccxusasmj6",
+    "novelId": "cmm6kvi7z000114octkplr1am",
+    "ip": "::ffff:117.29.115.255",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-06T08:03:26.638Z",
+    "updatedAt": "2026-03-06T08:03:26.638Z"
+  },
+  {
+    "id": "cmmfi8eig008a4tccr6wfebk8",
+    "novelId": "cmmfh1vcf00864tcc9b1iqcll",
+    "ip": "::ffff:209.94.142.134",
+    "userId": "cmmdy9nri002o4tcc0asg07vs",
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-06T23:07:19.285Z",
+    "updatedAt": "2026-03-06T23:07:19.285Z"
+  },
+  {
+    "id": "cmmfvjspu009k4tcc8j5dih7d",
+    "novelId": "cmm1m5edd005hpbh0c0piti24",
+    "ip": "::ffff:223.74.34.24",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-07T05:20:05.922Z",
+    "updatedAt": "2026-03-07T05:20:05.922Z"
+  },
+  {
+    "id": "cmmfvvkss009m4tccvfxv5laa",
+    "novelId": "cmmfh1vcf00864tcc9b1iqcll",
+    "ip": "::ffff:117.152.89.170",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-07T05:29:15.532Z",
+    "updatedAt": "2026-03-07T05:29:15.532Z"
+  },
+  {
+    "id": "cmmgesn1f00e34tcct0mu9ilu",
+    "novelId": "cmmgep0e800dz4tcc9bm6mj14",
+    "ip": "::ffff:218.94.133.183",
+    "userId": "cmmgebeen00dr4tccu4yvekx6",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-07T14:18:51.171Z",
+    "updatedAt": "2026-03-07T14:18:51.171Z"
+  },
+  {
+    "id": "cmmget2uk00e54tcc8i8ftee8",
+    "novelId": "cmmgekypn00dv4tccfvg5fx78",
+    "ip": "::ffff:218.94.133.183",
+    "userId": "cmmgebeen00dr4tccu4yvekx6",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-07T14:19:11.660Z",
+    "updatedAt": "2026-03-07T14:19:11.660Z"
+  },
+  {
+    "id": "cmmghs1ph00fq4tccyratbl21",
+    "novelId": "cmm9a2k3j00dcbf2ozx7q5xgd",
+    "ip": "::ffff:171.81.205.32",
+    "userId": null,
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-07T15:42:22.372Z",
+    "updatedAt": "2026-03-07T15:42:22.372Z"
+  },
+  {
+    "id": "cmmgjt1eu00g04tcctuy5mxx5",
+    "novelId": "cmlzb8pez003spbh0snxwcqx9",
+    "ip": "::ffff:117.182.131.161",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-07T16:39:07.878Z",
+    "updatedAt": "2026-03-07T16:39:07.878Z"
+  },
+  {
+    "id": "cmmhtzoyf00102gpaart3g38w",
+    "novelId": "cmmhr78lr000m2gpa6beuj3yi",
+    "ip": "::ffff:220.198.247.231",
+    "userId": "cmmfuqnol009f4tcctvsbcq8d",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-08T14:12:00.663Z",
+    "updatedAt": "2026-03-08T14:12:00.663Z"
+  },
+  {
+    "id": "cmmhu0nsm00162gpak9nf51f0",
+    "novelId": "cmm96endj00c6bf2owb70y5lk",
+    "ip": "::ffff:220.198.247.231",
+    "userId": "cmmfuqnol009f4tcctvsbcq8d",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-08T14:12:45.815Z",
+    "updatedAt": "2026-03-08T14:12:45.815Z"
+  },
+  {
+    "id": "cmmiqwhe100212gpaztzoyoq5",
+    "novelId": "cmmhumbe800182gpa210gv1ap",
+    "ip": "::ffff:155.69.195.67",
+    "userId": null,
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-09T05:33:18.217Z",
+    "updatedAt": "2026-03-09T05:33:18.217Z"
+  },
+  {
+    "id": "cmmj4m3o7000c95c5346qi4o9",
+    "novelId": "cmmj4kc2n000795c5avki4bjc",
+    "ip": "::ffff:219.146.241.122",
+    "userId": "cmmfzqkac009y4tccoj4riz9s",
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-09T11:57:08.504Z",
+    "updatedAt": "2026-03-09T11:57:08.504Z"
+  },
+  {
+    "id": "cmmj4v3kt000e95c5xbydtk4q",
+    "novelId": "cmm9a2k3j00dcbf2ozx7q5xgd",
+    "ip": "::ffff:116.233.246.2",
+    "userId": null,
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-09T12:04:08.285Z",
+    "updatedAt": "2026-03-09T12:04:08.285Z"
+  },
+  {
+    "id": "cmmkrgf4l000yai2ye9iqbz5i",
+    "novelId": "cmmecffq8003f4tccfjdbus8o",
+    "ip": "::ffff:120.244.142.87",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-10T15:24:20.757Z",
+    "updatedAt": "2026-03-10T15:24:20.757Z"
+  },
+  {
+    "id": "cmmlct9t50018ai2ylib5zan5",
+    "novelId": "cmmj4kc2n000795c5avki4bjc",
+    "ip": "::ffff:124.16.150.86",
+    "userId": "cmmfzqkac009y4tccoj4riz9s",
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-11T01:22:12.329Z",
+    "updatedAt": "2026-03-11T01:22:12.329Z"
+  },
+  {
+    "id": "cmmlkp3vx001tai2yu42diumc",
+    "novelId": "cmm9a2k3j00dcbf2ozx7q5xgd",
+    "ip": "::ffff:113.111.39.209",
+    "userId": "cmmfuqnol009f4tcctvsbcq8d",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-11T05:02:54.955Z",
+    "updatedAt": "2026-03-11T05:02:54.955Z"
+  },
+  {
+    "id": "cmmlkptai001vai2yow0iafb0",
+    "novelId": "cmmivc8cw002b2gpazby7ke0s",
+    "ip": "::ffff:113.111.39.209",
+    "userId": "cmmfuqnol009f4tcctvsbcq8d",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-11T05:03:27.883Z",
+    "updatedAt": "2026-03-11T05:03:27.883Z"
+  },
+  {
+    "id": "cmmlkpzpf001xai2y2f4njhkq",
+    "novelId": "cmmhr78lr000m2gpa6beuj3yi",
+    "ip": "::ffff:113.111.39.209",
+    "userId": "cmmfuqnol009f4tcctvsbcq8d",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-11T05:03:36.195Z",
+    "updatedAt": "2026-03-11T05:03:36.195Z"
+  },
+  {
+    "id": "cmmlmb28c0029ai2ye7xqsao0",
+    "novelId": "cmmljr7fd001hai2yttafilvf",
+    "ip": "::ffff:103.191.242.60",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-11T05:47:58.860Z",
+    "updatedAt": "2026-03-11T05:48:04.100Z"
+  },
+  {
+    "id": "cmmlt4bp6002uai2yk76t3il8",
+    "novelId": "cmm6kvi7z000114octkplr1am",
+    "ip": "::ffff:222.201.190.18",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-11T08:58:41.850Z",
+    "updatedAt": "2026-03-11T08:58:41.850Z"
+  },
+  {
+    "id": "cmmlyhfd20036ai2yrohoa6si",
+    "novelId": "cmmlyg4w40031ai2yot0zzqvd",
+    "ip": "::ffff:175.8.52.153",
+    "userId": "cmm7fa2nn002m14oc0a02snbi",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-11T11:28:51.206Z",
+    "updatedAt": "2026-03-11T11:28:51.206Z"
+  },
+  {
+    "id": "cmmlyi9b30039ai2yyz6wz1yi",
+    "novelId": "cmm9ys2oq001sa5jci81kmwn2",
+    "ip": "::ffff:175.8.52.153",
+    "userId": "cmm7fa2nn002m14oc0a02snbi",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-11T11:29:30.016Z",
+    "updatedAt": "2026-03-11T11:29:30.016Z"
+  },
+  {
+    "id": "cmmn8wvwg001af5vwmyyke1jw",
+    "novelId": "cmm6kvi7z000114octkplr1am",
+    "ip": "::ffff:115.196.70.94",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-12T09:08:34.816Z",
+    "updatedAt": "2026-03-12T09:08:34.816Z"
+  },
+  {
+    "id": "cmmong9ou0038kawtrzs4j411",
+    "novelId": "cmm6kvi7z000114octkplr1am",
+    "ip": "::ffff:183.221.76.134",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-13T08:43:19.950Z",
+    "updatedAt": "2026-03-13T08:43:19.950Z"
+  },
+  {
+    "id": "cmmooov0m003ikawt3z7sk38h",
+    "novelId": "cmmj1rax1000512xdo8ve2z04",
+    "ip": "::ffff:122.244.242.34",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-13T09:18:00.454Z",
+    "updatedAt": "2026-03-13T09:18:00.454Z"
+  },
+  {
+    "id": "cmmoylzzu005gkawt2odxfuzm",
+    "novelId": "cmm6kvi7z000114octkplr1am",
+    "ip": "::ffff:202.200.232.93",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-13T13:55:43.099Z",
+    "updatedAt": "2026-03-13T13:55:43.099Z"
+  },
+  {
+    "id": "cmmqe0jfb006mkawtqmzzi2j6",
+    "novelId": "cmmqdz2ai006ikawtefkgcz8a",
+    "ip": "::ffff:210.39.1.116",
+    "userId": "cmmecqo96003n4tccp66kfqto",
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-14T13:54:41.879Z",
+    "updatedAt": "2026-03-14T13:54:41.879Z"
+  },
+  {
+    "id": "cmmrhpvyq007rkawtae8q2h73",
+    "novelId": "cmmo51gxp000v4k4e73hfpm2m",
+    "ip": "::ffff:172.226.140.40",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-15T08:26:09.554Z",
+    "updatedAt": "2026-03-15T08:26:09.554Z"
+  },
+  {
+    "id": "cmmsojo7r007zkawt94b98vno",
+    "novelId": "cmmr4z0u3007gkawtjz8yx5y1",
+    "ip": "::ffff:123.153.212.39",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-16T04:25:03.050Z",
+    "updatedAt": "2026-03-16T04:25:03.050Z"
+  },
+  {
+    "id": "cmmt9ra950083kawtblyxpe2u",
+    "novelId": "cmmek5dje004q4tccl0w4iups",
+    "ip": "::ffff:119.2.223.117",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-16T14:18:50.154Z",
+    "updatedAt": "2026-03-16T14:18:50.154Z"
+  },
+  {
+    "id": "cmmu5cp4q008xkawtt53qrvkd",
+    "novelId": "cmmr4z0u3007gkawtjz8yx5y1",
+    "ip": "::ffff:120.235.59.70",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-17T05:03:17.294Z",
+    "updatedAt": "2026-03-17T05:03:17.294Z"
+  },
+  {
+    "id": "cmmvmima70090kawt48lg0815",
+    "novelId": "cmm6kvi7z000114octkplr1am",
+    "ip": "::ffff:115.225.181.109",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-18T05:51:33.199Z",
+    "updatedAt": "2026-03-18T05:51:33.199Z"
+  },
+  {
+    "id": "cmmwe0ywo009lkawt0gqculks",
+    "novelId": "cmmtyd1rm008tkawt7cwilgxo",
+    "ip": "::ffff:70.50.115.82",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-18T18:41:39.000Z",
+    "updatedAt": "2026-03-18T18:41:39.000Z"
+  },
+  {
+    "id": "cmn2howds00cgkawt3ajyttsc",
+    "novelId": "cmn1tao3d00c3kawt98zmtrbx",
+    "ip": "::ffff:60.216.135.152",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-23T01:10:51.375Z",
+    "updatedAt": "2026-03-23T01:10:51.375Z"
+  },
+  {
+    "id": "cmn2iv6qf00cikawtg2jrkzzg",
+    "novelId": "cmmy359ld00aakawte4eclvsi",
+    "ip": "::ffff:112.2.252.116",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-23T01:43:44.343Z",
+    "updatedAt": "2026-03-23T01:43:44.343Z"
+  },
+  {
+    "id": "cmn2mtng400ckkawtim0l17hp",
+    "novelId": "cmmr4z0u3007gkawtjz8yx5y1",
+    "ip": "::ffff:150.203.2.240",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-23T03:34:31.156Z",
+    "updatedAt": "2026-03-23T03:34:31.156Z"
+  },
+  {
+    "id": "cmn2rsdv400cnkawtlzozfxgn",
+    "novelId": "cmmljr7fd001hai2yttafilvf",
+    "ip": "::ffff:103.191.242.40",
+    "userId": "cmmecqo96003n4tccp66kfqto",
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-23T05:53:30.161Z",
+    "updatedAt": "2026-03-23T05:53:33.133Z"
+  },
+  {
+    "id": "cmn2zigi000czkawt47ixhq7x",
+    "novelId": "cmn1tao3d00c3kawt98zmtrbx",
+    "ip": "::ffff:220.194.129.176",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-23T09:29:43.945Z",
+    "updatedAt": "2026-03-23T09:29:43.945Z"
+  },
+  {
+    "id": "cmn2zn1y300d1kawtj4ky1tvl",
+    "novelId": "cmmkykzpn0014ai2y5qbuf533",
+    "ip": "::ffff:220.194.129.176",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-23T09:33:18.363Z",
+    "updatedAt": "2026-03-23T09:33:18.363Z"
+  },
+  {
+    "id": "cmn49x8qi00dmkawt5xlm5jzs",
+    "novelId": "cmn1tao3d00c3kawt98zmtrbx",
+    "ip": "::ffff:219.134.180.138",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-24T07:08:56.058Z",
+    "updatedAt": "2026-03-24T07:09:02.209Z"
+  },
+  {
+    "id": "cmn4ac6tx00dukawta46w9pr4",
+    "novelId": "cmn3sv81100d7kawt620m9cro",
+    "ip": "::ffff:219.134.180.138",
+    "userId": null,
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-24T07:20:33.428Z",
+    "updatedAt": "2026-03-24T07:20:33.428Z"
+  },
+  {
+    "id": "cmn4bwwv300eikawtung2zgi6",
+    "novelId": "cmm6kvi7z000114octkplr1am",
+    "ip": "::ffff:219.134.180.138",
+    "userId": null,
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-24T08:04:39.903Z",
+    "updatedAt": "2026-03-24T08:04:44.038Z"
+  },
+  {
+    "id": "cmn4msz5500evkawte04agiiv",
+    "novelId": "cmn1tao3d00c3kawt98zmtrbx",
+    "ip": "::ffff:180.115.48.251",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-24T13:09:32.009Z",
+    "updatedAt": "2026-03-24T13:09:32.009Z"
+  },
+  {
+    "id": "cmn4ocg0y00ezkawtd8ga37dn",
+    "novelId": "cmmy359ld00aakawte4eclvsi",
+    "ip": "::ffff:180.115.48.251",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-24T13:52:39.970Z",
+    "updatedAt": "2026-03-24T13:52:39.970Z"
+  },
+  {
+    "id": "cmn4ohiem00f2kawt6ta9i69z",
+    "novelId": "cmn1tao3d00c3kawt98zmtrbx",
+    "ip": "::ffff:120.229.61.103",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-24T13:56:36.334Z",
+    "updatedAt": "2026-03-24T13:56:40.631Z"
+  },
+  {
+    "id": "cmn6r4zo100g4kawtnuqunbpo",
+    "novelId": "cmmqdz2ai006ikawtefkgcz8a",
+    "ip": "::ffff:60.163.249.89",
+    "userId": "cmlqbdmog0008i51uvi5nuxy6",
+    "voteType": "MISCONDUCT",
+    "createdAt": "2026-03-26T00:46:23.377Z",
+    "updatedAt": "2026-03-26T00:46:24.496Z"
+  },
+  {
+    "id": "cmn6wpczn00ggkawtwajhdfw3",
+    "novelId": "cmmsf2875007vkawtvyslv9iw",
+    "ip": "::ffff:114.224.179.150",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-26T03:22:11.843Z",
+    "updatedAt": "2026-03-26T03:22:11.843Z"
+  },
+  {
+    "id": "cmn7caik900gykawtlptfakdl",
+    "novelId": "cmn1tao3d00c3kawt98zmtrbx",
+    "ip": "::ffff:60.163.249.89",
+    "userId": "cmlqbdmog0008i51uvi5nuxy6",
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-26T10:38:33.081Z",
+    "updatedAt": "2026-03-26T10:38:40.150Z"
+  },
+  {
+    "id": "cmn880flf00hakawtxrgd61da",
+    "novelId": "cmn1tao3d00c3kawt98zmtrbx",
+    "ip": "::ffff:58.32.217.195",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-27T01:26:30.387Z",
+    "updatedAt": "2026-03-27T01:26:30.387Z"
+  },
+  {
+    "id": "cmn8uxu4p00hgkawtkhkpc3wg",
+    "novelId": "cmmkll51s000uai2yipifa37j",
+    "ip": "::ffff:124.128.207.66",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-27T12:08:20.424Z",
+    "updatedAt": "2026-03-27T12:08:20.424Z"
+  },
+  {
+    "id": "cmn8wt1ja00hikawt4wyugknh",
+    "novelId": "cmmfh1vcf00864tcc9b1iqcll",
+    "ip": "::ffff:119.145.6.48",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-27T13:00:35.974Z",
+    "updatedAt": "2026-03-27T13:00:35.974Z"
+  },
+  {
+    "id": "cmn9zllfi00hqkawtsuy9bpo2",
+    "novelId": "cmn3sv81100d7kawt620m9cro",
+    "ip": "::ffff:117.136.22.129",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-28T07:06:33.534Z",
+    "updatedAt": "2026-03-28T07:06:33.534Z"
+  },
+  {
+    "id": "cmnadmg4800hskawt3rcsg74l",
+    "novelId": "cmmsf2875007vkawtvyslv9iw",
+    "ip": "::ffff:59.172.4.239",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-28T13:39:07.929Z",
+    "updatedAt": "2026-03-28T13:39:07.929Z"
+  },
+  {
+    "id": "cmnadpzzs00hukawtyq263c55",
+    "novelId": "cmm4qdyey001ce1k7d5qbgt97",
+    "ip": "::ffff:59.172.4.239",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-28T13:41:53.656Z",
+    "updatedAt": "2026-03-28T13:41:58.793Z"
+  },
+  {
+    "id": "cmnblrx9h00ibkawtzmnz356v",
+    "novelId": "cmmfh1vcf00864tcc9b1iqcll",
+    "ip": "::ffff:58.20.120.206",
+    "userId": null,
+    "voteType": "OVERREACH",
+    "createdAt": "2026-03-29T10:15:06.533Z",
+    "updatedAt": "2026-03-29T10:15:06.533Z"
+  }
+]

@@ -1,0 +1,34 @@
+[
+  {
+    "id": "cmmj5phd6000q95c5kbti0fk3",
+    "awardId": "cmmhr4e7u000g2gpa1x46qlam",
+    "name": "理论垃圾",
+    "description": "面向新传为代表的众多社会科学研究中，出现的三类典型「扯」理论的现象。",
+    "order": 0,
+    "createdAt": "2026-03-09T12:27:45.834Z"
+  },
+  {
+    "id": "cmmoxrh04004gkawtrok1cwsy",
+    "awardId": "cmm9amtee00dmbf2ofmb3hkuj",
+    "name": "\t自燃科学",
+    "description": "授予进行科学研究的个人。 ",
+    "order": 0,
+    "createdAt": "2026-03-13T13:31:58.805Z"
+  },
+  {
+    "id": "cmmoxrsek004ikawtgqcvjlxu",
+    "awardId": "cmm9amtee00dmbf2ofmb3hkuj",
+    "name": "无用发明",
+    "description": "授予有科研发明的个人。",
+    "order": 1,
+    "createdAt": "2026-03-13T13:32:13.580Z"
+  },
+  {
+    "id": "cmmoxs0uz004kkawtxgt2r76o",
+    "awardId": "cmm9amtee00dmbf2ofmb3hkuj",
+    "name": "科技退步",
+    "description": "授予阻碍科技发展的个人。",
+    "order": 2,
+    "createdAt": "2026-03-13T13:32:24.540Z"
+  }
+]
