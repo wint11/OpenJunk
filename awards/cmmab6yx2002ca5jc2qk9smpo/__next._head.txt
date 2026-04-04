@@ -1,8 +1,8 @@
 1:"$Sreact.fragment"
-2:I[10196,["/_next/static/chunks/fb2ff57bae076136.js","/_next/static/chunks/c022a629a3161d5a.js"],"ViewportBoundary"]
-3:I[10196,["/_next/static/chunks/fb2ff57bae076136.js","/_next/static/chunks/c022a629a3161d5a.js"],"MetadataBoundary"]
+2:I[10196,["/OpenJunk/_next/static/chunks/fb2ff57bae076136.js","/OpenJunk/_next/static/chunks/c022a629a3161d5a.js"],"ViewportBoundary"]
+3:I[10196,["/OpenJunk/_next/static/chunks/fb2ff57bae076136.js","/OpenJunk/_next/static/chunks/c022a629a3161d5a.js"],"MetadataBoundary"]
 4:"$Sreact.suspense"
-6:I[97291,["/_next/static/chunks/fb2ff57bae076136.js","/_next/static/chunks/c022a629a3161d5a.js"],"IconMark"]
+6:I[97291,["/OpenJunk/_next/static/chunks/fb2ff57bae076136.js","/OpenJunk/_next/static/chunks/c022a629a3161d5a.js"],"IconMark"]
 5:Tbb4,作为学术界的“二次勘探”奖，我们的奖项宗旨是：在废墟中打捞未来。我们致力于表彰那些在学术研究的“边缘地带”与“废弃矿区”默默耕耘的学者。当主流学界热衷于追逐显学的高峰时，我们致敬那些愿意俯身拾起被遗忘的数据、被忽视的档案、被废弃的假设以及被撤稿的论文残骸，并从中提炼出新价值的“拾荒者”。
 我们的核心理念包括：一、发现“负遗产”的价值： 承认失败的实验、被推翻的理论和尘封的文献并非无用之物，而是学术大厦不可或缺的基石。二、倡导“循环学术”： 鼓励对现有学术资源的深度挖掘与再利用，反对为了发表而制造的、空洞无物的“新概念”。三、致敬孤独的守望者： 为那些在冷门领域、交叉学科缝隙中坚持，或致力于修正、完善前人工作的学者提供一盏聚光灯。
 奖项历史：从戏谑到庄严
@@ -12,4 +12,4 @@
 奖项影响力：重塑学术的“暗物质”——《最佳拾荒者》的影响力不在于引领显学的潮流，而在于它深刻影响了学术界的 “自我净化”机制与“底层生态”。
 一、为学术史提供新视角： 获奖作品往往揭示了科学发现背后被遮蔽的曲折路径。例如，2023年的获奖者通过梳理上世纪某本停刊杂志的读者来信，找到了一个被遗忘的、比正式发表论文早十年的原始构想。
 二、促进科研资源的再利用： 奖项鼓励年轻学者不必盲目追热点，而是从庞大的、已发表但未被充分利用的学术存量中寻找突破口，极大地降低了低水平重复研究造成的“学术垃圾”产出。
-三、构建学术界的“拾荒者社群”： 它联结了一群有耐心、有眼光的学者，他们不再视“垃圾”为耻辱，而是视其为未被开采的矿藏。这种风气正在潜移默化地改变博士生们的选题焦虑，让他们相信：最深刻的真理，往往藏在最不起眼的注脚里。0:{"buildId":"KDQcFb9YMDO3lijmz4pVN","rsc":["$","$1","h",{"children":[null,["$","$L2",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$L3",null,{"children":["$","$4",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"The Best Scavenger Award最佳拾荒者 - OpenJunk - OpenJunk"}],["$","meta","1",{"name":"description","content":"$5"}],["$","link","2",{"rel":"icon","href":"/favicon.ico?favicon.0b3bf435.ico","sizes":"256x256","type":"image/x-icon"}],["$","$L6","3",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"loading":null,"isPartial":false}
+三、构建学术界的“拾荒者社群”： 它联结了一群有耐心、有眼光的学者，他们不再视“垃圾”为耻辱，而是视其为未被开采的矿藏。这种风气正在潜移默化地改变博士生们的选题焦虑，让他们相信：最深刻的真理，往往藏在最不起眼的注脚里。0:{"buildId":"5AiLfieu7kIBvM8U5lFaL","rsc":["$","$1","h",{"children":[null,["$","$L2",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$L3",null,{"children":["$","$4",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"The Best Scavenger Award最佳拾荒者 - OpenJunk - OpenJunk"}],["$","meta","1",{"name":"description","content":"$5"}],["$","link","2",{"rel":"icon","href":"/OpenJunk/favicon.ico?favicon.0b3bf435.ico","sizes":"256x256","type":"image/x-icon"}],["$","$L6","3",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"loading":null,"isPartial":false}

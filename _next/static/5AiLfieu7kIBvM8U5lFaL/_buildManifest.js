@@ -1,7 +1,12 @@
 self.__BUILD_MANIFEST = {
   "__rewrites": {
     "afterFiles": [],
-    "beforeFiles": [],
+    "beforeFiles": [
+      {
+        "source": "/OpenJunk//_next/:path+",
+        "destination": "/OpenJunk/_next/:path+"
+      }
+    ],
     "fallback": []
   },
   "sortedPages": [
