@@ -1,6 +1,6 @@
 1:"$Sreact.fragment"
-2:I[42950,["/OpenJunk/_next/static/chunks/c31f64d516e5aed5.js","/OpenJunk/_next/static/chunks/51662978c1dc1a3d.js","/OpenJunk/_next/static/chunks/aa9d8d086acb8bdd.js","/OpenJunk/_next/static/chunks/c6bb07a934291682.js","/OpenJunk/_next/static/chunks/a33506d8ce13a3cc.js","/OpenJunk/_next/static/chunks/d148c24c8bce1c09.js","/OpenJunk/_next/static/chunks/85f66ede9db7f4ca.js"],"JournalCustomRenderer"]
-6:I[10196,["/OpenJunk/_next/static/chunks/fb2ff57bae076136.js","/OpenJunk/_next/static/chunks/c022a629a3161d5a.js"],"OutletBoundary"]
+2:I[42950,["/_next/static/chunks/c31f64d516e5aed5.js","/_next/static/chunks/51662978c1dc1a3d.js","/_next/static/chunks/aa9d8d086acb8bdd.js","/_next/static/chunks/c6bb07a934291682.js","/_next/static/chunks/a33506d8ce13a3cc.js","/_next/static/chunks/d148c24c8bce1c09.js","/_next/static/chunks/85f66ede9db7f4ca.js"],"JournalCustomRenderer"]
+6:I[10196,["/_next/static/chunks/fb2ff57bae076136.js","/_next/static/chunks/c022a629a3161d5a.js"],"OutletBoundary"]
 7:"$Sreact.suspense"
 3:T3e0a,<!DOCTYPE html>
 <html lang="en" class="dark">
@@ -240,7 +240,7 @@
         </div>
     </div>
 </body>
-</html>0:{"buildId":"YW1JDpPRlx9q1X56KW6yG","rsc":["$","$1","c",{"children":[["$","$L2",null,{"code":"$3","data":{"name":"扯","description":"谁在扯，扯了什么，通过什么扯，扯给了谁，最后扯成了什么。\r\n\r\n作为十字路口的学科，我们承担着开塞露一般的职责:不生产真理，不消灭废话，只负责让一切原本堵塞的话语、观点、情绪与术语，以一种看似体面的方式流动起来。\r\n\r\n我们扯淡 扯远 扯犊子......扯东扯西.......上扯下扯。","paperCount":1,"adminCount":0,"createdAt":"2026/3/6","guidelines":"本刊欢迎各领域优秀学者赐稿。\r\n请使用word格式，审稿周期为一周左右。\r\n","guidelinesUrl":null,"papers":[{"id":"cmmqdz2ai006ikawtefkgcz8a","title":"从「窜稀」到「干屎塑形」:学术写作的排泄现象学与层次分化","description":"基于参与式观察与隐喻分析法，本文构建了「知识生产的排泄现象学」理论框架，对当前学术论文写作实践进行类型学分析。研究发现，学术写作者可根据「排泄物塑形能力」划分为三个层次:「窜稀型写作」表现为思路涣散、结构失禁，无法完成知识的固态成形，这一现象并非学术新手的专利，许多资深学者同样深陷其中;「屎上雕花」指在既无价值的排泄物上施加过度精致化的修辞劳作，陷入形式主义的内卷陷阱;「干屎塑形术」则意主体性文馆现的不评价体界的就难以产出真正创新，又无法顺畅排出陈腐范式。研究提出「排便自觉」作为学术写作的解放路径，倡导建立「排泄美学」以对抗知识生产的异化。","author":"扯主编","date":"2026/3/26","category":"新闻与传播学"}]}}],["$L4"],"$L5"]}],"loading":null,"isPartial":false}
-4:["$","script","script-0",{"src":"/OpenJunk/_next/static/chunks/85f66ede9db7f4ca.js","async":true}]
+</html>0:{"buildId":"KDQcFb9YMDO3lijmz4pVN","rsc":["$","$1","c",{"children":[["$","$L2",null,{"code":"$3","data":{"name":"扯","description":"谁在扯，扯了什么，通过什么扯，扯给了谁，最后扯成了什么。\r\n\r\n作为十字路口的学科，我们承担着开塞露一般的职责:不生产真理，不消灭废话，只负责让一切原本堵塞的话语、观点、情绪与术语，以一种看似体面的方式流动起来。\r\n\r\n我们扯淡 扯远 扯犊子......扯东扯西.......上扯下扯。","paperCount":1,"adminCount":0,"createdAt":"2026/3/6","guidelines":"本刊欢迎各领域优秀学者赐稿。\r\n请使用word格式，审稿周期为一周左右。\r\n","guidelinesUrl":null,"papers":[{"id":"cmmqdz2ai006ikawtefkgcz8a","title":"从「窜稀」到「干屎塑形」:学术写作的排泄现象学与层次分化","description":"基于参与式观察与隐喻分析法，本文构建了「知识生产的排泄现象学」理论框架，对当前学术论文写作实践进行类型学分析。研究发现，学术写作者可根据「排泄物塑形能力」划分为三个层次:「窜稀型写作」表现为思路涣散、结构失禁，无法完成知识的固态成形，这一现象并非学术新手的专利，许多资深学者同样深陷其中;「屎上雕花」指在既无价值的排泄物上施加过度精致化的修辞劳作，陷入形式主义的内卷陷阱;「干屎塑形术」则意主体性文馆现的不评价体界的就难以产出真正创新，又无法顺畅排出陈腐范式。研究提出「排便自觉」作为学术写作的解放路径，倡导建立「排泄美学」以对抗知识生产的异化。","author":"扯主编","date":"2026/3/26","category":"新闻与传播学"}]}}],["$L4"],"$L5"]}],"loading":null,"isPartial":false}
+4:["$","script","script-0",{"src":"/_next/static/chunks/85f66ede9db7f4ca.js","async":true}]
 5:["$","$L6",null,{"children":["$","$7",null,{"name":"Next.MetadataOutlet","children":"$@8"}]}]
 8:null
